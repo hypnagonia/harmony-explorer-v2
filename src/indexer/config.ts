@@ -10,7 +10,7 @@ export const config = {
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
     rpcUrls: [
       // shard #0 must go first
-      ['https://a.api.s0.t.hmny.io'],
+      ['https://a.api.s0.t.hmny.io', 'https://api.s0.t.hmny.io', 'https://api0.s0.t.hmny.io'],
       ['https://api.s1.t.hmny.io'],
       ['https://api.s1.t.hmny.io'],
       ['https://api.s1.t.hmny.io'],

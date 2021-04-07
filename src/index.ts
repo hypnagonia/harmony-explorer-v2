@@ -1,12 +1,8 @@
 import {logger} from './logger'
-import * as RPCClient from './indexer/rpc/client'
+import * as blockIndexer from './indexer/blockIndexer'
 
 const l = logger(module)
-l.info('hey')
 
-const run = async () => {
-  const res = await RPCClient.getBlockByNumber(4000000)
-  console.log({res})
-}
+l.info('Indexer starting...')
 
-run()
+blockIndexer.loop()

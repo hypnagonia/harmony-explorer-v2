@@ -2,13 +2,15 @@ import nodeFetch from 'node-fetch'
 import {RPCETHMethod, RPCHarmonyMethod} from 'types/blockchain'
 import AbortController from 'abort-controller'
 import {logger} from 'src/logger'
+import {config} from 'src/indexer/config'
+import {RPCStatistic} from './strategy/RPCStatistic'
 
 const l = logger(module)
 
-const defaultFetchTimeout = 2000
-const defaultRetries = 3
+const defaultFetchTimeout = 10000
+const defaultRetries = 5
 
-const increaseTimeout = (retry: number) => defaultRetries + 1 - retry * defaultFetchTimeout
+const increaseTimeout = (retry: number) => (defaultRetries + 1 - retry) * defaultFetchTimeout
 
 export const fetch = async (
   url: string,
@@ -24,17 +26,13 @@ export const fetch = async (
     try {
       return await fetchWithoutRetry(url, method, params, increaseTimeout(retry))
     } catch (err) {
-      if (retry < 2) {
+      const retriesLeft = retry - 1
+      if (retriesLeft < 1) {
         throw new Error(err)
       }
 
-      l.warn(`Failed to fetch ${url} ${method}. Retrying... ${retry}/${defaultRetries}`, {
-        err,
-        url,
-        method,
-        params,
-      })
-      return exec(url, method, params, retry - 1)
+      l.debug(`Retrying... ${retriesLeft}/${defaultRetries}`)
+      return exec(url, method, params, retriesLeft)
     }
   }
 
@@ -47,6 +45,8 @@ export const fetchWithoutRetry = (
   params: any[],
   timeout = defaultFetchTimeout
 ) => {
+  const startDate = Date.now()
+
   const body = {
     jsonrpc: '2.0',
     id: 1,
@@ -54,6 +54,7 @@ export const fetchWithoutRetry = (
     params,
   }
   l.debug(`fetch ${url} "${method}"`, {params, url, method})
+
   const controller = new AbortController()
   const timeoutID = setTimeout(() => {
     controller.abort()
@@ -66,9 +67,28 @@ export const fetchWithoutRetry = (
     signal: controller.signal,
   }
 
-  return nodeFetch(url, payload)
+  const rpc = RPCStatistic.getBest()
+
+  return nodeFetch(rpc.url, payload)
     .then((res) => res.json())
+    .then(({result}) => result)
+    .then((result) => {
+      rpc.submitStatistic(Date.now() - startDate, false)
+      return result
+    })
+    .catch((err) => {
+      rpc.submitStatistic(defaultFetchTimeout, true)
+      l.warn(`Failed to fetch ${url} ${method}`, {
+        err: err.message || err,
+        url,
+        method,
+        params,
+      })
+
+      throw new Error(err)
+    })
     .finally(() => {
+      l.debug(`fetch ${url} "${method}" took ${Date.now() - startDate}ms`)
       clearTimeout(timeoutID)
     })
 }
