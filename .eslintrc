@@ -30,6 +30,10 @@
     "import/extensions": "off",
     "semi": "off",
     "no-undef": "off",
-    "require-jsdoc": "off"
+    "require-jsdoc": "off",
+    "no-unused-vars": "off",
+    "indent": "off",
+    "object-curly-spacing": "off",
+    "max-len": "off"
   }
 }
