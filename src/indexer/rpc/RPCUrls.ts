@@ -2,7 +2,7 @@ import {config} from 'src/indexer/config'
 
 export class RPCUrls {
   responseTime = 0.1
-  fails = 0
+  failedRequests = 0
   url = ''
   queriesCount = 0
   totalQueries = 0
@@ -16,10 +16,11 @@ export class RPCUrls {
     this.responseTime = (this.responseTime + responseTime) / 2
 
     if (isFailed) {
-      this.fails++
+      this.failedRequests++
     }
   }
 
+  // naive way to elect best rpc url
   static getURL = () => {
     if (urls.length === 1) {
       return urls[0]
@@ -30,7 +31,7 @@ export class RPCUrls {
         a.responseTime +
         a.queriesCount * 2 -
         (b.responseTime + b.queriesCount * 2) -
-        (b.fails - a.fails) * 10
+        (b.failedRequests - a.failedRequests) * 10
     )[0]
 
     best.queriesCount++

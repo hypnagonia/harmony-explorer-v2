@@ -9,7 +9,7 @@ const l = logger(module)
 
 const defaultFetchTimeout = 10000
 const defaultRetries = 5
-
+const RPCErrorPrefix = 'RPC Error'
 const increaseTimeout = (retry: number) => defaultFetchTimeout
 
 export const fetch = async (
@@ -26,8 +26,10 @@ export const fetch = async (
     try {
       return await fetchWithoutRetry(url, method, params, increaseTimeout(retry))
     } catch (err) {
+      const isRCPErrorResponse = err.message.indexOf(RPCErrorPrefix) !== -1
+
       const retriesLeft = retry - 1
-      if (retriesLeft < 1) {
+      if (retriesLeft < 1 || isRCPErrorResponse) {
         throw new Error(err)
       }
 
@@ -53,7 +55,7 @@ export const fetchWithoutRetry = (
     method,
     params,
   }
-  l.debug(`fetch ${url} "${method}"`, {params, url, method})
+  l.debug(`fetch ${url} "${method}"`, {params})
 
   const controller = new AbortController()
   const timeoutID = setTimeout(() => {
@@ -71,7 +73,15 @@ export const fetchWithoutRetry = (
 
   return nodeFetch(rpc.url, payload)
     .then((res) => res.json())
-    .then(({result}) => result)
+    .then((res) => {
+      if (res.result) {
+        return res.result
+      }
+      if (res.error) {
+        throw new Error(RPCErrorPrefix + ': ' + JSON.stringify(res.error))
+      }
+      throw new Error('No response data')
+    })
     .then((result) => {
       rpc.submitStatistic(Date.now() - startDate, false)
       return result

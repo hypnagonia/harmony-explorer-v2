@@ -2,6 +2,7 @@ import zerg from 'zerg'
 import {TLogMessage} from 'zerg/dist/types'
 import * as Sentry from '@sentry/node'
 import {getExtendedData} from './utils'
+import {config} from 'src/indexer/config'
 
 const SENTRY_LEVEL_MAP = {
   debug: Sentry.Severity.Debug,
@@ -67,7 +68,7 @@ function handler(logMessage: TLogMessage) {
 
 const sentryTransport = zerg.createListener({
   handler,
-  levels: ['warn', 'error'],
+  levels: config.logger.levels.sentry,
 })
 
 export default sentryTransport

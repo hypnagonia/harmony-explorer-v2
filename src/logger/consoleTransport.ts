@@ -1,10 +1,11 @@
 import zerg from 'zerg'
 import {TLogMessage} from 'zerg/dist/types'
 import {getExtendedData} from './utils'
+import {consoleNodeColorful} from 'zerg/dist/transports'
+import {config} from 'src/indexer/config'
 
 function handler(logMessage: TLogMessage) {
-  const date = new Date().toISOString()
-  const message = `[${date}][${logMessage.moduleName}] ${logMessage.message}`
+  const message = logMessage.message
 
   const args: any[] = [message]
   const extendedData = getExtendedData(logMessage)
@@ -13,13 +14,12 @@ function handler(logMessage: TLogMessage) {
     args.push(extendedData)
   }
 
-  // @ts-ignore
-  console.log(...args)
+  return logMessage
 }
 
 const transportToConsole = zerg.createListener({
-  handler,
-  levels: ['error', 'info'],
+  handler: (...args) => consoleNodeColorful(handler(...args)),
+  levels: config.logger.levels.console,
 })
 
 export default transportToConsole

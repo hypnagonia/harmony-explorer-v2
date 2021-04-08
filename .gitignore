@@ -103,3 +103,4 @@ dist
 .vscode
 *.iml
 *.env
+.env
