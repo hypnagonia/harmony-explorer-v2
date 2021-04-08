@@ -19,7 +19,7 @@ function handler(logMessage: TLogMessage) {
 
 const transportToConsole = zerg.createListener({
   handler,
-  levels: ['warn', 'error', 'info'],
+  levels: ['error', 'info'],
 })
 
 export default transportToConsole

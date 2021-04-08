@@ -3,14 +3,14 @@ import {RPCETHMethod, RPCHarmonyMethod} from 'types/blockchain'
 import AbortController from 'abort-controller'
 import {logger} from 'src/logger'
 import {config} from 'src/indexer/config'
-import {RPCStatistic} from './strategy/RPCStatistic'
+import {RPCUrls} from './RPCUrls'
 
 const l = logger(module)
 
 const defaultFetchTimeout = 10000
 const defaultRetries = 5
 
-const increaseTimeout = (retry: number) => (defaultRetries + 1 - retry) * defaultFetchTimeout
+const increaseTimeout = (retry: number) => defaultFetchTimeout
 
 export const fetch = async (
   url: string,
@@ -67,7 +67,7 @@ export const fetchWithoutRetry = (
     signal: controller.signal,
   }
 
-  const rpc = RPCStatistic.getBest()
+  const rpc = RPCUrls.getURL()
 
   return nodeFetch(rpc.url, payload)
     .then((res) => res.json())
