@@ -5,6 +5,7 @@ import {logger} from 'src/logger'
 import {config} from 'src/indexer/config'
 import {RPCUrls} from './RPCUrls'
 import {ShardID} from 'src/types/blockchain'
+import {logTime} from 'src/utils/logTime'
 
 const l = logger(module)
 
@@ -48,7 +49,7 @@ export const fetchWithoutRetry = (
   params: any[],
   timeout = defaultFetchTimeout
 ) => {
-  const startDate = Date.now()
+  const timePassed = logTime()
   const rpc = RPCUrls.getURL(shardID)
 
   const body = {
@@ -83,7 +84,7 @@ export const fetchWithoutRetry = (
       throw new Error('No response data')
     })
     .then((result) => {
-      rpc.submitStatistic(Date.now() - startDate, false)
+      rpc.submitStatistic(timePassed().val, false)
       return result
     })
     .catch((err) => {
@@ -96,7 +97,7 @@ export const fetchWithoutRetry = (
       throw new Error(err)
     })
     .finally(() => {
-      l.debug(`fetch ${rpc.url} "${method}" took ${Date.now() - startDate}ms`)
+      l.debug(`fetch ${rpc.url} "${method}" took ${timePassed()}`)
       clearTimeout(timeoutID)
     })
 }

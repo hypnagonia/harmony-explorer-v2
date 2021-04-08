@@ -6,6 +6,7 @@ import {ShardID, Block} from 'src/types/blockchain'
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
 import {store} from 'src/store'
+import {logTime} from 'src/utils/logTime'
 
 const approximateBlockMintingTime = 2000
 
@@ -46,7 +47,7 @@ export class BlockIndexer {
 
   loop = async () => {
     try {
-      const now = Date.now()
+      const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(this.shardID)
       const latestSyncedBlock = await store.getLatestBlockNumber(this.shardID)
 
@@ -76,7 +77,7 @@ export class BlockIndexer {
       this.l.info(
         `Fetched [${this.currentHeight}, ${this.currentHeight + blocks.length}] ${
           blocks.length
-        } blocks. Done in ${Date.now() - now}ms. Failed requests ${failedCount}`
+        } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
       this.currentHeight += blocks.length
 
@@ -89,9 +90,9 @@ export class BlockIndexer {
         a.totalQueries = 0
       })
 
-      const now2 = Date.now()
+      const storeTime = logTime()
       await store.addBlocks(this.shardID, blocks)
-      this.l.info(`Saved to store. Done in ${Date.now() - now2}ms`)
+      this.l.info(`Saved to store. Done in ${storeTime()}`)
 
       if (blocks.length === this.batchCount) {
         if (failedCount > 0) {

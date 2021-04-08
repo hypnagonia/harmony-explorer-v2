@@ -2,7 +2,6 @@ export const scheme = `
     create schema IF NOT EXISTS public;
 
     create table IF NOT EXISTS block_interface (
-      id serial,
       number bigint primary key unique not null,
       hash varchar(66) unique not null,
       timestamp timestamp not null,
@@ -22,4 +21,4 @@ export const scheme = `
     create index on blocks1 using hash(hash);
     create index on blocks2 using hash(hash);
     create index on blocks3 using hash(hash);
-    `
+`
