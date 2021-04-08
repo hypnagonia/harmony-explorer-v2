@@ -54,8 +54,9 @@ export class BlockIndexer {
         this.currentHeight = latestSyncedBlock
       }
 
-      const latestBlockchainBlock = (await RPCClient.getBlockByNumber(this.shardID, 'latest'))
-        .number
+      const latestBlockchainBlock = (
+        await RPCClient.getBlockByNumber(this.shardID, 'latest', false)
+      ).number
 
       const res = await Promise.all(
         range(this.batchCount).map((_, i) => {
@@ -75,7 +76,7 @@ export class BlockIndexer {
       this.l.info(
         `Fetched [${this.currentHeight}, ${this.currentHeight + blocks.length}] ${
           blocks.length
-        } blocks. Done in ${Date.now() - now}ms. Failed count ${failedCount}`
+        } blocks. Done in ${Date.now() - now}ms. Failed requests ${failedCount}`
       )
       this.currentHeight += blocks.length
 
@@ -90,7 +91,7 @@ export class BlockIndexer {
 
       const now2 = Date.now()
       await store.addBlocks(this.shardID, blocks)
-      this.l.info(`${blocks.length} saved to storage. Done in ${Date.now() - now2}ms`)
+      this.l.info(`Saved to store. Done in ${Date.now() - now2}ms`)
 
       if (blocks.length === this.batchCount) {
         if (failedCount > 0) {

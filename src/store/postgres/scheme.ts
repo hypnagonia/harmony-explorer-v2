@@ -3,10 +3,10 @@ export const scheme = `
 
     create table IF NOT EXISTS block_interface (
       id serial,
-      number bigint primary key unique,
-      hash varchar(66) unique,
+      number bigint primary key unique not null,
+      hash varchar(66) unique not null,
       timestamp timestamp not null,
-      raw text
+      raw text not null
     );
     
     create table IF NOT EXISTS blocks0 ()

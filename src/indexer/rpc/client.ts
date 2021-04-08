@@ -1,5 +1,15 @@
 import {fetch} from './fetch'
-import {RPCETHMethod, RPCHarmonyMethod, Block, RPCBlock, ShardID} from 'types/blockchain'
+import {
+  RPCETHMethod,
+  RPCHarmonyMethod,
+  Block,
+  RPCBlock,
+  ShardID,
+  txHash,
+  txHashHarmony,
+  RPCTransaction,
+  RPCTransactionHarmony,
+} from 'types/blockchain'
 
 // todo url
 
@@ -16,5 +26,12 @@ export const getBlockByNumber = (
   num: number | 'latest',
   isFullInfo = true
 ): Promise<Block> => {
-  return fetch(shardID, 'hmy_getBlockByNumber', [num, isFullInfo]).then(mapBlockFromResponse)
+  return fetch(shardID, 'eth_getBlockByNumber', [num, isFullInfo]).then(mapBlockFromResponse)
+}
+
+export const getTransactionByHash = (
+  shardID: ShardID,
+  hash: txHash
+): Promise<RPCTransactionHarmony> => {
+  return fetch(shardID, 'hmy_getTransactionByHash', [hash])
 }
