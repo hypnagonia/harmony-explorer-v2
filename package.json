@@ -24,6 +24,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "eslint-config-google": "^0.14.0",
+    "ethereum-bloom-filters": "^1.0.9",
     "express": "^4.17.1",
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.6.0",

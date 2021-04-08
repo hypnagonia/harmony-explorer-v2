@@ -3,10 +3,12 @@ import {config} from 'src/indexer/config'
 import {logger} from 'src/logger'
 import {scheme} from './scheme'
 import {IStorage} from 'src/store/interface'
-import {Block, ShardID} from 'src/types/blockchain'
+import {Block, BlockHash, BlockNumber, Log, ShardID} from 'src/types/blockchain'
 import {store} from 'src/store'
+import {logTime} from 'src/utils/logTime'
 
-const l = logger(module, 'storage')
+const l = logger(module)
+const defaultRetries = 3
 
 export class PostgresStorage implements IStorage {
   db: Pool
@@ -44,22 +46,43 @@ export class PostgresStorage implements IStorage {
     return +res[0].max as number
   }
 
-  getBlockByNumber = async (shardId: ShardID, num: number): Promise<Block | null> => {
+  getBlockByNumber = async (shardId: ShardID, num: BlockNumber): Promise<Block | null> => {
     const res = await this.query(`select * from blocks${shardId} where number=$1;`, [num])
 
     return res[0] as Block
   }
 
-  getBlockByHash = async (shardId: ShardID, hash: string): Promise<Block | null> => {
+  getBlockByHash = async (shardId: ShardID, hash: BlockHash): Promise<Block | null> => {
     const res = await this.query(`select * from blocks${shardId} where hash=$1;`, [hash])
 
     return res[0] as Block
   }
 
+  addLog = async (shardId: ShardID, block: Log): Promise<any> => {}
+
+  getLogsByTransactionHash = async (
+    shardId: ShardID,
+    TransactionHash: string
+  ): Promise<Log[] | null> => {
+    const res = await this.query(`select * from logs${shardId} where transactionHash=$1;`, [
+      TransactionHash,
+    ])
+
+    return res as Log[]
+  }
+  getLogsByBlockNumber = async (shardId: ShardID, num: BlockNumber): Promise<Log[] | null> => {
+    const res = await this.query(`select * from logs${shardId} where blockNumber=$1;`, [num])
+
+    return res as Log[]
+  }
+  getLogsByBlockHash = async (shardId: ShardID, hash: BlockHash): Promise<Log[] | null> => {
+    const res = await this.query(`select * from logs${shardId} where blockHash=$1;`, [hash])
+
+    return res as Log[]
+  }
+
   async start() {
     l.info('Starting...')
-    await this.query('select 1;')
-
     await this.migrate()
 
     l.info('Done')
@@ -69,7 +92,12 @@ export class PostgresStorage implements IStorage {
     await this.db.query(scheme)
   }
 
-  async query(sql: string, params: any[] = [], retries = 3): Promise<any> {
+  async query(
+    sql: string,
+    params: any[] = [],
+    retries = defaultRetries,
+    force = false
+  ): Promise<any> {
     try {
       return this.queryWithoutRetry(sql, params)
     } catch (e) {
@@ -77,15 +105,24 @@ export class PostgresStorage implements IStorage {
       if (retriesLeft > 0) {
         return this.query(sql, params, retriesLeft)
       }
-
+      l.warn(`Query failed in ${defaultRetries} attempts`, {sql, params})
       throw new Error(e)
     }
   }
 
-  async queryWithoutRetry(sql: string, params: any[] = []) {
+  private async queryWithoutRetry(sql: string, params: any[] = []) {
+    const time = logTime()
+
     try {
-      const res = await this.db.query(sql, params)
-      return res.rows
+      const {rows} = await this.db.query(sql, params)
+      const timePassed = time()
+      l.debug(`Query completed in ${timePassed} ${sql}`, params)
+
+      if (timePassed.val > 5000) {
+        l.warn(`Query took ${timePassed}`, {sql, params})
+      }
+
+      return rows
     } catch (e) {
       l.error(e.message || e)
       throw new Error(e)
@@ -96,61 +133,3 @@ export class PostgresStorage implements IStorage {
     await this.db.end()
   }
 }
-
-/*
-  async setPostProcessed (postId) {
-    return await this.query('update posts set is_posted = true where id = $1', [postId])
-  }
-
-  async getPosts (fromId) {
-    return await this.query('select * from posts where id>$1 and is_posted=false;', [fromId])
-  }
-
-  async getCities () {
-    return await this.query('select * from cities;')
-  }
-
-  async addCity (city) {
-    return await this.query(
-      'insert into cities(city_id,city_title) values ($1,$2)',
-      [city.city_id, city.city_title])
-  }
-
-  async getTasks () {
-    return await this.query('select * from tasks;')
-  }
-
-  async addTasks (tasks) {
-    return await this.query(
-      'insert into tasks(query, tags) select * from unnest ($1::text[], $2::text[])',
-      [tasks.map(t => t.query), tasks.map(t => t.tags)]
-    )
-  }
-
-  async addPosts (posts) {
-    for (const post of posts) {
-      await this.query(
-        `insert into posts(name,text,group_id,members_count,likes_count,reposts_count,
-          comments_count,posted_at,city_id,city_title,task_id,id,image_url,post_id
-        ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
-         on conflict (group_id) do nothing;`,
-        [
-          post.name,
-          post.text,
-          post.group_id,
-          post.members_count,
-          post.likes_count,
-          post.reposts_count,
-          post.comments_count,
-          post.created_at,
-          post.city_id,
-          post.city_title,
-          post.task_id,
-          post.id,
-          post.image_url,
-          post.post_id
-        ]
-      )
-    }
-  }
- */

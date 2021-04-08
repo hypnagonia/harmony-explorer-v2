@@ -12,7 +12,7 @@ const approximateBlockMintingTime = 2000
 
 const range = (num: number) => Array(num).fill(0)
 
-export class BlockIndexer {
+export class LogIndexer {
   readonly shardID: ShardID
   private currentHeight: number
   private l: LoggerModule
@@ -21,7 +21,9 @@ export class BlockIndexer {
   constructor(shardID: ShardID) {
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
-    this.currentHeight = config.indexer.initialBlockSyncingHeight
+
+    // todo
+    this.currentHeight = 0 // config.indexer.initialBlockSyncingHeight
     this.l.info('Created')
   }
 
@@ -79,15 +81,6 @@ export class BlockIndexer {
         } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
       this.currentHeight += blocks.length
-
-      const u = urls[shardID]
-      console.log({
-        stats: u.map((s) => s.totalQueries),
-        fails: u.map((s) => s.failedRequests),
-      })
-      u.forEach((a) => {
-        a.totalQueries = 0
-      })
 
       const storeTime = logTime()
       await store.addBlocks(shardID, blocks)

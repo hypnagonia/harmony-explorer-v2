@@ -32,6 +32,11 @@ export const fetch = async (
 
       const retriesLeft = retry - 1
       if (retriesLeft < 1 || isRCPErrorResponse) {
+        l.warn(`"${method}" failed in ${defaultRetries} attempts`, {
+          shardID,
+          method,
+          params,
+        })
         throw new Error(err)
       }
 
@@ -89,7 +94,7 @@ export const fetchWithoutRetry = (
     })
     .catch((err) => {
       rpc.submitStatistic(defaultFetchTimeout, true)
-      l.warn(`Failed to fetch ${rpc.url} ${method}`, {
+      l.debug(`Failed to fetch ${rpc.url} ${method}`, {
         err: err.message || err,
         params,
       })

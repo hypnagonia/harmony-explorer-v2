@@ -29,7 +29,7 @@ export class RPCUrls {
     }
   }
 
-  // naive way to elect best rpc url
+  // naive way to elect the best rpc url
   static getURL = (shardID: ShardID) => {
     const shardUrls = urls[shardID]
 

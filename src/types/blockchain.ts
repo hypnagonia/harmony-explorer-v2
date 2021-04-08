@@ -1,42 +1,22 @@
-export type RPCETHMethod = 'eth_getBlockByNumber' | 'eth_getTransactionByHash'
+export type RPCETHMethod = 'eth_getBlockByNumber' | 'eth_getTransactionByHash' | 'eth_getLogs'
 export type RPCHarmonyMethod = 'hmy_getBlockByNumber' | 'hmy_getTransactionByHash'
 export type ShardID = 0 | 1 | 2 | 3
 
-/*
-      difficulty: '0x0',
-      extraData: '0x',
-      gasLimit: '0x4c4b400',
-      gasUsed: '0x0',
-      hash: '0x748f4ca121f5eb6dbd716baed959d6b2592cf6f60e5b0976971277ae58e1cfb3',
-      logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-      miner: '0x261fa45c6a09cd3faa277d829e91d9473973357c',
-      mixHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
-      nonce: '0x0000000000000000',
-      number: '0x3d0900',
-      parentHash: '0x014e2b2a488b2a2c437d26c271f05f15b3ac9de6d44cc776ec7a23d709a33e48',
-      receiptsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-      sha3Uncles: '0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
-      size: '0x2a8',
-      stateRoot: '0x7c9c67435d7a7999bdc43dc1cc54e5bd4393729a96a1d082b1cc41c5bef1a50e',
-      timestamp: '0x5feb90b3',
-      transactions: [],
-      transactionsRoot: '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-      uncles: []
- */
-
-export type BlockID = string
+export type BlockHexNumber = string
+export type BlockHash = string
+export type BlockNumber = number
 
 export type RPCBlock = {
   difficulty: string
   extraData: string
   gasLimit: string
   gasUsed: string
-  hash: BlockID
-  logsBloom: string
+  hash: BlockHash
+  logsBloom: LogsBloom
   miner: string
   mixHash: string
   nonce: string
-  number: string
+  number: BlockHexNumber
   parentHash: string
   receiptsRoot: string
   sha3Uncles: string
@@ -48,17 +28,19 @@ export type RPCBlock = {
   uncles: string[]
 }
 
+export type LogsBloom = string
+
 export type RPCBlockHarmony = {
   difficulty: string
   extraData: string
   gasLimit: string
   gasUsed: string
-  hash: BlockID
-  logsBloom: string
+  hash: BlockHash
+  logsBloom: LogsBloom
   miner: string
   mixHash: string
   nonce: string
-  number: string
+  number: BlockHexNumber
   parentHash: string
   receiptsRoot: string
   sha3Uncles: string
@@ -75,7 +57,7 @@ export type RPCBlockHarmony = {
 
 export type Block = {
   block: RPCBlock
-  number: number
+  number: BlockNumber
   timestamp: Date
 }
 
@@ -102,88 +84,82 @@ export type Block = {
 export type Address = string
 export type AddressHarmony = string
 
-export type txHash = string
-export type txHashHarmony = string
+export type TransactionHash = string
+export type TransactionHarmony = string
 
 export type RPCTransaction = {
-  blockHash: BlockID
-  blockNumber: number
+  blockHash: BlockHash
+  blockNumber: BlockHexNumber
   from: Address
+  to: Address
   gas: string
   gasPrice: string
-  hash: txHash
-  input: string
+  hash: TransactionHash
+  input: ByteCode
   nonce: string
   r: string
   s: string
   timestamp: string
-  to: Address
   transactionIndex: string
   v: string
   value: string
 }
 
 export type RPCTransactionHarmony = {
-  blockHash: BlockID
-  blockNumber: number
+  blockHash: BlockHash
+  blockNumber: BlockHexNumber
   from: AddressHarmony
+  to: AddressHarmony
   gas: string
   gasPrice: string
-  hash: txHashHarmony
-  input: string
+  hash: TransactionHarmony
+  input: ByteCode
   nonce: string
   r: string
   s: string
   shardID: ShardID
   timestamp: string
-  to: AddressHarmony
   toShardID: ShardID
   transactionIndex: string
   v: string
   value: string
 }
 
+export type Topic = string
+export type ByteCode = string
+
+export type Log = {
+  address: Address
+  topics: Topic[]
+  data: ByteCode
+  blockNumber: BlockHexNumber
+  transactionHash: TransactionHash
+  transactionIndex: string
+  blockHash: BlockHash
+  logIndex: string
+  removed: boolean
+}
+
+export type TraceCallTypes = 'CALL' | 'STATICCALL' | 'CREATE' | 'CREATE2'
+
+// how to extract see explorer-dashboard
+export type TraceCallErrorToRevert = string
+
+export type TraceCall = {
+  error?: TraceCallErrorToRevert
+  from: Address
+  to: Address
+  gas: string
+  gasUsed: string
+  input: ByteCode
+  output: ByteCode
+  time: string
+  type: TraceCallTypes
+  value: string
+  calls: TraceCall[]
+}
+
 export type Transaction = {
   harmony: RPCTransactionHarmony
   eth: RPCTransaction
-}
-
-// todo staking
-
-eth = {
-  jsonrpc: '2.0',
-  id: 1,
-  result: {
-    hash: '0x4d997d37e68534502d488104840080a82eaf26bb2c05d1728cd3f04c4477245c',
-    number: '0xaf2abb',
-    stateRoot: '0xc0bba63cba4ee730f850d5e8560f06b691e2c5490d0b334467f80e89f4c72d67',
-    timestamp: '0x606efb17',
-    transactions: [
-      {
-        hash: '0x2a5ea44dc8d9e9fde37876818646c6781327076fbbffb0a84fa075b8112a531a',
-        blockHash: '0x4d997d37e68534502d488104840080a82eaf26bb2c05d1728cd3f04c4477245c',
-        blockNumber: '0xaf2abb',
-        from: '0x7252c42d6c9abae1b4b79c08626e820566373d15',
-        to: '0x5d82c86f72331bf75ce1838212118624c882270a',
-      },
-    ],
-  },
-}
-hmy = {
-  jsonrpc: '2.0',
-  id: 1,
-  result: {
-    hash: '0x4d997d37e68534502d488104840080a82eaf26bb2c05d1728cd3f04c4477245c',
-    number: '0xaf2abb',
-    timestamp: '0x606efb17',
-    transactions: [
-      {
-        blockHash: '0x4d997d37e68534502d488104840080a82eaf26bb2c05d1728cd3f04c4477245c',
-        blockNumber: '0xaf2abb',
-        hash: '0xc4cb6824a04cc9b363deac7d19f09d5fe6ec7d8966462316c75708f8132f4a77',
-        from: 'one1wx6p8kjucu5llqz79h9pmn0qf55772m2d2xt26',
-        to: 'one1tkpvsmmjxvdlwh8pswppyyvxynygyfc2cj457u',
-      },
-    ],
-  },
 }

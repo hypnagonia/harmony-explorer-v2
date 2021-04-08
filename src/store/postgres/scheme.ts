@@ -21,4 +21,19 @@ export const scheme = `
     create index on blocks1 using hash(hash);
     create index on blocks2 using hash(hash);
     create index on blocks3 using hash(hash);
+    
+    create table IF NOT EXISTS logs_interface (
+      address varchar(42) not null,
+      topics text,
+      data text,
+      blockNumber bigint not null,
+      transactionHash varchar(66) not null,
+      transactionIndex varchar(8),
+      blockHash varchar(66) not null,
+      logIndex varchar(8),
+      removed boolean not null
+    );
+    
+    create table IF NOT EXISTS logs0 ()
+     INHERITS (logs_interface);
 `

@@ -5,13 +5,14 @@ import {
   Block,
   RPCBlock,
   ShardID,
-  txHash,
-  txHashHarmony,
+  TransactionHarmony,
+  TransactionHash,
   RPCTransaction,
   RPCTransactionHarmony,
+  Topic,
+  Address,
+  BlockNumber,
 } from 'types/blockchain'
-
-// todo url
 
 const mapBlockFromResponse = (block: RPCBlock): Block => {
   return {
@@ -23,7 +24,7 @@ const mapBlockFromResponse = (block: RPCBlock): Block => {
 
 export const getBlockByNumber = (
   shardID: ShardID,
-  num: number | 'latest',
+  num: BlockNumber | 'latest',
   isFullInfo = true
 ): Promise<Block> => {
   return fetch(shardID, 'eth_getBlockByNumber', [num, isFullInfo]).then(mapBlockFromResponse)
@@ -31,7 +32,23 @@ export const getBlockByNumber = (
 
 export const getTransactionByHash = (
   shardID: ShardID,
-  hash: txHash
+  hash: TransactionHash
 ): Promise<RPCTransactionHarmony> => {
-  return fetch(shardID, 'hmy_getTransactionByHash', [hash])
+  return fetch(shardID, 'eth_getTransactionByHash', [hash])
+}
+
+export const getLogs = (
+  shardID: ShardID,
+  fromBlock: BlockNumber,
+  toBlock: BlockNumber,
+  address?: Address,
+  topics?: Topic[]
+): Promise<RPCTransactionHarmony> => {
+  const o = {
+    topics,
+    address,
+    fromBlock: fromBlock.toString(16),
+    toBlock: toBlock.toString(16),
+  }
+  return fetch(shardID, 'eth_getLogs', [o])
 }
