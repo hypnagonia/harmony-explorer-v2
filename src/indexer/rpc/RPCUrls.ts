@@ -1,4 +1,13 @@
 import {config} from 'src/indexer/config'
+import {ShardID} from 'src/types/blockchain'
+
+const safeIncrement = (num: number) => {
+  if (num + 1 >= Number.MAX_SAFE_INTEGER) {
+    return 0
+  }
+
+  return num + 1
+}
 
 export class RPCUrls {
   responseTime = 0.1
@@ -16,17 +25,19 @@ export class RPCUrls {
     this.responseTime = (this.responseTime + responseTime) / 2
 
     if (isFailed) {
-      this.failedRequests++
+      this.failedRequests = safeIncrement(this.failedRequests)
     }
   }
 
   // naive way to elect best rpc url
-  static getURL = () => {
-    if (urls.length === 1) {
-      return urls[0]
+  static getURL = (shardID: ShardID) => {
+    const shardUrls = urls[shardID]
+
+    if (shardUrls.length === 1) {
+      return shardUrls[0]
     }
 
-    const best = urls.sort(
+    const best = shardUrls.sort(
       (a, b) =>
         a.responseTime +
         a.queriesCount * 2 -
@@ -34,11 +45,19 @@ export class RPCUrls {
         (b.failedRequests - a.failedRequests) * 10
     )[0]
 
-    best.queriesCount++
-    best.totalQueries++
+    best.queriesCount = safeIncrement(best.queriesCount)
+    best.totalQueries = safeIncrement(best.totalQueries)
+
     return best
+  }
+
+  static getFailedCount = (shardID: ShardID) => {
+    const shardUrls = urls[shardID]
+    return shardUrls.reduce((a, b) => a + b.failedRequests, 0)
   }
 }
 
 // @ts-ignore
-export const urls = config.indexer.rpcUrls[0].map((url) => new RPCUrls(url))
+export const urls = config.indexer.rpcUrls.map((shardUrls) =>
+  shardUrls.map((url) => new RPCUrls(url))
+)

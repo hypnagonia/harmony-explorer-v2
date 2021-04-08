@@ -1,5 +1,6 @@
 export type RPCETHMethod = 'eth_getBlockByNumber'
 export type RPCHarmonyMethod = 'hmy_getBlockByNumber'
+export type ShardID = 0 | 1 | 2 | 3
 
 /*
       difficulty: '0x0',
@@ -50,7 +51,7 @@ export type RPCBlock = {
 export type Block = {
   block: RPCBlock
   number: number
-  timestamp: number
+  timestamp: Date
 }
 
 export type RPCTransaction = {}

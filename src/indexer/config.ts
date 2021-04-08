@@ -24,21 +24,27 @@ export const config = {
   indexer: {
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
-    batchCount: +(process.env.INDEXER_BATCHED_COUNT || 1),
+    batchCount: +(process.env.INDEXER_BATCHED_COUNT || 100),
     rpcUrls: [
       // shard #0 goes first
       ['https://a.api.s0.t.hmny.io', 'https://api.s0.t.hmny.io', 'https://api0.s0.t.hmny.io'],
       ['https://api.s1.t.hmny.io'],
-      ['https://api.s1.t.hmny.io'],
-      ['https://api.s1.t.hmny.io'],
+      ['https://api.s2.t.hmny.io'],
+      ['https://api.s3.t.hmny.io'],
     ],
   },
   store: {
-    postgres: {},
+    postgres: {
+      user: 'postgres',
+      host: 'localhost',
+      database: 'e',
+      password: '',
+      port: 5432,
+    },
   },
   logger: {
     levels: {
-      console: ['error', 'info', 'warn'] as TLogLevel[],
+      console: ['error', 'info'] as TLogLevel[],
       sentry: ['error', 'warn'] as TLogLevel[],
     },
   },
