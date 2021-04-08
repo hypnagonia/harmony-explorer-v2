@@ -26,6 +26,7 @@ export class PostgresStorage implements IStorage {
     })
   }
 
+  // blocks
   addBlocks = async (shardID: ShardID, blocks: Block[]) => {
     return Promise.all(blocks.map((b) => store.addBlock(shardID, b)))
   }
@@ -58,7 +59,49 @@ export class PostgresStorage implements IStorage {
     return res[0] as Block
   }
 
-  addLog = async (shardId: ShardID, block: Log): Promise<any> => {}
+  // logs
+  setLastIndexedLogsBlockNumber = async (shardId: ShardID, num: BlockNumber): Promise<number> => {
+    return this.query(`update logs_index${shardId} set lastIndexedBlockNumber=$1 where id=0;`, [
+      num,
+    ])
+  }
+
+  getLastIndexedLogsBlockNumber = async (shardId: ShardID): Promise<number> => {
+    const res = await this.query(
+      `select lastIndexedBlockNumber from logs_index${shardId} where id=0;`,
+      []
+    )
+    return +res[0].lastindexedblocknumber || 0
+  }
+
+  addLog = async (shardID: ShardID, log: Log): Promise<any> => {
+    return await this.query(
+      `insert into logs${shardID}
+       (
+        address,
+        topics,
+        data,
+        blockNumber,
+        transactionHash,
+        transactionIndex,
+        blockHash,
+        logIndex,
+        removed
+       ) values
+       ($1,$2,$3,$4,$5,$6,$7,$8,$9);`,
+      [
+        log.address,
+        log.topics.join(','),
+        log.data,
+        parseInt(log.blockNumber, 16),
+        log.transactionHash,
+        log.transactionIndex,
+        log.blockHash,
+        log.logIndex,
+        log.removed,
+      ]
+    )
+  }
 
   getLogsByTransactionHash = async (
     shardId: ShardID,

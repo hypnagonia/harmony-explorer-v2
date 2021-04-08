@@ -12,6 +12,7 @@ import {
   Topic,
   Address,
   BlockNumber,
+  Log,
 } from 'types/blockchain'
 
 const mapBlockFromResponse = (block: RPCBlock): Block => {
@@ -43,12 +44,12 @@ export const getLogs = (
   toBlock: BlockNumber,
   address?: Address,
   topics?: Topic[]
-): Promise<RPCTransactionHarmony> => {
+): Promise<Log[]> => {
   const o = {
     topics,
     address,
-    fromBlock: fromBlock.toString(16),
-    toBlock: toBlock.toString(16),
+    fromBlock: '0x' + fromBlock.toString(16),
+    toBlock: '0x' + toBlock.toString(16),
   }
   return fetch(shardID, 'eth_getLogs', [o])
 }

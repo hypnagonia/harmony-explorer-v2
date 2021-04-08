@@ -33,8 +33,8 @@ export const fetch = async (
       const retriesLeft = retry - 1
       if (retriesLeft < 1 || isRCPErrorResponse) {
         l.warn(`"${method}" failed in ${defaultRetries} attempts`, {
+          err,
           shardID,
-          method,
           params,
         })
         throw new Error(err)

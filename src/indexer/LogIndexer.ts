@@ -1,7 +1,7 @@
 import {config} from 'src/indexer/config'
 import * as RPCClient from 'src/indexer/rpc/client'
 import {urls, RPCUrls} from 'src/indexer/rpc/RPCUrls'
-import {ShardID, Block} from 'src/types/blockchain'
+import {ShardID, Log} from 'src/types/blockchain'
 
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
@@ -9,21 +9,19 @@ import {store} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 
 const approximateBlockMintingTime = 2000
+const blockRange = 10
 
 const range = (num: number) => Array(num).fill(0)
 
 export class LogIndexer {
   readonly shardID: ShardID
-  private currentHeight: number
   private l: LoggerModule
-  private batchCount = config.indexer.batchCount
+  // todo config
+  private batchCount = 10
 
   constructor(shardID: ShardID) {
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
-
-    // todo
-    this.currentHeight = 0 // config.indexer.initialBlockSyncingHeight
     this.l.info('Created')
   }
 
@@ -51,42 +49,53 @@ export class LogIndexer {
       const shardID = this.shardID
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
-      const latestSyncedBlock = await store.getLatestBlockNumber(shardID)
-
-      if (latestSyncedBlock) {
-        this.currentHeight = latestSyncedBlock
-      }
+      const latestSyncedBlock = await store.getLastIndexedLogsBlockNumber(shardID)
 
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number
 
       const res = await Promise.all(
-        range(this.batchCount).map((_, i) => {
-          const height = this.currentHeight + i
-          if (height <= latestBlockchainBlock) {
-            return RPCClient.getBlockByNumber(shardID, height)
+        range(this.batchCount).map(async (_, i) => {
+          const from = latestSyncedBlock + i * blockRange
+          const to = Math.min(from + blockRange - 1, latestBlockchainBlock)
+
+          if (from > latestBlockchainBlock) {
+            return Promise.resolve(null)
           }
 
-          return Promise.resolve(null)
+          const res = await RPCClient.getLogs(shardID, from, to)
+          return res
         })
       )
 
-      const blocks = res.filter((b) => b).sort((a, b) => a!.number - b!.number) as Block[]
-
+      const logs = res.filter((l) => l) as Log[][]
+      const logsLength = logs.reduce((a, b) => a + b.length, 0)
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
+      const syncedToBlock = latestSyncedBlock + blockRange * this.batchCount
 
       this.l.info(
-        `Fetched [${this.currentHeight}, ${this.currentHeight + blocks.length}] ${
-          blocks.length
-        } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
+        `Get logs [${latestSyncedBlock},${
+          syncedToBlock - 1
+        }] ${logsLength} log entries. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
-      this.currentHeight += blocks.length
 
       const storeTime = logTime()
-      await store.addBlocks(shardID, blocks)
+
+      await Promise.all(
+        logs.map((entries) =>
+          Promise.all(
+            entries.map((e) => {
+              return store.addLog(shardID, e)
+            })
+          )
+        )
+      )
+
+      await store.setLastIndexedLogsBlockNumber(shardID, syncedToBlock)
+
       this.l.info(`Saved to store. Done in ${storeTime()}`)
 
-      if (blocks.length === this.batchCount) {
+      if (logs.length === this.batchCount) {
         if (failedCount > 0) {
           this.decreaseBatchCount()
         } else {

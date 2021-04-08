@@ -9,6 +9,7 @@ import {store} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 
 const approximateBlockMintingTime = 2000
+const maxBatchCount = 5000
 
 const range = (num: number) => Array(num).fill(0)
 
@@ -28,8 +29,8 @@ export class BlockIndexer {
   increaseBatchCount = () => {
     this.batchCount = Math.ceil(this.batchCount * 1.1)
 
-    if (this.batchCount > config.indexer.batchCount * 10) {
-      this.batchCount = config.indexer.batchCount
+    if (this.batchCount > maxBatchCount) {
+      this.batchCount = maxBatchCount
     } else {
       this.l.info(`Batch increased to ${this.batchCount}`)
     }
@@ -78,7 +79,6 @@ export class BlockIndexer {
           blocks.length
         } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
-      this.currentHeight += blocks.length
 
       const u = urls[shardID]
       console.log({

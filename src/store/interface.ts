@@ -14,4 +14,6 @@ export interface IStorage {
   ) => Promise<Log[] | null>
   getLogsByBlockNumber: (shardId: ShardID, num: BlockNumber) => Promise<Log[] | null>
   getLogsByBlockHash: (shardId: ShardID, hash: BlockHash) => Promise<Log[] | null>
+  getLastIndexedLogsBlockNumber: (shardId: ShardID) => Promise<number>
+  setLastIndexedLogsBlockNumber: (shardId: ShardID, num: BlockNumber) => Promise<any>
 }

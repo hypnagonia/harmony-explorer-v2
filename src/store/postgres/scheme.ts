@@ -1,3 +1,7 @@
+// todo config
+const contractStartBlock = 35000000
+
+// todo indexes
 export const scheme = `
     create schema IF NOT EXISTS public;
 
@@ -35,5 +39,19 @@ export const scheme = `
     );
     
     create table IF NOT EXISTS logs0 ()
-     INHERITS (logs_interface);
+    INHERITS (logs_interface);
+              
+    create index on logs0 using hash(transactionHash);
+    create index on logs0 using hash(blockHash);
+    
+    create table IF NOT EXISTS logs_index (
+      lastIndexedBlockNumber bigint not null
+    );
+  
+    create table IF NOT EXISTS logs_index0 (
+      id smallint default(0),
+      unique(id)
+    ) INHERITS (logs_index);
+    
+    insert into logs_index0 (lastIndexedBlockNumber) values (${contractStartBlock}) on conflict(id) do nothing;
 `
