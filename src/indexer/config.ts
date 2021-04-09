@@ -37,21 +37,12 @@ export const config = {
   },
   store: {
     postgres: {
-      user: 'postgres',
-      host: '35.222.136.38',
-      database: 'e',
-      password: 'FuckYouGoogle131313!',
-      port: 5432,
+      user: process.env.POSTGRES_USER,
+      host: process.env.POSTGRES_HOST,
+      database: process.env.POSTGRES_DB,
+      password: process.env.POSTGRES_PASSWORD,
+      port: +(process.env.POSTGRES_PORT || 5432),
     },
-    /*
-    postgres: {
-      user: 'postgres',
-      host: 'localhost',
-      database: 'e',
-      password: '',
-      port: 5432
-    }
-    */
   },
   logger: {
     levels: {

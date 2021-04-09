@@ -50,7 +50,7 @@ export class BlockIndexer {
       const shardID = this.shardID
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
-      const latestSyncedBlock = await store.getLatestBlockNumber(shardID)
+      const latestSyncedBlock = await store.block.getLastIndexedBlockNumber(shardID)
 
       if (latestSyncedBlock) {
         this.currentHeight = latestSyncedBlock
@@ -64,7 +64,7 @@ export class BlockIndexer {
       }
 
       const addBlock = async (block: Block) => {
-        await store.addBlock(shardID, block)
+        await store.block.addBlock(shardID, block)
         return block
       }
 
@@ -80,11 +80,14 @@ export class BlockIndexer {
       )
 
       const blocks = res.filter((b) => b).sort((a, b) => a!.number - b!.number) as Block[]
+      const lastFetchedBlockNumber = blocks.reduce((a, b) => (a < b.number ? b.number : a), 0)
 
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
 
+      await store.block.setLastIndexedBlockNumber(shardID, lastFetchedBlockNumber)
+
       this.l.info(
-        `Processed [${this.currentHeight}, ${this.currentHeight + blocks.length}] ${
+        `Processed [${this.currentHeight}, ${lastFetchedBlockNumber}] ${
           blocks.length
         } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
       )

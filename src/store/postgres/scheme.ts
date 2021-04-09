@@ -52,15 +52,16 @@ export const scheme = `
     create index if not exists iLogs0BlockHash on logs0 using hash(blockHash);
     create index if not exists iLogs0BlockNumber on logs0(blockNumber);
     
-    create table IF NOT EXISTS logs_index (
-      lastIndexedBlockNumber bigint not null
-    );
-  
-    create table IF NOT EXISTS logs_index0 (
+    create table IF NOT EXISTS indexer_state (
+      lastLogs0IndexedBlockNumber bigint default(0),
+      lastBlocks0IndexedBlockNumber bigint default(0),
+      lastBlocks1IndexedBlockNumber bigint default(0),
+      lastBlocks2IndexedBlockNumber bigint default(0),
+      lastBlocks3IndexedBlockNumber bigint default(0),
       id smallint default(0),
       unique(id)
-    ) INHERITS (logs_index);
+    );
     
-    insert into logs_index0 (lastIndexedBlockNumber) 
+    insert into indexer_state (lastLogs0IndexedBlockNumber) 
       values (${contractStartBlock}) on conflict(id) do nothing;
 `
