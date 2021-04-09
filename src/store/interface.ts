@@ -21,7 +21,10 @@ export interface IStorageLog {
   setLastIndexedLogsBlockNumber: (shardId: ShardID, num: BlockNumber) => Promise<any>
 }
 
+export interface IStorageTransaction {}
+
 export interface IStorage {
   block: IStorageBlock
   log: IStorageLog
+  transaction: IStorageTransaction
 }

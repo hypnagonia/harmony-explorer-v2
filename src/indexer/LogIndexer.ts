@@ -80,7 +80,10 @@ export class LogIndexer {
       const logs = res.filter((l) => l) as Log[][]
       const logsLength = logs.reduce((a, b) => a + b.length, 0)
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
-      const syncedToBlock = latestSyncedBlock + blockRange * this.batchCount
+      const syncedToBlock = Math.min(
+        latestBlockchainBlock,
+        latestSyncedBlock + blockRange * this.batchCount
+      )
 
       this.l.info(
         `Processed [${latestSyncedBlock},${
