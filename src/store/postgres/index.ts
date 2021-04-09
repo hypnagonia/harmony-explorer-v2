@@ -35,7 +35,7 @@ export class PostgresStorage implements IStorage {
     return await this.query(
       `insert into blocks${shardID}
        (number,hash,timestamp,raw) values
-       ($1,$2,$3,$4);`,
+       ($1,$2,$3,$4) on conflict(number) do nothing;`,
       [block.number, block.block.hash, block.timestamp, JSON.stringify(block.block)]
     )
   }
@@ -146,6 +146,7 @@ export class PostgresStorage implements IStorage {
     } catch (e) {
       const retriesLeft = retries - 1
       if (retriesLeft > 0) {
+        await new Promise((r) => setTimeout(r, 1000))
         return this.query(sql, params, retriesLeft)
       }
       l.warn(`Query failed in ${defaultRetries} attempts`, {sql, params})
@@ -159,15 +160,17 @@ export class PostgresStorage implements IStorage {
     try {
       const {rows} = await this.db.query(sql, params)
       const timePassed = time()
-      l.debug(`Query completed in ${timePassed} ${sql}`, params)
+      // l.debug(`Query completed in ${timePassed} ${sql}`, params)
 
-      if (timePassed.val > 5000) {
-        l.warn(`Query took ${timePassed}`, {sql, params})
+      /*
+      if (timePassed.val > 10000) {
+        l.debug(`Query took ${timePassed}`, { sql, params })
       }
+      */
 
       return rows
     } catch (e) {
-      l.error(e.message || e)
+      l.debug(e.message || e, {sql, params})
       throw new Error(e)
     }
   }

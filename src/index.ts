@@ -12,8 +12,8 @@ const run = async () => {
     await store.start()
 
     const shards = [0] as ShardID[]
-    // const blockIndexers = shards.map((shardID) => new BlockIndexer(shardID))
-    // blockIndexers.forEach((b) => b.loop())
+    const blockIndexers = shards.map((shardID) => new BlockIndexer(shardID))
+    blockIndexers.forEach((b) => b.loop())
 
     const logIndexer0 = new LogIndexer(0)
     await logIndexer0.loop()

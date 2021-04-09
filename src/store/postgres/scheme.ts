@@ -1,7 +1,9 @@
-// todo config
-const contractStartBlock = 35000000
+import {config} from 'src/indexer/config'
+const contractStartBlock = config.indexer.initialLogsSyncingHeight
 
 // todo indexes
+// todo inherit & constraints
+
 export const scheme = `
     create schema IF NOT EXISTS public;
 
@@ -21,10 +23,15 @@ export const scheme = `
     create table IF NOT EXISTS blocks3 ()
      INHERITS (block_interface);
     
-    create index on blocks0 using hash(hash);
-    create index on blocks1 using hash(hash);
-    create index on blocks2 using hash(hash);
-    create index on blocks3 using hash(hash);
+    create index if not exists iBlocks0Hash on blocks0 using hash(hash);
+    create index if not exists iBlocks1Hash on blocks1 using hash(hash);
+    create index if not exists iBlocks2Hash on blocks2 using hash(hash);
+    create index if not exists iBlocks3Hash on blocks3 using hash(hash);
+    
+    create index if not exists iBlocks0Number on blocks0(number);
+    create index if not exists iBlocks1Number on blocks1(number);
+    create index if not exists iBlocks2Number on blocks2(number);
+    create index if not exists iBlocks3Number on blocks3(number);
     
     create table IF NOT EXISTS logs_interface (
       address varchar(42) not null,
@@ -41,8 +48,9 @@ export const scheme = `
     create table IF NOT EXISTS logs0 ()
     INHERITS (logs_interface);
               
-    create index on logs0 using hash(transactionHash);
-    create index on logs0 using hash(blockHash);
+    create index if not exists iLogs0TransactionHash on logs0 using hash(transactionHash);
+    create index if not exists iLogs0BlockHash on logs0 using hash(blockHash);
+    create index if not exists iLogs0BlockNumber on logs0(blockNumber);
     
     create table IF NOT EXISTS logs_index (
       lastIndexedBlockNumber bigint not null
@@ -53,5 +61,6 @@ export const scheme = `
       unique(id)
     ) INHERITS (logs_index);
     
-    insert into logs_index0 (lastIndexedBlockNumber) values (${contractStartBlock}) on conflict(id) do nothing;
+    insert into logs_index0 (lastIndexedBlockNumber) 
+      values (${contractStartBlock}) on conflict(id) do nothing;
 `

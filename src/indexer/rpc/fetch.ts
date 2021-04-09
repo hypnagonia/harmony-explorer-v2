@@ -40,7 +40,7 @@ export const fetch = async (
         throw new Error(err)
       }
 
-      l.debug(`Retrying... ${retriesLeft}/${defaultRetries}`)
+      // l.debug(`Retrying... ${retriesLeft}/${defaultRetries}`)
       return exec(shardID, method, params, retriesLeft)
     }
   }
@@ -63,7 +63,7 @@ export const fetchWithoutRetry = (
     method,
     params,
   }
-  l.debug(`fetch ${rpc.url} "${method}"`, {params})
+  // l.debug(`fetch ${rpc.url} "${method}"`, {params})
 
   const controller = new AbortController()
   const timeoutID = setTimeout(() => {
@@ -94,15 +94,17 @@ export const fetchWithoutRetry = (
     })
     .catch((err) => {
       rpc.submitStatistic(defaultFetchTimeout, true)
+      /*
       l.debug(`Failed to fetch ${rpc.url} ${method}`, {
         err: err.message || err,
         params,
       })
+      */
 
       throw new Error(err)
     })
     .finally(() => {
-      l.debug(`fetch ${rpc.url} "${method}" took ${timePassed()}`)
+      // l.debug(`fetch ${rpc.url} "${method}" took ${timePassed()}`)
       clearTimeout(timeoutID)
     })
 }

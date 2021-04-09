@@ -10,6 +10,7 @@ import {logTime} from 'src/utils/logTime'
 
 const approximateBlockMintingTime = 2000
 const blockRange = 10
+const maxBatchCount = 100
 
 const range = (num: number) => Array(num).fill(0)
 
@@ -28,10 +29,10 @@ export class LogIndexer {
   increaseBatchCount = () => {
     this.batchCount = Math.ceil(this.batchCount * 1.1)
 
-    if (this.batchCount > config.indexer.batchCount * 10) {
-      this.batchCount = config.indexer.batchCount
+    if (this.batchCount > maxBatchCount) {
+      this.batchCount = maxBatchCount
     } else {
-      this.l.info(`Batch increased to ${this.batchCount}`)
+      this.l.debug(`Batch increased to ${this.batchCount}`)
     }
   }
 
@@ -40,7 +41,7 @@ export class LogIndexer {
     if (this.batchCount < 1) {
       this.batchCount = 1
     } else {
-      this.l.info(`Batch decreased to ${this.batchCount}`)
+      this.l.debug(`Batch decreased to ${this.batchCount}`)
     }
   }
 
@@ -54,6 +55,15 @@ export class LogIndexer {
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number
 
+      const addLogs = (logs: Log[]) => {
+        return Promise.all(
+          logs.map(async (log) => {
+            await store.addLog(shardID, log)
+            return log
+          })
+        )
+      }
+
       const res = await Promise.all(
         range(this.batchCount).map(async (_, i) => {
           const from = latestSyncedBlock + i * blockRange
@@ -63,8 +73,7 @@ export class LogIndexer {
             return Promise.resolve(null)
           }
 
-          const res = await RPCClient.getLogs(shardID, from, to)
-          return res
+          return await RPCClient.getLogs(shardID, from, to).then(addLogs)
         })
       )
 
@@ -74,26 +83,12 @@ export class LogIndexer {
       const syncedToBlock = latestSyncedBlock + blockRange * this.batchCount
 
       this.l.info(
-        `Get logs [${latestSyncedBlock},${
+        `Processed [${latestSyncedBlock},${
           syncedToBlock - 1
         }] ${logsLength} log entries. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
 
-      const storeTime = logTime()
-
-      await Promise.all(
-        logs.map((entries) =>
-          Promise.all(
-            entries.map((e) => {
-              return store.addLog(shardID, e)
-            })
-          )
-        )
-      )
-
       await store.setLastIndexedLogsBlockNumber(shardID, syncedToBlock)
-
-      this.l.info(`Saved to store. Done in ${storeTime()}`)
 
       if (logs.length === this.batchCount) {
         if (failedCount > 0) {
@@ -107,7 +102,8 @@ export class LogIndexer {
         this.decreaseBatchCount()
         setTimeout(this.loop, approximateBlockMintingTime)
       }
-    } catch (e) {
+    } catch (err) {
+      this.l.warn(`Batch failed. Retrying in ${approximateBlockMintingTime}ms`, err)
       this.decreaseBatchCount()
       setTimeout(this.loop, approximateBlockMintingTime)
     }

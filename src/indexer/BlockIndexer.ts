@@ -1,7 +1,7 @@
 import {config} from 'src/indexer/config'
 import * as RPCClient from 'src/indexer/rpc/client'
 import {urls, RPCUrls} from 'src/indexer/rpc/RPCUrls'
-import {ShardID, Block} from 'src/types/blockchain'
+import {ShardID, Block, BlockNumber} from 'src/types/blockchain'
 
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
@@ -32,7 +32,7 @@ export class BlockIndexer {
     if (this.batchCount > maxBatchCount) {
       this.batchCount = maxBatchCount
     } else {
-      this.l.info(`Batch increased to ${this.batchCount}`)
+      this.l.debug(`Batch increased to ${this.batchCount}`)
     }
   }
 
@@ -41,7 +41,7 @@ export class BlockIndexer {
     if (this.batchCount < 1) {
       this.batchCount = 1
     } else {
-      this.l.info(`Batch decreased to ${this.batchCount}`)
+      this.l.debug(`Batch decreased to ${this.batchCount}`)
     }
   }
 
@@ -59,11 +59,20 @@ export class BlockIndexer {
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number
 
+      const getBlock = (num: BlockNumber) => {
+        return RPCClient.getBlockByNumber(shardID, num)
+      }
+
+      const addBlock = async (block: Block) => {
+        await store.addBlock(shardID, block)
+        return block
+      }
+
       const res = await Promise.all(
         range(this.batchCount).map((_, i) => {
-          const height = this.currentHeight + i
-          if (height <= latestBlockchainBlock) {
-            return RPCClient.getBlockByNumber(shardID, height)
+          const num = this.currentHeight + i
+          if (num <= latestBlockchainBlock) {
+            return getBlock(num).then(addBlock)
           }
 
           return Promise.resolve(null)
@@ -75,23 +84,19 @@ export class BlockIndexer {
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
 
       this.l.info(
-        `Fetched [${this.currentHeight}, ${this.currentHeight + blocks.length}] ${
+        `Processed [${this.currentHeight}, ${this.currentHeight + blocks.length}] ${
           blocks.length
         } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
 
       const u = urls[shardID]
-      console.log({
-        stats: u.map((s) => s.totalQueries),
-        fails: u.map((s) => s.failedRequests),
+      this.l.debug('RPC queries', {
+        queries: u.map((s) => s.totalQueries),
+        failed: u.map((s) => s.failedRequests),
       })
       u.forEach((a) => {
         a.totalQueries = 0
       })
-
-      const storeTime = logTime()
-      await store.addBlocks(shardID, blocks)
-      this.l.info(`Saved to store. Done in ${storeTime()}`)
 
       if (blocks.length === this.batchCount) {
         if (failedCount > 0) {
@@ -105,7 +110,8 @@ export class BlockIndexer {
         this.decreaseBatchCount()
         setTimeout(this.loop, approximateBlockMintingTime)
       }
-    } catch (e) {
+    } catch (err) {
+      this.l.warn(`Batch failed. Retrying in ${approximateBlockMintingTime}ms`, err)
       this.decreaseBatchCount()
       setTimeout(this.loop, approximateBlockMintingTime)
     }

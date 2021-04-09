@@ -24,6 +24,8 @@ export const config = {
   indexer: {
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
+    // set to the height where smart contracts were introduced on the chain
+    initialLogsSyncingHeight: 3500000,
     batchCount: +(process.env.INDEXER_BATCHED_COUNT || 100),
     rpcUrls: [
       // shard #0 goes first
@@ -36,15 +38,24 @@ export const config = {
   store: {
     postgres: {
       user: 'postgres',
+      host: '35.222.136.38',
+      database: 'e',
+      password: 'FuckYouGoogle131313!',
+      port: 5432,
+    },
+    /*
+    postgres: {
+      user: 'postgres',
       host: 'localhost',
       database: 'e',
       password: '',
-      port: 5432,
-    },
+      port: 5432
+    }
+    */
   },
   logger: {
     levels: {
-      console: ['error', 'info', 'warn'] as TLogLevel[],
+      console: ['error', 'info', 'warn', 'debug'] as TLogLevel[],
       sentry: ['error', 'warn'] as TLogLevel[],
     },
   },
