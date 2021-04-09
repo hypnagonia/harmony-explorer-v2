@@ -1,20 +1,26 @@
 import {config} from 'src/indexer/config'
 const contractStartBlock = config.indexer.initialLogsSyncingHeight
 
-// todo indexes
-// todo inherit & constraints
-// todo camel case
-
-// don't keep from to because implement address2tx table
 const transactionsScheme = `
     create table IF NOT EXISTS transactions (
         shard smallint not null,  
-        hash varchar(66) unique primary key not null,
-        value bigint default(0),
-        blockHash varchar(66) not null,
-        blockNumber bigint not null,
-        timestamp timestamp not null,
-        raw text not null        
+        hash char(66) unique primary key not null,
+        value numeric,
+        block_hash char(66) not null,
+        block_number bigint not null,
+        timestamp timestamp,
+        from char(42),
+        to char(42),
+        gas bigint,
+        gas_price bigint,
+        hash char(66),
+        input text,
+        nonce smallint,
+        r text,
+        s text,
+        to_shard_id smallint,
+        transaction_index smallint
+        v text    
     );
     create index if not exists itransactionsBlockHash on transactions using hash(hash);
     create index if not exists itransactionsBlockNumber on transactions using hash(blockHash);        
@@ -22,16 +28,16 @@ const transactionsScheme = `
 
     create table IF NOT EXISTS address2transaction (
         blockNumber bigint not null,
-        hash varchar(66) references transactions(hash) on delete cascade,
-        address varchar(42) not null;
+        hash char(66) references transactions(hash),
+        address char(42) not null;
     );
     create index if not exists iaddress2transactionTransactionHash on address2transaction using hash(hash);
     create index if not exists iaddress2transactionAddress on address2transaction using hash(address);        
     create index if not exists iaddress2transactionBlockNumber on address2transaction(blockNumber);
 
     create table IF NOT EXISTS transaction_traces (
-        blockNumber bigint not null,
-        hash varchar(66) references transactions(hash) on delete cascade,
+        block_number bigint not null,
+        hash char(66) references transactions(hash),
         error text,
         raw text;
     );
@@ -40,8 +46,8 @@ const transactionsScheme = `
     create index if not exists itransactionTracesBlockNumber on transaction_traces(blockNumber);
 
     create table IF NOT EXISTS internal_transactions (
-        blockNumber bigint not null,
-        hash varchar(66) references transactions(hash) on delete cascade,
+        block_number bigint not null,
+        hash char(66) references transactions(hash) on delete cascade,
         raw text;
     );
 
@@ -53,10 +59,28 @@ export const scheme = `
     create schema IF NOT EXISTS public;
 
     create table IF NOT EXISTS block_interface (
-      number bigint primary key unique not null,
-      hash varchar(66) unique primary key not null,
-      timestamp timestamp not null,
-      raw text not null
+      number bigint unique primary key not null,
+      hash char(66) unique not null,
+      miner char(42),
+      extra_data text,
+      gas_limit bigint,
+      gas_used bigint,
+      timestamp timestamp,
+      difficulty bigint,
+      logs_bloom text,
+      mix_hash char(66),
+      nonce smallint,
+      parent_hash char(66),       
+      receipts_root char(66),
+      sha3_uncles char(66),
+      size bigint not null,
+      state_root char(66),
+      transactions char(66)[],
+      staking_transactions char(66)[], 
+      transactions_root char(66),
+      uncles char(66)[],
+      epoch bigint,
+      view_id text      
     );
     
     create table IF NOT EXISTS blocks0 ()
@@ -79,23 +103,23 @@ export const scheme = `
     create index if not exists iBlocks3Number on blocks3(number);
     
     create table IF NOT EXISTS logs_interface (
-      address varchar(42) not null,
-      topics text,
+      address char(42) not null,
+      topics char(66)[],
       data text,
-      blockNumber bigint not null primary key,
-      transactionHash varchar(66) not null,
-      transactionIndex varchar(8),
-      blockHash varchar(66) not null,
-      logIndex varchar(8),
-      removed boolean not null
+      block_number bigint not null primary key,
+      transaction_hash char(66) not null,
+      transaction_index smallint,
+      block_hash char(66) not null,
+      log_index smallint,
+      removed boolean
     );
     
     create table IF NOT EXISTS logs0 ()
     INHERITS (logs_interface);
               
-    create index if not exists iLogs0TransactionHash on logs0 using hash(transactionHash);
-    create index if not exists iLogs0BlockHash on logs0 using hash(blockHash);
-    create index if not exists iLogs0BlockNumber on logs0(blockNumber);
+    create index if not exists iLogs0TransactionHash on logs0 using hash(transaction_hash);
+    create index if not exists iLogs0BlockHash on logs0 using hash(block_hash);
+    create index if not exists iLogs0BlockNumber on logs0(block_number);
     
     create table IF NOT EXISTS indexer_state (
       lastLogs0IndexedBlockNumber bigint default(0),
@@ -108,6 +132,5 @@ export const scheme = `
     );
     
     insert into indexer_state (lastLogs0IndexedBlockNumber) 
-      values (${contractStartBlock}) on conflict(id) do nothing;
-      
+      values (${contractStartBlock}) on conflict(id) do nothing;      
 `

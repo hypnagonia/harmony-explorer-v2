@@ -10,7 +10,6 @@ const required: Record<string, string> = {
   INDEXER_BATCHED_COUNT: 'number',
   POSTGRES_HOST: 'string',
   POSTGRES_USER: 'string',
-  POSTGRES_PASSWORD: 'string',
   POSTGRES_DB: 'string',
   POSTGRES_PORT: 'number',
 }

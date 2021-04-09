@@ -1,10 +1,7 @@
-import {logger} from 'src/logger'
-import {IStorage, IStorageLog} from 'src/store/interface'
-import {Block, BlockHash, BlockNumber, Log, ShardID} from 'src/types/blockchain'
+import {IStorageLog} from 'src/store/interface'
+import {BlockHash, BlockNumber, Log, ShardID} from 'src/types/blockchain'
 
 import {Query} from 'src/store/postgres/types'
-
-const l = logger(module)
 
 export class PostgresStorageLog implements IStorageLog {
   query: Query
@@ -37,23 +34,23 @@ export class PostgresStorageLog implements IStorageLog {
         address,
         topics,
         data,
-        blockNumber,
-        transactionHash,
-        transactionIndex,
-        blockHash,
-        logIndex,
+        block_number,
+        transaction_hash,
+        transaction_index,
+        block_hash,
+        log_index,
         removed
        ) values
        ($1,$2,$3,$4,$5,$6,$7,$8,$9);`,
       [
         log.address,
-        log.topics.join(','),
+        log.topics,
         log.data,
         parseInt(log.blockNumber, 16),
         log.transactionHash,
-        log.transactionIndex,
+        parseInt(log.transactionIndex, 16),
         log.blockHash,
-        log.logIndex,
+        parseInt(log.logIndex, 16),
         log.removed,
       ]
     )

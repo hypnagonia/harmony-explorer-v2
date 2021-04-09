@@ -17,10 +17,9 @@ import {
 
 const mapBlockFromResponse = (block: RPCBlock): Block => {
   return {
-    block,
+    ...block,
     number: parseInt(block.number, 16),
-    timestamp: new Date(parseInt(block.timestamp, 16)),
-  }
+  } as Block
 }
 
 export const getBlockByNumber = (

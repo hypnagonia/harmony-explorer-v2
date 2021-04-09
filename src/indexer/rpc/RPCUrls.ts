@@ -1,6 +1,7 @@
 import {config} from 'src/indexer/config'
 import {ShardID} from 'src/types/blockchain'
 
+// todo drop stats
 const safeIncrement = (num: number) => {
   if (num + 1 >= Number.MAX_SAFE_INTEGER) {
     return 0

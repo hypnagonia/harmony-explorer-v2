@@ -11,8 +11,7 @@
 - [ ] Track transactions for Address
 - [ ] Index Transactions Trace Calls
 - [ ] Index Internal Transactions
-- [ ] Detect contracts
-- [ ] Define
+- [ ] Detect Contracts
 - [ ] Track HRC20
 - [ ] Track HRC721
 
@@ -20,6 +19,8 @@
 
 - [ ] Blocks
 - [ ] Transactions
+- [ ] Staking Transactions
+- [ ] Internal Transactions
 - [ ] Addresses
 - [ ] Metrics
 - [ ] Documentation

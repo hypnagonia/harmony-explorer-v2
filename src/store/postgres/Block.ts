@@ -1,6 +1,7 @@
 import {logger} from 'src/logger'
-import {IStorage, IStorageBlock} from 'src/store/interface'
+import {IStorageBlock} from 'src/store/interface'
 import {Block, BlockHash, BlockNumber, ShardID} from 'src/types/blockchain'
+import {generateQuery} from './queryMapper'
 
 import {Query} from 'src/store/postgres/types'
 
@@ -17,12 +18,9 @@ export class PostgresStorageBlock implements IStorageBlock {
   }
 
   addBlock = async (shardID: ShardID, block: Block) => {
-    return await this.query(
-      `insert into blocks${shardID}
-       (number,hash,timestamp,raw) values
-       ($1,$2,$3,$4) on conflict(number) do nothing;`,
-      [block.number, block.block.hash, block.timestamp, JSON.stringify(block.block)]
-    )
+    const {query, params} = generateQuery(block)
+
+    return await this.query(`insert into blocks${shardID} ${query};`, params)
   }
 
   getLastIndexedBlockNumber = async (shardID: ShardID): Promise<number | null> => {
