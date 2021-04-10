@@ -55,7 +55,20 @@ export type RPCBlockHarmony = {
   viewID: string
 }
 
-export type Block = {number: number} & RPCBlock
+type Modify<T, R> = Omit<T, keyof R> & R
+
+export type Block = Modify<
+  RPCBlock,
+  {
+    number: BlockNumber
+    epoch: number
+    difficulty: number
+    gasLimit: number
+    gasUsed: number
+    nonce: number
+    size: number
+  }
+>
 
 export type Address = string
 export type AddressHarmony = string
