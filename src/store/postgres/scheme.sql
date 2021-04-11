@@ -1,6 +1,6 @@
-create schema IF NOT EXISTS public;
+create schema if not exists public;
 
-create table IF NOT EXISTS block_base
+create table if not exists block_base
 (
     number               bigint unique primary key not null,
     hash                 char(66) unique           not null,
@@ -26,22 +26,22 @@ create table IF NOT EXISTS block_base
     view_id              text
 );
 
-create table IF NOT EXISTS blocks0
+create table if not exists blocks0
 (
 )
-    INHERITS (block_base);
-create table IF NOT EXISTS blocks1
+    inherits (block_base);
+create table if not exists blocks1
 (
 )
-    INHERITS (block_base);
-create table IF NOT EXISTS blocks2
+    inherits (block_base);
+create table if not exists blocks2
 (
 )
-    INHERITS (block_base);
-create table IF NOT EXISTS blocks3
+    inherits (block_base);
+create table if not exists blocks3
 (
 )
-    INHERITS (block_base);
+    inherits (block_base);
 
 create index if not exists iBlocks0Hash on blocks0 using hash (hash);
 create index if not exists iBlocks1Hash on blocks1 using hash (hash);
@@ -53,7 +53,7 @@ create index if not exists iBlocks1Number on blocks1 (number);
 create index if not exists iBlocks2Number on blocks2 (number);
 create index if not exists iBlocks3Number on blocks3 (number);
 
-create table IF NOT EXISTS logs_base
+create table if not exists logs_base
 (
     address           char(42) not null,
     topics            char(66)[],
@@ -66,16 +66,16 @@ create table IF NOT EXISTS logs_base
     removed           boolean
 );
 
-create table IF NOT EXISTS logs0
+create table if not exists logs0
 (
 )
-    INHERITS (logs_base);
+    inherits (logs_base);
 
 create index if not exists iLogs0TransactionHash on logs0 using hash (transaction_hash);
 create index if not exists iLogs0BlockHash on logs0 using hash (block_hash);
 create index if not exists iLogs0BlockNumber on logs0 (block_number);
 
-create table IF NOT EXISTS transactions
+create table if not exists transactions
 (
     shard             smallint                    not null,
     hash              char(66) unique primary key not null,
@@ -104,7 +104,7 @@ create type transaction_type as enum (
     'transaction',
     'internal_transaction');
 /*addresses mentioned in transaction*/
-create table IF NOT EXISTS address2transaction
+create table if not exists address2transaction
 (
     address          char(42) not null,
     block_hash       char(66) not null,
@@ -115,7 +115,7 @@ create table IF NOT EXISTS address2transaction
 create index if not exists iAddress2transactionAddress on address2transaction using hash (address);
 create index if not exists iAddress2transactionAddress on address2transaction using hash (block_hash);
 
-create table IF NOT EXISTS transaction_traces
+create table if not exists transaction_traces
 (
     block_number bigint not null,
     hash         char(66) references transactions (hash),
@@ -124,7 +124,7 @@ create table IF NOT EXISTS transaction_traces
 );
 create index if not exists iTransactionTracesTransactionHash on transaction_traces using hash (hash);
 
-create table IF NOT EXISTS indexer_state
+create table if not exists indexer_state
 (
     lastLogs0IndexedBlockNumber   bigint   default (0),
     lastBlocks0IndexedBlockNumber bigint   default (0),
@@ -136,7 +136,7 @@ create table IF NOT EXISTS indexer_state
 );
 
 /*tracking create/create2 */
-create table IF NOT EXISTS contracts
+create table if not exists contracts
 (
     address          char(42) not null,
     creator_address  char(42) not null,
