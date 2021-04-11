@@ -129,7 +129,7 @@ export type Log = {
   removed: boolean
 }
 
-export type TraceCallTypes = 'CALL' | 'STATICCALL' | 'CREATE' | 'CREATE2'
+export type TraceCallTypes = 'CALL' | 'STATICCALL' | 'CREATE' | 'CREATE2' | 'DELEGATECALL'
 
 // how to extract see explorer-dashboard
 export type TraceCallErrorToRevert = string

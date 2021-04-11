@@ -1,6 +1,6 @@
 create schema if not exists public;
 
-create table if not exists block_base
+create table if not exists blocks0
 (
     number               bigint unique primary key not null,
     hash                 char(66) unique           not null,
@@ -26,22 +26,24 @@ create table if not exists block_base
     view_id              text
 );
 
-create table if not exists blocks0
-(
-)
-    inherits (block_base);
 create table if not exists blocks1
 (
+    unique (number),
+    unique (hash)
 )
-    inherits (block_base);
+    inherits (blocks0);
 create table if not exists blocks2
 (
+    unique (number),
+    unique (hash)
 )
-    inherits (block_base);
+    inherits (blocks0);
 create table if not exists blocks3
 (
+    unique (number),
+    unique (hash)
 )
-    inherits (block_base);
+    inherits (blocks0);
 
 create index if not exists iBlocks0Hash on blocks0 using hash (hash);
 create index if not exists iBlocks1Hash on blocks1 using hash (hash);
@@ -53,23 +55,18 @@ create index if not exists iBlocks1Number on blocks1 (number);
 create index if not exists iBlocks2Number on blocks2 (number);
 create index if not exists iBlocks3Number on blocks3 (number);
 
-create table if not exists logs_base
+create table if not exists logs0
 (
     address           char(42) not null,
     topics            char(66)[],
     data              text,
-    block_number      bigint   not null primary key,
+    block_number      bigint   not null,
     transaction_hash  char(66) not null,
     transaction_index smallint,
     block_hash        char(66) not null,
     log_index         smallint,
     removed           boolean
 );
-
-create table if not exists logs0
-(
-)
-    inherits (logs_base);
 
 create index if not exists iLogs0TransactionHash on logs0 using hash (transaction_hash);
 create index if not exists iLogs0BlockHash on logs0 using hash (block_hash);
@@ -100,9 +97,17 @@ create index if not exists iTransactionsTransactionHash on transactions using ha
 create index if not exists iTransactionsBlockHash on transactions using hash (block_hash);
 create index if not exists iTransactionsBlockNumber on transactions (block_number);
 
-create type transaction_type as enum (
-    'transaction',
-    'internal_transaction');
+do
+$$
+    begin
+        create type transaction_type as enum (
+            'transaction',
+            'internal_transaction');
+    exception
+        when duplicate_object then null;
+    end
+$$;
+
 /*addresses mentioned in transaction*/
 create table if not exists address2transaction
 (
@@ -119,7 +124,7 @@ create table if not exists transaction_traces
     block_number bigint not null,
     hash         char(66) references transactions (hash),
     error        text default (null),
-    raw         jsonb
+    raw          jsonb
 );
 create index if not exists iTransactionTracesTransactionHash on transaction_traces using hash (hash);
 
@@ -137,7 +142,7 @@ create table if not exists indexer_state
 /*tracking create/create2 */
 create table if not exists contracts
 (
-    address          char(42) not null,
+    address          char(42) unique not null,
     creator_address  char(42) not null,
     block_hash       char(66) not null,
     transaction_hash char(66) references transactions (hash),
@@ -150,7 +155,7 @@ create index if not exists iAddress2transactionIPFSHash on contracts using hash 
 
 create table if not exists erc20
 (
-    address                  char(42) not null,
+    address                  char(42) unique not null,
     decimals                 smallint not null,
     symbol                   text     not null,
     name                     text     not null,
@@ -175,7 +180,7 @@ create index if not exists iERC20BalanceTokenAddress on erc20_balance using hash
 
 create table if not exists erc721
 (
-    address                  char(42) not null,
+    address                  char(42) unique not null,
     symbol                   text     not null,
     name                     text     not null,
     total_supply             numeric default (0),
