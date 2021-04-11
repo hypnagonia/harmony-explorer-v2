@@ -72,6 +72,7 @@ create index if not exists iLogs0TransactionHash on logs0 using hash (transactio
 create index if not exists iLogs0BlockHash on logs0 using hash (block_hash);
 create index if not exists iLogs0BlockNumber on logs0 (block_number);
 
+/*todo status*/
 create table if not exists transactions
 (
     shard             smallint                    not null,
@@ -148,17 +149,6 @@ create table if not exists transaction_traces
 
 create index if not exists iTransactionTracesTransactionHash on transaction_traces using hash (hash);
 
-create table if not exists indexer_state
-(
-    lastLogs0IndexedBlockNumber   bigint   default (0),
-    lastBlocks0IndexedBlockNumber bigint   default (0),
-    lastBlocks1IndexedBlockNumber bigint   default (0),
-    lastBlocks2IndexedBlockNumber bigint   default (0),
-    lastBlocks3IndexedBlockNumber bigint   default (0),
-    id                            smallint default (0),
-    unique (id)
-);
-
 /*tracking create/create2 */
 create table if not exists contracts
 (
@@ -222,3 +212,14 @@ create table if not exists erc721_asset
 
 create index if not exists iERC721BalanceAddress on erc721_asset using hash (owner_address);
 create index if not exists iERC721BalanceTokenAddress on erc721_asset using hash (token_address);
+
+create table if not exists indexer_state
+(
+    lastLogs0IndexedBlockNumber   bigint   default (0),
+    lastBlocks0IndexedBlockNumber bigint   default (0),
+    lastBlocks1IndexedBlockNumber bigint   default (0),
+    lastBlocks2IndexedBlockNumber bigint   default (0),
+    lastBlocks3IndexedBlockNumber bigint   default (0),
+    id                            smallint default (0),
+    unique (id)
+);
