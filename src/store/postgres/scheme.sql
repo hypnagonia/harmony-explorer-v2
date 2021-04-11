@@ -143,19 +143,38 @@ create table if not exists contracts
     block_hash       char(66) not null,
     transaction_hash char(66) references transactions (hash),
     transaction_type transaction_type,
-    ipfs_hash char(64),
-    meta jsonb
+    ipfs_hash        char(64),
+    meta             jsonb
 );
-
 create index if not exists iAddress2transactionAddress on contracts using hash (address);
 create index if not exists iAddress2transactionAddress on contracts using hash (ipfs_hash);
 
+create table if not exists erc20
+(
+    address                  char(42) not null,
+    decimals                 smallint not null,
+    symbol                   text     not null,
+    name                     text     not null,
+    total_supply             numeric default (0),
+    holders                  numeric default (0),
+    transaction_count        bigint  default (0),
+    last_update_block_number bigint
+);
+
+create index if not exists iAddress2transactionAddress on erc20 using hash (address);
+
+create table if not exists erc20_balance
+(
+    address                  char(42) not null,
+    erc20_address            char(42) not null,
+    balance                  numeric,
+    last_update_block_number bigint
+);
+create index if not exists iAddress2transactionAddress on erc20_balance using hash (address);
+create index if not exists iAddress2transactionAddress on erc20_balance using hash (erc20_address);
 
 /*
 todo
-erc20 table
-erc20 balances
-
 erc721 table
 erc721 token info table, owner
 */
