@@ -120,6 +120,24 @@ create table if not exists address2transaction
 create index if not exists iAddress2transactionAddress on address2transaction using hash (address);
 create index if not exists iAddress2transactionBlockNumber on transactions (block_number);
 
+create table if not exists internal_transactions
+(
+    id               bigserial primary key,
+    "from"           char(42),
+    "to"             char(42),
+    gas              bigint,
+    gas_used         bigint,
+    input            text,
+    output           text,
+    type             text,
+    value            numeric,
+    transaction_hash char(66) references transactions (hash),
+    time             time,
+    parent_id        bigint
+);
+
+create index if not exists iInternalTransactionsTransactionHash on internal_transactions using hash (transaction_hash);
+
 create table if not exists transaction_traces
 (
     block_number bigint not null,
@@ -127,6 +145,7 @@ create table if not exists transaction_traces
     error        text default (null),
     raw          jsonb
 );
+
 create index if not exists iTransactionTracesTransactionHash on transaction_traces using hash (hash);
 
 create table if not exists indexer_state
