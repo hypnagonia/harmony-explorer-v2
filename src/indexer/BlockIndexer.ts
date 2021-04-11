@@ -27,22 +27,13 @@ export class BlockIndexer {
   }
 
   increaseBatchCount = () => {
-    this.batchCount = Math.ceil(this.batchCount * 1.1)
-
-    if (this.batchCount > maxBatchCount) {
-      this.batchCount = maxBatchCount
-    } else {
-      this.l.debug(`Batch increased to ${this.batchCount}`)
-    }
+    this.batchCount = Math.min(Math.ceil(this.batchCount * 1.1), maxBatchCount)
+    this.l.debug(`Batch increased to ${this.batchCount}`)
   }
 
   decreaseBatchCount = () => {
-    this.batchCount = ~~(this.batchCount * 0.9)
-    if (this.batchCount < 1) {
-      this.batchCount = 1
-    } else {
-      this.l.debug(`Batch decreased to ${this.batchCount}`)
-    }
+    this.batchCount = Math.max(~~(this.batchCount * 0.9), 1)
+    this.l.debug(`Batch decreased to ${this.batchCount}`)
   }
 
   loop = async () => {
@@ -79,7 +70,7 @@ export class BlockIndexer {
         })
       )
 
-      const blocks = res.filter((b) => b).sort((a, b) => a!.number - b!.number) as Block[]
+      const blocks = res.filter((b) => b) as Block[]
       const lastFetchedBlockNumber = blocks.reduce((a, b) => (a < b.number ? b.number : a), 0)
 
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore

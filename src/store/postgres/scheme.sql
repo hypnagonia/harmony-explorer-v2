@@ -119,7 +119,7 @@ create table if not exists transaction_traces
     block_number bigint not null,
     hash         char(66) references transactions (hash),
     error        text default (null),
-    json         jsonb
+    raw         jsonb
 );
 create index if not exists iTransactionTracesTransactionHash on transaction_traces using hash (hash);
 
