@@ -24,7 +24,9 @@ const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((
   return a
 }, {} as Record<string, string>)
 
-const fromHexToNumber = (s: string) => parseInt(s, 16)
+const fromHexToNumber = (s: string | number) =>
+  s ? (typeof s === 'number' ? s : parseInt(s, 16)) : s
+const fromStringToNumber = (s: string | number) => +s
 
 const toStoreMappers: Record<string, (val: any) => any> = {
   gasLimit: fromHexToNumber,

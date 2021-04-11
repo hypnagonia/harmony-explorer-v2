@@ -16,6 +16,7 @@ import {
 } from 'types/blockchain'
 
 const mapBlockFromResponse = (block: RPCBlock): Block => {
+  // @ts-ignore
   return {
     ...block,
     number: parseInt(block.number, 16),

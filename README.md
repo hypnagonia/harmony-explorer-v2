@@ -4,6 +4,7 @@
 
 ### Indexer
 
+- [ ] A few indexer instances work in parallel
 - [x] Index Blocks
 - [ ] Index Transactions
 - [ ] Index Staking Transactions
