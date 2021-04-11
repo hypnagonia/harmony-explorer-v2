@@ -96,8 +96,8 @@ create table if not exists transactions
     transaction_index smallint,
     v                 text
 );
-create index if not exists iTransactionsBlockHash on transactions using hash (hash);
-create index if not exists iTransactionsBlockNumber on transactions using hash (block_hash);
+create index if not exists iTransactionsTransactionHash on transactions using hash (hash);
+create index if not exists iTransactionsBlockHash on transactions using hash (block_hash);
 create index if not exists iTransactionsBlockNumber on transactions (block_number);
 
 create type transaction_type as enum (
@@ -107,14 +107,13 @@ create type transaction_type as enum (
 create table if not exists address2transaction
 (
     address          char(42) not null,
-    block_hash       char(66) not null,
+    block_number     char(66) not null,
     transaction_hash char(66) references transactions (hash),
     transaction_type transaction_type
 );
 
 create index if not exists iAddress2transactionAddress on address2transaction using hash (address);
-create index if not exists iAddress2transactionAddress on address2transaction using hash (block_hash);
-
+create index if not exists iAddress2transactionBlockNumber on transactions (block_number);
 create table if not exists transaction_traces
 (
     block_number bigint not null,
