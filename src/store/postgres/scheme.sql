@@ -211,7 +211,6 @@ create table if not exists erc721
 
 create index if not exists iERC721Address on erc721 using hash (address);
 
-/* todo*/
 create table if not exists erc721_asset
 (
     owner_address            char(42) not null,
@@ -221,5 +220,5 @@ create table if not exists erc721_asset
     last_update_block_number bigint
 );
 
-create index if not exists iERC721BalanceAddress on erc721_asset using hash (address);
+create index if not exists iERC721BalanceAddress on erc721_asset using hash (owner_address);
 create index if not exists iERC721BalanceTokenAddress on erc721_asset using hash (token_address);
