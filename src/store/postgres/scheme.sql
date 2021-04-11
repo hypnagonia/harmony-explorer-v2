@@ -173,8 +173,25 @@ create table if not exists erc20_balance
 create index if not exists iAddress2transactionAddress on erc20_balance using hash (address);
 create index if not exists iAddress2transactionAddress on erc20_balance using hash (erc20_address);
 
-/*
-todo
-erc721 table
-erc721 token info table, owner
-*/
+
+create table if not exists erc721
+(
+    address                  char(42) not null,
+    symbol                   text     not null,
+    name                     text     not null,
+    total_supply             numeric default (0),
+    holders                  numeric default (0),
+    transaction_count        bigint  default (0),
+    last_update_block_number bigint
+);
+
+create index if not exists iAddress2transactionAddress on erc721 using hash (address);
+
+create table if not exists erc721_token
+(
+    owner_address            char(42) not null,
+    erc721_address           char(42) not null,
+    token_id                 text,
+    meta                     jsonb,
+    last_update_block_number bigint
+);
