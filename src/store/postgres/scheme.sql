@@ -146,7 +146,7 @@ create table if not exists contracts
     meta             jsonb
 );
 create index if not exists iAddress2transactionAddress on contracts using hash (address);
-create index if not exists iAddress2transactionAddress on contracts using hash (ipfs_hash);
+create index if not exists iAddress2transactionIPFSHash on contracts using hash (ipfs_hash);
 
 create table if not exists erc20
 (
@@ -160,7 +160,7 @@ create table if not exists erc20
     last_update_block_number bigint
 );
 
-create index if not exists iAddress2transactionAddress on erc20 using hash (address);
+create index if not exists iERC20Address on erc20 using hash (address);
 
 create table if not exists erc20_balance
 (
@@ -169,8 +169,8 @@ create table if not exists erc20_balance
     balance                  numeric,
     last_update_block_number bigint
 );
-create index if not exists iAddress2transactionAddress on erc20_balance using hash (address);
-create index if not exists iAddress2transactionAddress on erc20_balance using hash (erc20_address);
+create index if not exists iERC20BalanceAddress on erc20_balance using hash (address);
+create index if not exists iERC20BalanceTokenAddress on erc20_balance using hash (erc20_address);
 
 
 create table if not exists erc721
@@ -184,8 +184,9 @@ create table if not exists erc721
     last_update_block_number bigint
 );
 
-create index if not exists iAddress2transactionAddress on erc721 using hash (address);
+create index if not exists iERC721Address on erc721 using hash (address);
 
+/* todo*/
 create table if not exists erc721_token
 (
     owner_address            char(42) not null,
