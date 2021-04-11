@@ -16,7 +16,7 @@ create table if not exists blocks0
     parent_hash          char(66),
     receipts_root        char(66),
     sha3_uncles          char(66),
-    size                 bigint                    not null,
+    size                 bigint,
     state_root           char(66),
     transactions         char(66)[],
     staking_transactions char(66)[],
@@ -144,8 +144,8 @@ create table if not exists indexer_state
 create table if not exists contracts
 (
     address          char(42) unique not null,
-    creator_address  char(42) not null,
-    block_hash       char(66) not null,
+    creator_address  char(42)        not null,
+    block_hash       char(66)        not null,
     transaction_hash char(66) references transactions (hash),
     transaction_type transaction_type,
     ipfs_hash        char(64),
@@ -157,9 +157,9 @@ create index if not exists iAddress2transactionIPFSHash on contracts using hash 
 create table if not exists erc20
 (
     address                  char(42) unique not null,
-    decimals                 smallint not null,
-    symbol                   text     not null,
-    name                     text     not null,
+    decimals                 smallint        not null,
+    symbol                   text            not null,
+    name                     text            not null,
     total_supply             numeric default (0),
     holders                  numeric default (0),
     transaction_count        bigint  default (0),
@@ -182,8 +182,8 @@ create index if not exists iERC20BalanceTokenAddress on erc20_balance using hash
 create table if not exists erc721
 (
     address                  char(42) unique not null,
-    symbol                   text     not null,
-    name                     text     not null,
+    symbol                   text            not null,
+    name                     text            not null,
     total_supply             numeric default (0),
     holders                  numeric default (0),
     transaction_count        bigint  default (0),
@@ -196,7 +196,7 @@ create index if not exists iERC721Address on erc721 using hash (address);
 create table if not exists erc721_asset
 (
     owner_address            char(42) not null,
-    token_address           char(42) not null,
+    token_address            char(42) not null,
     token_id                 text,
     meta                     jsonb,
     last_update_block_number bigint
