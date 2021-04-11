@@ -171,12 +171,12 @@ create index if not exists iERC20Address on erc20 using hash (address);
 create table if not exists erc20_balance
 (
     address                  char(42) not null,
-    erc20_address            char(42) not null,
+    token_address            char(42) not null,
     balance                  numeric,
     last_update_block_number bigint
 );
 create index if not exists iERC20BalanceAddress on erc20_balance using hash (address);
-create index if not exists iERC20BalanceTokenAddress on erc20_balance using hash (erc20_address);
+create index if not exists iERC20BalanceTokenAddress on erc20_balance using hash (token_address);
 
 
 create table if not exists erc721
@@ -193,11 +193,14 @@ create table if not exists erc721
 create index if not exists iERC721Address on erc721 using hash (address);
 
 /* todo*/
-create table if not exists erc721_token
+create table if not exists erc721_asset
 (
     owner_address            char(42) not null,
-    erc721_address           char(42) not null,
+    token_address           char(42) not null,
     token_id                 text,
     meta                     jsonb,
     last_update_block_number bigint
 );
+
+create index if not exists iERC721BalanceAddress on erc721_asset using hash (address);
+create index if not exists iERC721BalanceTokenAddress on erc721_asset using hash (token_address);
