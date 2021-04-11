@@ -16,7 +16,7 @@ const run = async () => {
     blockIndexers.forEach((b) => b.loop())
 
     const logIndexer0 = new LogIndexer(0)
-    await logIndexer0.loop()
+    // await logIndexer0.loop()
   } catch (err) {
     l.error(err)
     process.exit(1)

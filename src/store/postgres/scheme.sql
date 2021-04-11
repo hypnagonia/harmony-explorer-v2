@@ -119,6 +119,7 @@ create table if not exists address2transaction
 
 create index if not exists iAddress2transactionAddress on address2transaction using hash (address);
 create index if not exists iAddress2transactionBlockNumber on transactions (block_number);
+
 create table if not exists transaction_traces
 (
     block_number bigint not null,

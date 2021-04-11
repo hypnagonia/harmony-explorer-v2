@@ -44,7 +44,7 @@ export class BlockIndexer {
       const latestSyncedBlock = await store.block.getLastIndexedBlockNumber(shardID)
 
       if (latestSyncedBlock) {
-        this.currentHeight = latestSyncedBlock
+        this.currentHeight = latestSyncedBlock + 1
       }
 
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
