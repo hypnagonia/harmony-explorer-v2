@@ -13,9 +13,9 @@ const run = async () => {
 
     const shards = [1] as ShardID[]
     const blockIndexers = shards.map((shardID) => new BlockIndexer(shardID))
-    blockIndexers.forEach((b) => b.loop())
+    // blockIndexers.forEach((b) => b.loop())
 
-    const logIndexer0 = new LogIndexer(0)
+    const logIndexer0 = new LogIndexer(1)
     // await logIndexer0.loop()
   } catch (err) {
     l.error(err)

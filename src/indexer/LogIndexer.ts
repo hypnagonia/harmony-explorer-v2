@@ -21,6 +21,10 @@ export class LogIndexer {
   private batchCount = 10
 
   constructor(shardID: ShardID) {
+    if (shardID !== 0) {
+      throw new Error('Only shard #0 is currently supported')
+    }
+
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
     this.l.info('Created')

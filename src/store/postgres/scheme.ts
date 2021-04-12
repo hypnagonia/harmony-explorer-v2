@@ -9,6 +9,6 @@ const sql = fs.readFileSync(path.join(__dirname, './scheme.sql'))
 export const scheme = `
     ${sql}
     
-    insert into indexer_state (lastLogs0IndexedBlockNumber) 
+    insert into indexer_state (logs_last_synced_block_number) 
       values (${contractStartBlock}) on conflict(id) do nothing;      
 `
