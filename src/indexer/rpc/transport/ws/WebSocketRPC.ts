@@ -23,7 +23,6 @@ export class WebSocketRPC {
     this.ws.on('error', this.onError)
     this.ws.on('close', this.onClose)
     this.ws.on('open', this.onOpen)
-    // this.connect()
   }
 
   connect = () => {
