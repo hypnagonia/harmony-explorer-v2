@@ -7,6 +7,7 @@ import {config} from 'src/indexer/config'
 
 const l = logger(module)
 
+// todo checks on start. shard chainId
 const run = async () => {
   try {
     l.info('Indexer starting...')
@@ -23,7 +24,7 @@ const run = async () => {
     )
     blockIndexers.forEach((b) => b.loop())
 
-    const logIndexer0 = new LogIndexer(0)
+    // const logIndexer0 = new LogIndexer(0)
     // await logIndexer0.loop()
   } catch (err) {
     l.error(err)

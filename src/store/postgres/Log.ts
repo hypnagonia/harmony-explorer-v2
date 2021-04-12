@@ -12,8 +12,9 @@ export class PostgresStorageLog implements IStorageLog {
 
   addLog = async (shardID: ShardID, log: Log): Promise<any> => {
     return await this.query(
-      `insert into logs${shardID}
+      `insert into logs
        (
+        shard,
         address,
         topics,
         data,
@@ -24,8 +25,9 @@ export class PostgresStorageLog implements IStorageLog {
         log_index,
         removed
        ) values
-       ($1,$2,$3,$4,$5,$6,$7,$8,$9);`,
+       ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);`,
       [
+        shardID,
         log.address,
         log.topics,
         log.data,

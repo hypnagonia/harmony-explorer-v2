@@ -25,10 +25,6 @@ export class WebSocketRPC {
     this.ws.on('open', this.onOpen)
   }
 
-  connect = () => {
-    this.open = false
-  }
-
   call = (method: string, params: any[]): Promise<any> => {
     const retryPromise = () =>
       sleep().then(() => {

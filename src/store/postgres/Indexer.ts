@@ -41,7 +41,7 @@ export class PostgresStorageIndexer implements IStorageIndexer {
   }
 
   setLastIndexedLogsBlockNumber = async (shardId: ShardID, num: BlockNumber): Promise<number> => {
-    return this.query(`update indexer_state set logs_last_synced_block_numberr=$1 where id=0;`, [
+    return this.query(`update indexer_state set logs_last_synced_block_number=$1 where id=0;`, [
       num,
     ])
   }

@@ -2,14 +2,20 @@ import {WebSocketRPC} from './WebSocketRPC'
 import {RPCETHMethod, RPCHarmonyMethod, ShardID} from 'src/types/blockchain'
 import {config} from 'src/indexer/config'
 
+const lazyConnection = (shardID: ShardID, url: string) => {
+  let connection: WebSocketRPC | null = null
+  return {
+    getConnection: () => connection,
+    connect: () => (connection = new WebSocketRPC(shardID as ShardID, url)),
+  }
+}
+
 const connections =
   config.indexer.rpc.transport === 'ws'
     ? config.indexer.rpc.urls.map((list, shardID) =>
-        list.map((url) => new WebSocketRPC(shardID as ShardID, url))
+        list.map((url) => lazyConnection(shardID as ShardID, url))
       )
     : []
-
-connections.forEach((pool) => pool.forEach((c) => c.connect()))
 
 export const WSTransport = (
   shardID: ShardID,
@@ -17,6 +23,11 @@ export const WSTransport = (
   params: any[]
 ) => {
   // todo robin round pool of ws connections, lazy init
-  const ws = connections[shardID][0]
-  return ws.call(method, params)
+  const c = connections[shardID][0]
+
+  if (c.getConnection() === null) {
+    c.connect()
+  }
+
+  return c.getConnection()!.call(method, params)
 }
