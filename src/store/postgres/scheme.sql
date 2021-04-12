@@ -1,9 +1,10 @@
 create schema if not exists public;
 
-create table if not exists blocks0
+create table if not exists blocks
 (
-    number               bigint unique primary key not null,
-    hash                 char(66) unique           not null,
+    shard                smallint not null,
+    number               bigint   not null,
+    hash                 char(66) not null,
     miner                char(42),
     extra_data           text,
     gas_limit            bigint,
@@ -23,40 +24,21 @@ create table if not exists blocks0
     transactions_root    char(66),
     uncles               char(66)[],
     epoch                bigint,
-    view_id              text
+    view_id              text,
+    primary key (shard, number),
+    unique (shard, number)
 );
 
-create table if not exists blocks1
-(
-    unique (number),
-    unique (hash)
-)
-    inherits (blocks0);
-create table if not exists blocks2
-(
-    unique (number),
-    unique (hash)
-)
-    inherits (blocks0);
-create table if not exists blocks3
-(
-    unique (number),
-    unique (hash)
-)
-    inherits (blocks0);
+create index if not exists idx_blocks_shard0_number on blocks(number) where shard = 0;
+create index if not exists idx_blocks_shard1_number on blocks(number) where shard = 1;
+create index if not exists idx_blocks_shard2_number on blocks(number) where shard = 2;
+create index if not exists idx_blocks_shard3_number on blocks(number) where shard = 3;
 
-create index if not exists iBlocks0Hash on blocks0 using hash (hash);
-create index if not exists iBlocks1Hash on blocks1 using hash (hash);
-create index if not exists iBlocks2Hash on blocks2 using hash (hash);
-create index if not exists iBlocks3Hash on blocks3 using hash (hash);
+create index if not exists idx_blocks_hash on blocks using hash (hash);
 
-create index if not exists iBlocks0Number on blocks0 (number);
-create index if not exists iBlocks1Number on blocks1 (number);
-create index if not exists iBlocks2Number on blocks2 (number);
-create index if not exists iBlocks3Number on blocks3 (number);
-
-create table if not exists logs0
+create table if not exists logs
 (
+    shard             smallint not null,
     address           char(42) not null,
     topics            char(66)[],
     data              text,
@@ -68,9 +50,9 @@ create table if not exists logs0
     removed           boolean
 );
 
-create index if not exists iLogs0TransactionHash on logs0 using hash (transaction_hash);
-create index if not exists iLogs0BlockHash on logs0 using hash (block_hash);
-create index if not exists iLogs0BlockNumber on logs0 (block_number);
+create index if not exists idx_logs_transaction_hash on logs using hash (transaction_hash);
+create index if not exists idx_logs_block_hash on logs using hash (block_hash);
+create index if not exists idx_logs_block_number on logs (block_number);
 
 /*todo status*/
 create table if not exists transactions
@@ -94,9 +76,9 @@ create table if not exists transactions
     transaction_index smallint,
     v                 text
 );
-create index if not exists iTransactionsTransactionHash on transactions using hash (hash);
-create index if not exists iTransactionsBlockHash on transactions using hash (block_hash);
-create index if not exists iTransactionsBlockNumber on transactions (block_number);
+create index if not exists idx_transactions_hash on transactions using hash (hash);
+create index if not exists idx_transactions_block_hash on transactions using hash (block_hash);
+create index if not exists idx_transactions_block_number on transactions (block_number);
 
 do
 $$
@@ -118,8 +100,8 @@ create table if not exists address2transaction
     transaction_type transaction_type
 );
 
-create index if not exists iAddress2transactionAddress on address2transaction using hash (address);
-create index if not exists iAddress2transactionBlockNumber on transactions (block_number);
+create index if not exists idx_address2transaction_address on address2transaction using hash (address);
+create index if not exists idx_address2transaction_block_number on transactions (block_number);
 
 create table if not exists internal_transactions
 (
@@ -137,7 +119,7 @@ create table if not exists internal_transactions
     parent_id        bigint
 );
 
-create index if not exists iInternalTransactionsTransactionHash on internal_transactions using hash (transaction_hash);
+create index if not exists idx_internal_transactions_transaction_hash on internal_transactions using hash (transaction_hash);
 
 create table if not exists transaction_traces
 (
@@ -147,7 +129,7 @@ create table if not exists transaction_traces
     raw          jsonb
 );
 
-create index if not exists iTransactionTracesTransactionHash on transaction_traces using hash (hash);
+create index if not exists idx_transaction_traces_hash on transaction_traces using hash (hash);
 
 /*tracking create/create2 */
 create table if not exists contracts
@@ -160,8 +142,8 @@ create table if not exists contracts
     ipfs_hash        char(64),
     meta             jsonb
 );
-create index if not exists iAddress2transactionAddress on contracts using hash (address);
-create index if not exists iAddress2transactionIPFSHash on contracts using hash (ipfs_hash);
+create index if not exists idx_contracts_address on contracts using hash (address);
+create index if not exists idx_contracts_ipfs_hash on contracts using hash (ipfs_hash);
 
 create table if not exists erc20
 (
@@ -175,7 +157,7 @@ create table if not exists erc20
     last_update_block_number bigint
 );
 
-create index if not exists iERC20Address on erc20 using hash (address);
+create index if not exists idx_erc20_address on erc20 using hash (address);
 
 create table if not exists erc20_balance
 (
@@ -184,8 +166,8 @@ create table if not exists erc20_balance
     balance                  numeric,
     last_update_block_number bigint
 );
-create index if not exists iERC20BalanceAddress on erc20_balance using hash (address);
-create index if not exists iERC20BalanceTokenAddress on erc20_balance using hash (token_address);
+create index if not exists idx_erc20_balance_address on erc20_balance using hash (address);
+create index if not exists idx_erc20_balance_token_address on erc20_balance using hash (token_address);
 
 
 create table if not exists erc721
@@ -199,7 +181,7 @@ create table if not exists erc721
     last_update_block_number bigint
 );
 
-create index if not exists iERC721Address on erc721 using hash (address);
+create index if not exists idx_erc721_address on erc721 using hash (address);
 
 create table if not exists erc721_asset
 (
@@ -210,8 +192,8 @@ create table if not exists erc721_asset
     last_update_block_number bigint
 );
 
-create index if not exists iERC721BalanceAddress on erc721_asset using hash (owner_address);
-create index if not exists iERC721BalanceTokenAddress on erc721_asset using hash (token_address);
+create index if not exists idx_erc721_asset_owner_address on erc721_asset using hash (owner_address);
+create index if not exists idx_erc721_asset_token_address on erc721_asset using hash (token_address);
 
 create table if not exists indexer_state
 (
