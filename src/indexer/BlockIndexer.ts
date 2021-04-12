@@ -18,7 +18,7 @@ export class BlockIndexer {
   private l: LoggerModule
   private batchCount: number
 
-  constructor(shardID: ShardID, batchCount: number = maxBatchCount, startHeight: number) {
+  constructor(shardID: ShardID, batchCount: number = maxBatchCount, startHeight: number = 0) {
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
     this.currentHeight = startHeight

@@ -12,7 +12,7 @@ const run = async () => {
     l.info('Indexer starting...')
     await store.start()
 
-    const shards = [1] as ShardID[]
+    const shards = [0] as ShardID[]
     const blockIndexers = shards.map(
       (shardID) =>
         new BlockIndexer(
@@ -21,9 +21,9 @@ const run = async () => {
           config.indexer.initialBlockSyncingHeight
         )
     )
-    // blockIndexers.forEach((b) => b.loop())
+    blockIndexers.forEach((b) => b.loop())
 
-    const logIndexer0 = new LogIndexer(1)
+    const logIndexer0 = new LogIndexer(0)
     // await logIndexer0.loop()
   } catch (err) {
     l.error(err)

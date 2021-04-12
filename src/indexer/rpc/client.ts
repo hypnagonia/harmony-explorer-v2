@@ -1,4 +1,4 @@
-import {fetch} from './fetch'
+import {transport} from './transport'
 import {
   RPCETHMethod,
   RPCHarmonyMethod,
@@ -28,14 +28,14 @@ export const getBlockByNumber = (
   num: BlockNumber | 'latest',
   isFullInfo = true
 ): Promise<Block> => {
-  return fetch(shardID, 'eth_getBlockByNumber', [num, isFullInfo]).then(mapBlockFromResponse)
+  return transport(shardID, 'eth_getBlockByNumber', [num, isFullInfo]).then(mapBlockFromResponse)
 }
 
 export const getTransactionByHash = (
   shardID: ShardID,
   hash: TransactionHash
 ): Promise<RPCTransactionHarmony> => {
-  return fetch(shardID, 'eth_getTransactionByHash', [hash])
+  return transport(shardID, 'eth_getTransactionByHash', [hash])
 }
 
 export const getLogs = (
@@ -51,5 +51,5 @@ export const getLogs = (
     fromBlock: '0x' + fromBlock.toString(16),
     toBlock: '0x' + toBlock.toString(16),
   }
-  return fetch(shardID, 'eth_getLogs', [o])
+  return transport(shardID, 'eth_getLogs', [o])
 }

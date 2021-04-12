@@ -2,8 +2,8 @@ create schema if not exists public;
 
 create table if not exists blocks
 (
-    shard                smallint not null,
-    number               bigint   not null,
+    shard                smallint        not null,
+    number               bigint          not null,
     hash                 char(66) unique not null,
     miner                char(42),
     extra_data           text,
@@ -142,7 +142,6 @@ create table if not exists contracts
     meta             jsonb
 );
 create index if not exists idx_contracts_address on contracts using hash (address);
-create index if not exists idx_contracts_ipfs_hash on contracts using hash (ipfs_hash);
 
 create table if not exists erc20
 (

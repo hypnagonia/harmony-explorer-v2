@@ -3,7 +3,7 @@ import {RPCETHMethod, RPCHarmonyMethod} from 'types/blockchain'
 import AbortController from 'abort-controller'
 import {logger} from 'src/logger'
 import {config} from 'src/indexer/config'
-import {RPCUrls} from './RPCUrls'
+import {RPCUrls} from '../../RPCUrls'
 import {ShardID} from 'src/types/blockchain'
 import {logTime} from 'src/utils/logTime'
 
@@ -14,7 +14,7 @@ const defaultRetries = 5
 const RPCErrorPrefix = 'RPC Error'
 const increaseTimeout = (retry: number) => defaultFetchTimeout
 
-export const fetch = async (
+export const HTTPTransport = async (
   shardID: ShardID,
   method: RPCETHMethod | RPCHarmonyMethod,
   params: any[]
@@ -48,7 +48,7 @@ export const fetch = async (
   return exec(shardID, method, params, defaultRetries)
 }
 
-export const fetchWithoutRetry = (
+const fetchWithoutRetry = (
   shardID: ShardID,
   method: RPCETHMethod | RPCHarmonyMethod,
   params: any[],
