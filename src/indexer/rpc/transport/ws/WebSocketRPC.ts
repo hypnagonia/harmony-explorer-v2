@@ -10,7 +10,7 @@ const sleep = () => new Promise((r) => setTimeout(r, 1000))
 
 export class WebSocketRPC {
   readonly url: string
-  ws: Client | undefined
+  ws: Client
   l: LoggerModule
   open = false
   shardID: ShardID
@@ -46,7 +46,7 @@ export class WebSocketRPC {
       return retryPromise()
     }
 
-    return Promise.race([this.ws!.call(method, params), timeoutPromise()]).catch(catchPromise)
+    return Promise.race([this.ws.call(method, params), timeoutPromise()]).catch(catchPromise)
   }
 
   private onError = (err: any) => {
