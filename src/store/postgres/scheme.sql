@@ -25,8 +25,7 @@ create table if not exists blocks
     uncles               char(66)[],
     epoch                bigint,
     view_id              text,
-    primary key (shard, number),
-    unique (shard, number)
+    primary key (shard, number)
 );
 
 create index if not exists idx_blocks_shard0_number on blocks(number) where shard = 0;
