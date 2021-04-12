@@ -41,7 +41,7 @@ export class BlockIndexer {
       const shardID = this.shardID
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
-      const latestSyncedBlock = await store.block.getLastIndexedBlockNumber(shardID)
+      const latestSyncedBlock = await store.indexer.getLastIndexedBlockNumber(shardID)
 
       if (latestSyncedBlock) {
         this.currentHeight = latestSyncedBlock + 1
@@ -75,7 +75,7 @@ export class BlockIndexer {
 
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
 
-      await store.block.setLastIndexedBlockNumber(shardID, lastFetchedBlockNumber)
+      await store.indexer.setLastIndexedBlockNumber(shardID, lastFetchedBlockNumber)
 
       this.l.info(
         `Processed [${this.currentHeight}, ${lastFetchedBlockNumber}] ${

@@ -9,6 +9,7 @@ import {Query} from './types'
 import {PostgresStorageBlock} from './Block'
 import {PostgresStorageLog} from './Log'
 import {PostgresStorageTransaction} from './Transaction'
+import {PostgresStorageIndexer} from 'src/store/postgres/Indexer'
 
 const l = logger(module)
 const defaultRetries = 3
@@ -18,11 +19,13 @@ export class PostgresStorage implements IStorage {
   block: PostgresStorageBlock
   log: PostgresStorageLog
   transaction: PostgresStorageTransaction
+  indexer: PostgresStorageIndexer
 
   constructor() {
     this.block = new PostgresStorageBlock(this.query)
     this.log = new PostgresStorageLog(this.query)
     this.transaction = new PostgresStorageTransaction(this.query)
+    this.indexer = new PostgresStorageIndexer(this.query)
 
     const c = config.store.postgres
 

@@ -10,23 +10,6 @@ export class PostgresStorageLog implements IStorageLog {
     this.query = query
   }
 
-  getLastIndexedLogsBlockNumber = async (shardID: ShardID): Promise<number> => {
-    const res = await this.query(
-      `select lastLogs${shardID}IndexedBlockNumber from indexer_state where id=0;`,
-      []
-    )
-
-    const lastIndexedBlock = +res[0][`lastlogs${shardID}indexedblocknumber`]
-    return lastIndexedBlock || 0
-  }
-
-  setLastIndexedLogsBlockNumber = async (shardId: ShardID, num: BlockNumber): Promise<number> => {
-    return this.query(
-      `update indexer_state set lastLogs${shardId}IndexedBlockNumber=$1 where id=0;`,
-      [num]
-    )
-  }
-
   addLog = async (shardID: ShardID, log: Log): Promise<any> => {
     return await this.query(
       `insert into logs${shardID}
