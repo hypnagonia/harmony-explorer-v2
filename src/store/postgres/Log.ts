@@ -40,22 +40,29 @@ export class PostgresStorageLog implements IStorageLog {
   }
 
   getLogsByTransactionHash = async (
-    shardId: ShardID,
+    shardID: ShardID,
     TransactionHash: string
   ): Promise<Log[] | null> => {
-    const res = await this.query(`select * from logs${shardId} where transactionHash=$1;`, [
+    const res = await this.query(`select * from logs where transaction_hash=$1 and shard=$2;`, [
       TransactionHash,
+      shardID,
     ])
 
     return res as Log[]
   }
-  getLogsByBlockNumber = async (shardId: ShardID, num: BlockNumber): Promise<Log[] | null> => {
-    const res = await this.query(`select * from logs${shardId} where blockNumber=$1;`, [num])
+  getLogsByBlockNumber = async (shardID: ShardID, num: BlockNumber): Promise<Log[] | null> => {
+    const res = await this.query(`select * from logs where block_number=$1 and shard=$2;`, [
+      num,
+      shardID,
+    ])
 
     return res as Log[]
   }
-  getLogsByBlockHash = async (shardId: ShardID, hash: BlockHash): Promise<Log[] | null> => {
-    const res = await this.query(`select * from logs${shardId} where blockHash=$1;`, [hash])
+  getLogsByBlockHash = async (shardID: ShardID, hash: BlockHash): Promise<Log[] | null> => {
+    const res = await this.query(`select * from logs where block_hash=$1 and shard=$2;`, [
+      hash,
+      shardID,
+    ])
 
     return res as Log[]
   }

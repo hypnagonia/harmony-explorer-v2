@@ -17,6 +17,7 @@ const mapNaming: Record<string, string> = {
   block_hash: 'blockHash',
   transaction_hash: 'transactionHash',
   log_index: 'logIndex',
+  shard: 'shardID',
 }
 
 const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((a, k) => {
