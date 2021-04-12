@@ -1,4 +1,3 @@
-import {config} from 'src/indexer/config'
 import * as RPCClient from 'src/indexer/rpc/client'
 import {urls, RPCUrls} from 'src/indexer/rpc/RPCUrls'
 import {ShardID, Block, BlockNumber} from 'src/types/blockchain'
@@ -17,12 +16,13 @@ export class BlockIndexer {
   readonly shardID: ShardID
   private currentHeight: number
   private l: LoggerModule
-  private batchCount = config.indexer.batchCount
+  private batchCount: number
 
-  constructor(shardID: ShardID) {
+  constructor(shardID: ShardID, batchCount: number = maxBatchCount, startHeight: number) {
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
-    this.currentHeight = config.indexer.initialBlockSyncingHeight
+    this.currentHeight = startHeight
+    this.batchCount = batchCount
     this.l.info('Created')
   }
 
