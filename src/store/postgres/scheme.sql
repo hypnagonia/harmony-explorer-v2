@@ -197,11 +197,11 @@ create index if not exists idx_erc721_asset_token_address on erc721_asset using 
 
 create table if not exists indexer_state
 (
-    lastLogs0IndexedBlockNumber   bigint   default (0),
-    lastBlocks0IndexedBlockNumber bigint   default (0),
-    lastBlocks1IndexedBlockNumber bigint   default (0),
-    lastBlocks2IndexedBlockNumber bigint   default (0),
-    lastBlocks3IndexedBlockNumber bigint   default (0),
+    logs_last_synced_block_number   bigint   default (0),
+    blocks_shard0_last_synced_block_number bigint   default (0),
+    blocks_shard1_last_synced_block_number bigint   default (0),
+    blocks_shard2_last_synced_block_number bigint   default (0),
+    blocks_shard3_last_synced_block_number bigint   default (0),
     id                            smallint default (0),
     unique (id)
 );
