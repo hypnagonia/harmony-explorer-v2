@@ -1,21 +1,22 @@
 import {WebSocketRPC} from './WebSocketRPC'
-import {Client} from 'rpc-websockets'
 import {RPCETHMethod, RPCHarmonyMethod, ShardID} from 'src/types/blockchain'
+import {config} from 'src/indexer/config'
 
-const poolSize = 1
-const pool = Array(poolSize)
-  .fill(0)
-  .map(() => new WebSocketRPC('wss://ws.s0.b.hmny.io'))
+const connections =
+  config.indexer.rpc.transport === 'ws'
+    ? config.indexer.rpc.urls.map((list, shardID) =>
+        list.map((url) => new WebSocketRPC(shardID as ShardID, url))
+      )
+    : []
 
-pool.forEach((ws) => ws.connect())
+connections.forEach((pool) => pool.forEach((c) => c.connect()))
 
-let i = 0
 export const WSTransport = (
   shardID: ShardID,
   method: RPCETHMethod | RPCHarmonyMethod,
   params: any[]
 ) => {
-  const ws = pool[i]
-  i = i >= poolSize - 1 ? 0 : i + 1
+  // todo robin round pool of ws connections, lazy init
+  const ws = connections[shardID][0]
   return ws.call(method, params)
 }

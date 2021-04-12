@@ -2,6 +2,7 @@ import {Client} from 'rpc-websockets'
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
 import {RPCUrls} from '../../RPCUrls'
+import {ShardID} from 'src/types/blockchain'
 
 const callTimeout = 10000
 const timeoutPromise = () => new Promise((_, reject) => setTimeout(reject, callTimeout))
@@ -12,8 +13,10 @@ export class WebSocketRPC {
   ws: Client | undefined
   l: LoggerModule
   open = false
+  shardID: ShardID
 
-  constructor(url: string) {
+  constructor(shardID: ShardID, url: string) {
+    this.shardID = shardID
     this.url = url
     this.l = logger(module, url)
     this.ws = new Client(this.url, {max_reconnects: 0})
@@ -40,7 +43,7 @@ export class WebSocketRPC {
     const catchPromise = (err: any) => {
       // this.l.debug('Call error', { err })
       // todo
-      RPCUrls.getURL(0).submitStatistic(0, true)
+      RPCUrls.getURL(this.shardID).submitStatistic(0, true)
       return retryPromise()
     }
 
@@ -49,20 +52,17 @@ export class WebSocketRPC {
 
   private onError = (err: any) => {
     this.open = false
-    RPCUrls.getURL(0).submitStatistic(0, true)
+    RPCUrls.getURL(this.shardID).submitStatistic(0, true)
     this.l.debug(`Error ${err.message || JSON.stringify(err)}`)
-    // this.ws!.close()
-    // return sleep().then(this.connect)
   }
 
   private onClose = () => {
-    this.l.debug('Closed')
+    this.l.warn('Closed')
     this.open = false
-    // return this.connect()
   }
 
   private onOpen = () => {
     this.open = true
-    this.l.debug(`Open`)
+    this.l.info(`Open`)
   }
 }

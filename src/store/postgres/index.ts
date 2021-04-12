@@ -35,7 +35,7 @@ export class PostgresStorage implements IStorage {
       database: c.database,
       password: c.password,
       port: c.port,
-      max: 90,
+      max: config.store.postgres.poolSize,
     })
   }
 
