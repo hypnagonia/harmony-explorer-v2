@@ -8,7 +8,7 @@ import {store} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 
 const approximateBlockMintingTime = 2000
-const maxBatchCount = 5000
+const maxBatchCount = 10000
 
 const range = (num: number) => Array(num).fill(0)
 

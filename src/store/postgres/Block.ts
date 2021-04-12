@@ -18,6 +18,10 @@ export class PostgresStorageBlock implements IStorageBlock {
   }
 
   addBlock = async (shardID: ShardID, block: Block) => {
+    // todo
+    // @ts-ignore
+    block.stakingTransactions = []
+    block.transactions = []
     const {query, params} = generateQuery({...block, shardID})
 
     return await this.query(

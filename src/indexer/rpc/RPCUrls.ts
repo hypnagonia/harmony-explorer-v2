@@ -59,6 +59,6 @@ export class RPCUrls {
 }
 
 // @ts-ignore
-export const urls = config.indexer.rpcUrls.map((shardUrls) =>
+export const urls = config.indexer.rpc.urls.map((shardUrls) =>
   shardUrls.map((url) => new RPCUrls(url))
 )

@@ -38,12 +38,15 @@ export const config = {
     // set to the height where smart contracts were introduced on the chain
     initialLogsSyncingHeight: 3500000,
     batchCount: +(process.env.INDEXER_BATCHED_COUNT || 100),
-    rpcUrls: [
-      getCommaSeparatedList(process.env.INDEXER_RPC_SHARD0),
-      getCommaSeparatedList(process.env.INDEXER_RPC_SHARD1),
-      getCommaSeparatedList(process.env.INDEXER_RPC_SHARD2),
-      getCommaSeparatedList(process.env.INDEXER_RPC_SHARD3),
-    ],
+    rpc: {
+      transport: 'ws',
+      urls: [
+        getCommaSeparatedList(process.env.INDEXER_RPC_SHARD0),
+        getCommaSeparatedList(process.env.INDEXER_RPC_SHARD1),
+        getCommaSeparatedList(process.env.INDEXER_RPC_SHARD2),
+        getCommaSeparatedList(process.env.INDEXER_RPC_SHARD3),
+      ],
+    },
   },
   store: {
     postgres: {
