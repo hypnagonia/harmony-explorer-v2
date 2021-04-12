@@ -4,7 +4,7 @@ create table if not exists blocks
 (
     shard                smallint not null,
     number               bigint   not null,
-    hash                 char(66) not null,
+    hash                 char(66) unique not null,
     miner                char(42),
     extra_data           text,
     gas_limit            bigint,
@@ -57,8 +57,8 @@ create index if not exists idx_logs_block_number on logs (block_number);
 create table if not exists transactions
 (
     shard             smallint                    not null,
-    hash              char(66) unique             not null,
-    hash_harmony      char(66) unique primary key not null,
+    hash              char(66) unique primary key not null,
+    hash_harmony      char(66) unique             not null,
     value             numeric,
     block_hash        char(66)                    not null,
     block_number      bigint                      not null,
