@@ -28,10 +28,10 @@ create table if not exists blocks
     primary key (shard, number)
 );
 
-create index if not exists idx_blocks_shard0_number on blocks(number) where shard = 0;
-create index if not exists idx_blocks_shard1_number on blocks(number) where shard = 1;
-create index if not exists idx_blocks_shard2_number on blocks(number) where shard = 2;
-create index if not exists idx_blocks_shard3_number on blocks(number) where shard = 3;
+create index if not exists idx_blocks_shard0_number on blocks (number) where shard = 0;
+create index if not exists idx_blocks_shard1_number on blocks (number) where shard = 1;
+create index if not exists idx_blocks_shard2_number on blocks (number) where shard = 2;
+create index if not exists idx_blocks_shard3_number on blocks (number) where shard = 3;
 
 create index if not exists idx_blocks_hash on blocks using hash (hash);
 
@@ -57,8 +57,8 @@ create index if not exists idx_logs_block_number on logs (block_number);
 create table if not exists transactions
 (
     shard             smallint                    not null,
-    hash              char(66) unique primary key not null,
-    hash_harmony      char(66) unique             not null,
+    hash              char(66) unique             not null,
+    hash_harmony      char(66) unique primary key not null,
     value             numeric,
     block_hash        char(66)                    not null,
     block_number      bigint                      not null,
@@ -196,11 +196,11 @@ create index if not exists idx_erc721_asset_token_address on erc721_asset using 
 
 create table if not exists indexer_state
 (
-    logs_last_synced_block_number   bigint   default (0),
+    logs_last_synced_block_number          bigint   default (0),
     blocks_shard0_last_synced_block_number bigint   default (0),
     blocks_shard1_last_synced_block_number bigint   default (0),
     blocks_shard2_last_synced_block_number bigint   default (0),
     blocks_shard3_last_synced_block_number bigint   default (0),
-    id                            smallint default (0),
+    id                                     smallint default (0),
     unique (id)
 );
