@@ -81,7 +81,9 @@ export class LogIndexer {
       )
 
       this.l.info(
-        `Processed [${startBlock},${syncedToBlock}] ${logsLength} log entries. Done in ${batchTime()}. Failed requests ${failedCount}`
+        `Processed [${startBlock},${syncedToBlock}] ${
+          syncedToBlock - startBlock
+        } blocks. ${logsLength} log entries. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
 
       await store.indexer.setLastIndexedLogsBlockNumber(shardID, syncedToBlock)

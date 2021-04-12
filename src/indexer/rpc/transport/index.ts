@@ -1,5 +1,10 @@
 import {HTTPTransport} from './http/fetch'
 import {WSTransport} from './ws'
 import {config} from 'src/indexer/config'
+import {logger} from 'src/logger'
 
-export const transport = config.indexer.rpc.transport === 'http' ? HTTPTransport : WSTransport
+const l = logger(module)
+
+const isHTTP = config.indexer.rpc.transport === 'http'
+l.info(`RPC transport: ${isHTTP ? 'HTTP' : 'Websocket'}`)
+export const transport = isHTTP ? HTTPTransport : WSTransport

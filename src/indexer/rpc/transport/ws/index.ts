@@ -22,7 +22,7 @@ export const WSTransport = (
   method: RPCETHMethod | RPCHarmonyMethod,
   params: any[]
 ) => {
-  // todo robin round pool of ws connections, lazy init
+  // todo robin round pool of ws connections
   const c = connections[shardID][0]
 
   if (c.getConnection() === null) {
