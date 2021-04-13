@@ -25,6 +25,7 @@ export class PostgresStorage implements IStorage {
   isStarted = false
   isStarting = false
   l: LoggerModule
+  options: PostgresStorageOptions
 
   constructor(options: PostgresStorageOptions) {
     this.block = new PostgresStorageBlock(this.query)
@@ -32,6 +33,7 @@ export class PostgresStorage implements IStorage {
     this.transaction = new PostgresStorageTransaction(this.query)
     this.indexer = new PostgresStorageIndexer(this.query)
     this.l = logger(module, `shard${options.shardID}`)
+    this.options = options
 
     this.db = new Pool({
       user: options.user,
@@ -44,6 +46,9 @@ export class PostgresStorage implements IStorage {
   }
 
   async start() {
+    const p = this.options
+    this.l.info(`postgres://${p.user}@${p.host}:${p.port}/${p.database}`)
+
     this.isStarting = true
     this.l.info('Starting...')
     await this.migrate()
