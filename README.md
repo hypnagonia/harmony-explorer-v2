@@ -1,10 +1,8 @@
 # harmony-explorer-v2
 
-## Run
+## Run 
 
-```
 Copy `mainnet.env.example` to `.env` and define vars
-```
 
 ```
 yarn
