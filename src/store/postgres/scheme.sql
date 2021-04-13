@@ -2,7 +2,6 @@ create schema if not exists public;
 
 create table if not exists blocks
 (
-    shard                smallint        not null,
     number               bigint          not null,
     hash                 char(66) unique not null,
     miner                char(42),
@@ -25,19 +24,14 @@ create table if not exists blocks
     uncles               char(66)[],
     epoch                bigint,
     view_id              text,
-    primary key (shard, number)
+    primary key (number)
 );
 
-create index if not exists idx_blocks_shard0_number on blocks (number) where shard = 0;
-create index if not exists idx_blocks_shard1_number on blocks (number) where shard = 1;
-create index if not exists idx_blocks_shard2_number on blocks (number) where shard = 2;
-create index if not exists idx_blocks_shard3_number on blocks (number) where shard = 3;
-
+create index if not exists idx_blocks_number on blocks (number);
 create index if not exists idx_blocks_hash on blocks using hash (hash);
 
 create table if not exists logs
 (
-    shard             smallint not null,
     address           char(42) not null,
     topics            char(66)[],
     data              text,
