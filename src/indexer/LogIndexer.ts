@@ -5,8 +5,9 @@ import {ShardID, Log} from 'src/types/blockchain'
 
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {store} from 'src/store'
+import {getStore} from 'src/store'
 import {logTime} from 'src/utils/logTime'
+import {PostgresStorage} from 'src/store/postgres'
 
 const approximateBlockMintingTime = 2000
 const blockRange = 10
@@ -19,6 +20,7 @@ export class LogIndexer {
   private l: LoggerModule
   // todo config
   private batchCount = 10
+  readonly store: PostgresStorage
 
   constructor(shardID: ShardID) {
     if (shardID !== 0) {
@@ -27,6 +29,7 @@ export class LogIndexer {
 
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
+    this.store = getStore(shardID)
     this.l.info('Created')
   }
 
@@ -43,6 +46,7 @@ export class LogIndexer {
   loop = async () => {
     try {
       const shardID = this.shardID
+      const store = this.store
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
       const latestSyncedBlock = await store.indexer.getLastIndexedLogsBlockNumber(shardID)

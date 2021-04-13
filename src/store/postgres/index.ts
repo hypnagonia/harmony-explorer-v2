@@ -5,14 +5,16 @@ import {scheme} from './scheme'
 import {IStorage} from 'src/store/interface'
 import {Block, BlockHash, BlockNumber, Log, ShardID} from 'src/types/blockchain'
 import {logTime} from 'src/utils/logTime'
-import {Query} from './types'
+import {Query, PostgresStorageOptions} from './types'
 import {PostgresStorageBlock} from './Block'
 import {PostgresStorageLog} from './Log'
 import {PostgresStorageTransaction} from './Transaction'
 import {PostgresStorageIndexer} from 'src/store/postgres/Indexer'
+import LoggerModule from 'zerg/dist/LoggerModule'
 
-const l = logger(module)
 const defaultRetries = 3
+
+const sleep = () => new Promise((r) => setTimeout(r, 1000))
 
 export class PostgresStorage implements IStorage {
   db: Pool
@@ -20,30 +22,34 @@ export class PostgresStorage implements IStorage {
   log: PostgresStorageLog
   transaction: PostgresStorageTransaction
   indexer: PostgresStorageIndexer
+  isStarted = false
+  isStarting = false
+  l: LoggerModule
 
-  constructor() {
+  constructor(options: PostgresStorageOptions) {
     this.block = new PostgresStorageBlock(this.query)
     this.log = new PostgresStorageLog(this.query)
     this.transaction = new PostgresStorageTransaction(this.query)
     this.indexer = new PostgresStorageIndexer(this.query)
-
-    const c = config.store.postgres
+    this.l = logger(module, `shard${options.shardID}`)
 
     this.db = new Pool({
-      user: c.user,
-      host: c.host,
-      database: c.database,
-      password: c.password,
-      port: c.port,
-      max: config.store.postgres.poolSize,
+      user: options.user,
+      host: options.host,
+      database: options.database,
+      password: options.password,
+      port: options.port,
+      max: options.poolSize,
     })
   }
 
   async start() {
-    l.info('Starting...')
+    this.isStarting = true
+    this.l.info('Starting...')
     await this.migrate()
-
-    l.info('Done')
+    this.isStarted = true
+    this.isStarting = false
+    this.l.info('Done')
   }
 
   async migrate() {
@@ -51,6 +57,15 @@ export class PostgresStorage implements IStorage {
   }
 
   query: Query = async (sql: string, params: any[] = [], retries = defaultRetries) => {
+    // lazy start
+    if (!this.isStarted) {
+      return this.start().then(() => this.query(sql, params, retries))
+    }
+
+    if (this.isStarting) {
+      return sleep().then(() => this.query(sql, params, retries))
+    }
+
     try {
       return this.queryWithoutRetry(sql, params)
     } catch (e) {
@@ -59,7 +74,7 @@ export class PostgresStorage implements IStorage {
         await new Promise((r) => setTimeout(r, 1000))
         return this.query(sql, params, retriesLeft)
       }
-      l.warn(`Query failed in ${defaultRetries} attempts`, {sql, params})
+      this.l.warn(`Query failed in ${defaultRetries} attempts`, {sql, params})
       throw new Error(e)
     }
   }
@@ -80,7 +95,7 @@ export class PostgresStorage implements IStorage {
 
       return rows
     } catch (e) {
-      l.debug(e.message || e, {sql, params})
+      this.l.debug(e.message || e, {sql, params})
       throw new Error(e)
     }
   }

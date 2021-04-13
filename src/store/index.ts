@@ -1,8 +1,16 @@
 import {PostgresStorage} from 'src/store/postgres'
 import {logger} from 'src/logger'
 import {config} from 'src/indexer/config'
+import {ShardID} from 'src/types/blockchain'
+import {PostgresStorageOptions} from './postgres/types'
 
 const l = logger(module)
-const p = config.store.postgres
-l.info(`Store postgres://${p.user}@${p.host}:${p.port}/${p.database}`)
-export const store = new PostgresStorage()
+const shards: ShardID[] = [0, 1, 2, 3]
+
+const stores = shards.map((shardID) => {
+  const p = config.store.postgres[shardID]
+  l.info(`Store postgres://${p.user}@${p.host}:${p.port}/${p.database}`)
+  return new PostgresStorage({...p, shardID} as PostgresStorageOptions)
+})
+
+export const getStore = (shardID: ShardID) => stores[shardID]

@@ -2,7 +2,7 @@ import {logger} from './logger'
 import {BlockIndexer} from './indexer/BlockIndexer'
 import {LogIndexer} from './indexer/LogIndexer'
 import {ShardID} from 'src/types/blockchain'
-import {store} from 'src/store'
+
 import {config} from 'src/indexer/config'
 import {getBlockByNumber} from 'src/indexer/rpc/client'
 
@@ -13,7 +13,6 @@ const run = async () => {
   try {
     if (config.indexer.isEnabled) {
       l.info('Indexer starting...')
-      await store.start()
 
       const shards = [0] as ShardID[]
       const blockIndexers = shards.map(

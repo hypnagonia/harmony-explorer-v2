@@ -8,10 +8,6 @@ const toBool = (value: string) => !!+value
 
 const required: Record<string, string> = {
   INDEXER_BATCH_COUNT: 'number',
-  POSTGRES_HOST: 'string',
-  POSTGRES_USER: 'string',
-  POSTGRES_DB: 'string',
-  POSTGRES_PORT: 'number',
 }
 
 if (toBool(process.env.INDEXER_IS_ENABLED || '0')) {
@@ -49,14 +45,40 @@ export const config = {
     },
   },
   store: {
-    postgres: {
-      user: process.env.POSTGRES_USER,
-      host: process.env.POSTGRES_HOST,
-      database: process.env.POSTGRES_DB,
-      password: process.env.POSTGRES_PASSWORD,
-      port: +(process.env.POSTGRES_PORT || 5432),
-      poolSize: +(process.env.POSTGRES_POOL_SIZE || 90),
-    },
+    postgres: [
+      {
+        user: process.env.SHARD0_POSTGRES_USER,
+        host: process.env.SHARD0_POSTGRES_HOST,
+        database: process.env.SHARD0_POSTGRES_DB,
+        password: process.env.SHARD0_POSTGRES_PASSWORD,
+        port: +(process.env.SHARD0_POSTGRES_PORT || 5432),
+        poolSize: +(process.env.SHARD0_POSTGRES_POOL_SIZE || 90),
+      },
+      {
+        user: process.env.SHARD1_POSTGRES_USER,
+        host: process.env.SHARD1_POSTGRES_HOST,
+        database: process.env.SHARD1_POSTGRES_DB,
+        password: process.env.SHARD1_POSTGRES_PASSWORD,
+        port: +(process.env.SHARD1_POSTGRES_PORT || 5432),
+        poolSize: +(process.env.SHARD1_POSTGRES_POOL_SIZE || 90),
+      },
+      {
+        user: process.env.SHARD2_POSTGRES_USER,
+        host: process.env.SHARD2_POSTGRES_HOST,
+        database: process.env.SHARD2_POSTGRES_DB,
+        password: process.env.SHARD2_POSTGRES_PASSWORD,
+        port: +(process.env.SHARD2_POSTGRES_PORT || 5432),
+        poolSize: +(process.env.SHARD2_POSTGRES_POOL_SIZE || 90),
+      },
+      {
+        user: process.env.SHARD3_POSTGRES_USER,
+        host: process.env.SHARD3_POSTGRES_HOST,
+        database: process.env.SHARD3_POSTGRES_DB,
+        password: process.env.SHARD3_POSTGRES_PASSWORD,
+        port: +(process.env.SHARD3_POSTGRES_PORT || 5432),
+        poolSize: +(process.env.SHARD3_POSTGRES_POOL_SIZE || 90),
+      },
+    ],
   },
   logger: {
     levels: {

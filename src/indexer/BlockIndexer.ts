@@ -4,8 +4,9 @@ import {ShardID, Block, BlockNumber} from 'src/types/blockchain'
 
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {store} from 'src/store'
+import {getStore} from 'src/store'
 import {logTime} from 'src/utils/logTime'
+import {PostgresStorage} from 'src/store/postgres'
 
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 10000
@@ -17,6 +18,7 @@ export class BlockIndexer {
   private currentHeight: number
   private l: LoggerModule
   private batchCount: number
+  readonly store: PostgresStorage
 
   constructor(shardID: ShardID, batchCount: number = maxBatchCount, startHeight: number = 0) {
     this.l = logger(module, `shard${shardID}`)
@@ -24,6 +26,7 @@ export class BlockIndexer {
     this.currentHeight = startHeight
     this.batchCount = batchCount
     this.l.info('Created')
+    this.store = getStore(shardID)
   }
 
   increaseBatchCount = () => {
@@ -39,6 +42,7 @@ export class BlockIndexer {
   loop = async () => {
     try {
       const shardID = this.shardID
+      const store = this.store
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
       const latestSyncedBlock = await store.indexer.getLastIndexedBlockNumber(shardID)
