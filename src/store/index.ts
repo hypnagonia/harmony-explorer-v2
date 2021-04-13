@@ -9,6 +9,6 @@ const shards: ShardID[] = [0, 1, 2, 3]
 
 export const stores = shards.map((shardID) => {
   const p = config.store.postgres[shardID]
-  l.info(`${shardID}shardID postgres://${p.user}@${p.host}:${p.port}/${p.database}`)
+  l.info(`Shard${shardID} postgres://${p.user}@${p.host}:${p.port}/${p.database}`)
   return new PostgresStorage({...p, shardID} as PostgresStorageOptions)
 })
