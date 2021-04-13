@@ -32,13 +32,13 @@ create index if not exists idx_blocks_hash on blocks using hash (hash);
 
 create table if not exists logs
 (
-    address           char(42) not null,
+    address           char(42)                          not null,
     topics            char(66)[],
     data              text,
-    block_number      bigint   not null,
-    transaction_hash  char(66) not null,
+    block_number      bigint references blocks (number) not null,
+    transaction_hash  char(66)                          not null,
     transaction_index smallint,
-    block_hash        char(66) not null,
+    block_hash        char(66) references blocks (hash) not null,
     log_index         smallint,
     removed           boolean
 );
@@ -50,12 +50,12 @@ create index if not exists idx_logs_block_number on logs (block_number);
 /*todo status*/
 create table if not exists transactions
 (
-    shard             smallint                    not null,
-    hash              char(66) unique primary key not null,
-    hash_harmony      char(66) unique             not null,
+    shard             smallint                          not null,
+    hash              char(66) unique primary key       not null,
+    hash_harmony      char(66) unique                   not null,
     value             numeric,
-    block_hash        char(66)                    not null,
-    block_number      bigint                      not null,
+    block_hash        char(66) references blocks (hash) not null,
+    block_number      bigint references blocks (number) not null,
     timestamp         timestamp,
     "from"            char(42),
     "to"              char(42),
@@ -153,8 +153,8 @@ create index if not exists idx_erc20_address on erc20 using hash (address);
 
 create table if not exists erc20_balance
 (
-    address                  char(42) not null,
-    token_address            char(42) not null,
+    address                  char(42)                            not null,
+    token_address            char(42) references erc20 (address) not null,
     balance                  numeric,
     last_update_block_number bigint
 );
@@ -177,8 +177,8 @@ create index if not exists idx_erc721_address on erc721 using hash (address);
 
 create table if not exists erc721_asset
 (
-    owner_address            char(42) not null,
-    token_address            char(42) not null,
+    owner_address            char(42)                             not null,
+    token_address            char(42) references erc721 (address) not null,
     token_id                 text,
     meta                     jsonb,
     last_update_block_number bigint
