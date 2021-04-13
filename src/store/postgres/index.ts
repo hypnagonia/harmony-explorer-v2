@@ -47,10 +47,9 @@ export class PostgresStorage implements IStorage {
 
   async start() {
     const p = this.options
-    this.l.info(`postgres://${p.user}@${p.host}:${p.port}/${p.database}`)
+    this.l.info(`postgres://${p.user}@${p.host}:${p.port}/${p.database} starting...`)
 
     this.isStarting = true
-    this.l.info('Starting...')
     await this.migrate()
     this.isStarted = true
     this.isStarting = false
