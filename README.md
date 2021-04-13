@@ -1,5 +1,16 @@
 # harmony-explorer-v2
 
+## Run
+
+```
+Copy `mainnet.env.example` to `.env` and define vars
+```
+
+```
+yarn
+yarn start
+```
+
 ## TODO
 
 ### Indexer

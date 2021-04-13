@@ -39,7 +39,7 @@ export const config = {
     initialLogsSyncingHeight: 3500000,
     batchCount: +(process.env.INDEXER_BATCHED_COUNT || 100),
     rpc: {
-      transport: 'ws',
+      transport: process.env.INDEXER_RPC_TRANSPORT || 'ws',
       urls: [
         getCommaSeparatedList(process.env.INDEXER_RPC_SHARD0),
         getCommaSeparatedList(process.env.INDEXER_RPC_SHARD1),

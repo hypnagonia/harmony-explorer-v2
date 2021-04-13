@@ -35,7 +35,7 @@ export const getTransactionByHash = (
   shardID: ShardID,
   hash: TransactionHash
 ): Promise<RPCTransactionHarmony> => {
-  return transport(shardID, 'eth_getTransactionByHash', [hash])
+  return transport(shardID, 'hmy_getTransactionByHash', [hash])
 }
 
 export const getLogs = (

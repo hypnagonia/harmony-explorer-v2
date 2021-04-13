@@ -3,8 +3,6 @@ import {logger} from 'src/logger'
 import {config} from 'src/indexer/config'
 
 const l = logger(module)
-
-l.info(
-  `Store postgres://${config.store.postgres.user}@${config.store.postgres.host}:${config.store.postgres.port}/${config.store.postgres.database}`
-)
+const p = config.store.postgres
+l.info(`Store postgres://${p.user}@${p.host}:${p.port}/${p.database}`)
 export const store = new PostgresStorage()
