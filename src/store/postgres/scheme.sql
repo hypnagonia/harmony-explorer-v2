@@ -139,10 +139,10 @@ create index if not exists idx_contracts_address on contracts using hash (addres
 
 create table if not exists erc20
 (
-    address                  char(42) unique not null,
-    decimals                 smallint        not null,
-    symbol                   text            not null,
-    name                     text            not null,
+    address                  char(42) unique references contracts (address) not null,
+    decimals                 smallint                                       not null,
+    symbol                   text                                           not null,
+    name                     text                                           not null,
     total_supply             numeric default (0),
     holders                  numeric default (0),
     transaction_count        bigint  default (0),
@@ -153,8 +153,8 @@ create index if not exists idx_erc20_address on erc20 using hash (address);
 
 create table if not exists erc20_balance
 (
-    address                  char(42)                            not null,
-    token_address            char(42) references erc20 (address) not null,
+    address                  char(42) references contracts (address) not null,
+    token_address            char(42) references erc20 (address)     not null,
     balance                  numeric,
     last_update_block_number bigint
 );
