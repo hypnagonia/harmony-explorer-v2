@@ -5,7 +5,7 @@ import {ShardID, Log} from 'src/types/blockchain'
 
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {getStore} from 'src/store'
+import {stores} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 import {PostgresStorage} from 'src/store/postgres'
 
@@ -29,7 +29,7 @@ export class LogIndexer {
 
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
-    this.store = getStore(shardID)
+    this.store = stores[shardID]
     this.l.info('Created')
   }
 

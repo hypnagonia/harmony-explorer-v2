@@ -4,7 +4,7 @@ import {ShardID, Block, BlockNumber} from 'src/types/blockchain'
 
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {getStore} from 'src/store'
+import {stores} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 import {PostgresStorage} from 'src/store/postgres'
 
@@ -26,7 +26,7 @@ export class BlockIndexer {
     this.currentHeight = startHeight
     this.batchCount = batchCount
     this.l.info('Created')
-    this.store = getStore(shardID)
+    this.store = stores[shardID]
   }
 
   increaseBatchCount = () => {
