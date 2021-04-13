@@ -14,7 +14,6 @@ export class PostgresStorageLog implements IStorageLog {
     return await this.query(
       `insert into logs
        (
-        shard,
         address,
         topics,
         data,
@@ -27,7 +26,6 @@ export class PostgresStorageLog implements IStorageLog {
        ) values
        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);`,
       [
-        shardID,
         log.address,
         log.topics,
         log.data,
@@ -45,26 +43,17 @@ export class PostgresStorageLog implements IStorageLog {
     shardID: ShardID,
     TransactionHash: string
   ): Promise<Log[] | null> => {
-    const res = await this.query(`select * from logs where transaction_hash=$1 and shard=$2;`, [
-      TransactionHash,
-      shardID,
-    ])
+    const res = await this.query(`select * from logs where transaction_hash=$1;`, [TransactionHash])
 
     return res as Log[]
   }
   getLogsByBlockNumber = async (shardID: ShardID, num: BlockNumber): Promise<Log[] | null> => {
-    const res = await this.query(`select * from logs where block_number=$1 and shard=$2;`, [
-      num,
-      shardID,
-    ])
+    const res = await this.query(`select * from logs where block_number=$1;`, [num])
 
     return res as Log[]
   }
   getLogsByBlockHash = async (shardID: ShardID, hash: BlockHash): Promise<Log[] | null> => {
-    const res = await this.query(`select * from logs where block_hash=$1 and shard=$2;`, [
-      hash,
-      shardID,
-    ])
+    const res = await this.query(`select * from logs where block_hash=$1;`, [hash])
 
     return res as Log[]
   }

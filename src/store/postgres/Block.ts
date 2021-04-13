@@ -22,28 +22,19 @@ export class PostgresStorageBlock implements IStorageBlock {
     // @ts-ignore
     block.stakingTransactions = []
     block.transactions = []
-    const {query, params} = generateQuery({...block, shardID})
+    const {query, params} = generateQuery(block)
 
-    return await this.query(
-      `insert into blocks ${query} on conflict (shard, number) do nothing;`,
-      params
-    )
+    return await this.query(`insert into blocks ${query} on conflict (number) do nothing;`, params)
   }
 
   getBlockByNumber = async (shardID: ShardID, num: BlockNumber): Promise<Block | null> => {
-    const res = await this.query(`select * from blocks where number=$1 and shard=${shardID};`, [
-      num,
-      shardID,
-    ])
+    const res = await this.query(`select * from blocks where number=$1;`, [num])
 
     return res[0] as Block
   }
 
   getBlockByHash = async (shardID: ShardID, hash: BlockHash): Promise<Block | null> => {
-    const res = await this.query(`select * from blocks where hash=$1 and shard=${shardID};`, [
-      hash,
-      shardID,
-    ])
+    const res = await this.query(`select * from blocks where hash=$1;`, [hash])
 
     return res[0] as Block
   }
