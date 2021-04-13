@@ -7,7 +7,7 @@ dotenv.config()
 const toBool = (value: string) => !!+value
 
 const required: Record<string, string> = {
-  INDEXER_BATCHED_COUNT: 'number',
+  INDEXER_BATCH_COUNT: 'number',
   POSTGRES_HOST: 'string',
   POSTGRES_USER: 'string',
   POSTGRES_DB: 'string',
@@ -37,7 +37,7 @@ export const config = {
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
     // set to the height where smart contracts were introduced on the chain
     initialLogsSyncingHeight: 3500000,
-    batchCount: +(process.env.INDEXER_BATCHED_COUNT || 100),
+    batchCount: +(process.env.INDEXER_BATCH_COUNT || 100),
     rpc: {
       transport: process.env.INDEXER_RPC_TRANSPORT || 'ws',
       urls: [
