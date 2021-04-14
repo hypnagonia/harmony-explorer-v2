@@ -1,22 +1,19 @@
-import {Response, Request, Router} from 'express'
+import {Response, Request, Router, NextFunction} from 'express'
 import {stores} from 'src/store'
+import {validate, isShard, isBlockNumber} from 'src/api/server/validators'
+import {ShardID} from 'src/types/blockchain'
 
 export const blockRouter = Router({mergeParams: true})
 
-blockRouter.get('/number/:number', getBlockByNumber)
+const v = validate([isBlockNumber, isShard])
+blockRouter.get('/number/:blockNumber', v, getBlockByNumber)
 
-export async function getBlockByNumber(req: Request, res: Response) {
+export async function getBlockByNumber(req: Request, res: Response, next: NextFunction) {
   try {
-    const {number, shardID} = req.params
-
-    if (!number) {
-      res.status(500)
-      return
-    }
-
-    const block = await stores[0].block.getBlockByNumber(0, +number)
-    res.json(block)
+    const {blockNumber, shardID} = req.params
+    const block = await stores[0].block.getBlockByNumber(+shardID as ShardID, +blockNumber)
+    next(block)
   } catch (err) {
-    res.status(500).json({status: 'ERROR'})
+    next(err)
   }
 }

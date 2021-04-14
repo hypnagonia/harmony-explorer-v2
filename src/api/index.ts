@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import {logger} from 'src/logger'
 import {blockRouter} from 'src/api/server/routes/block'
+import {transport} from 'src/api/server/transport'
 
 export const api = async () => {
   const l = logger(module)
@@ -15,7 +16,8 @@ export const api = async () => {
 
   const mainRouter = Router({mergeParams: true})
   mainRouter.use('/block', blockRouter)
-  api.use('/shard/:shardID', mainRouter)
+  // @ts-ignore
+  api.use('/shard/:shardID', mainRouter, transport)
 
   let server: Server
 
