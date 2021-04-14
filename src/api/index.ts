@@ -1,4 +1,4 @@
-import express, {Router} from 'express'
+import express, {NextFunction, Router} from 'express'
 import {config} from 'src/config'
 import http, {Server} from 'http'
 import bodyParser from 'body-parser'
@@ -16,7 +16,6 @@ export const api = async () => {
 
   const mainRouter = Router({mergeParams: true})
   mainRouter.use('/block', blockRouter)
-  // @ts-ignore
   api.use('/shard/:shardID', mainRouter, transport)
 
   let server: Server
