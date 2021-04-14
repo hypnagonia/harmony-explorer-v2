@@ -1,5 +1,5 @@
 import {PostgresStorage} from 'src/store/postgres'
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 import {ShardID} from 'src/types/blockchain'
 import {PostgresStorageOptions} from './postgres/types'
 

@@ -5,8 +5,6 @@ import {generateQuery} from './queryMapper'
 
 import {Query} from 'src/store/postgres/types'
 
-const l = logger(module)
-
 export class PostgresStorageBlock implements IStorageBlock {
   query: Query
   constructor(query: Query) {

@@ -1,6 +1,6 @@
 import {HTTPTransport} from './http/fetch'
 import {WSTransport} from './ws'
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 import {logger} from 'src/logger'
 
 const l = logger(module)

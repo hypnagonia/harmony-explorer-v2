@@ -1,5 +1,5 @@
 import {Pool} from 'pg'
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 import {logger} from 'src/logger'
 import {scheme} from './scheme'
 import {IStorage} from 'src/store/interface'

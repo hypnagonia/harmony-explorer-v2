@@ -28,6 +28,10 @@ const getCommaSeparatedList = (list: string | undefined): string[] =>
     .split(',')
 
 export const config = {
+  api: {
+    isEnabled: true,
+    port: 3000,
+  },
   indexer: {
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),

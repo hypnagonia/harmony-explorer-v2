@@ -35,6 +35,7 @@
     "indent": "off",
     "object-curly-spacing": "off",
     "max-len": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "new-cap": "off"
   }
 }

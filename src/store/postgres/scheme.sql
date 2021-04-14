@@ -73,6 +73,8 @@ create index if not exists idx_transactions_hash on transactions using hash (has
 create index if not exists idx_transactions_block_hash on transactions using hash (block_hash);
 create index if not exists idx_transactions_block_number on transactions (block_number);
 
+/*todo staking transactions*/
+
 do
 $$
     begin
@@ -133,6 +135,7 @@ create table if not exists contracts
     transaction_hash char(66) references transactions (hash),
     transaction_type transaction_type,
     ipfs_hash        char(64),
+    solidity_version     char(6),
     meta             jsonb
 );
 create index if not exists idx_contracts_address on contracts using hash (address);
@@ -189,11 +192,8 @@ create index if not exists idx_erc721_asset_token_address on erc721_asset using 
 
 create table if not exists indexer_state
 (
-    logs_last_synced_block_number          bigint   default (0),
-    blocks_shard0_last_synced_block_number bigint   default (0),
-    blocks_shard1_last_synced_block_number bigint   default (0),
-    blocks_shard2_last_synced_block_number bigint   default (0),
-    blocks_shard3_last_synced_block_number bigint   default (0),
-    id                                     smallint default (0),
+    logs_last_synced_block_number   bigint   default (0),
+    blocks_last_synced_block_number bigint   default (0),
+    id                              smallint default (0),
     unique (id)
 );

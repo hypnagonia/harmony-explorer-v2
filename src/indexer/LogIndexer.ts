@@ -1,4 +1,4 @@
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 import * as RPCClient from 'src/indexer/rpc/client'
 import {urls, RPCUrls} from 'src/indexer/rpc/RPCUrls'
 import {ShardID, Log} from 'src/types/blockchain'

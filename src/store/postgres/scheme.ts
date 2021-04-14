@@ -1,4 +1,4 @@
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 import fs from 'fs'
 import path from 'path'
 const contractStartBlock = config.indexer.initialLogsSyncingHeight

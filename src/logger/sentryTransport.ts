@@ -2,7 +2,7 @@ import zerg from 'zerg'
 import {TLogMessage} from 'zerg/dist/types'
 import * as Sentry from '@sentry/node'
 import {getExtendedData} from './utils'
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 
 const SENTRY_LEVEL_MAP = {
   debug: Sentry.Severity.Debug,

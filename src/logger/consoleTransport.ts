@@ -2,7 +2,7 @@ import zerg from 'zerg'
 import {TLogMessage} from 'zerg/dist/types'
 import {getExtendedData} from './utils'
 import {consoleNodeColorful} from 'zerg/dist/transports'
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 
 function handler(logMessage: TLogMessage) {
   const message = logMessage.message

@@ -4,8 +4,6 @@ import {Block, BlockHash, BlockNumber, ShardID} from 'src/types/blockchain'
 
 import {Query} from 'src/store/postgres/types'
 
-const l = logger(module)
-
 export class PostgresStorageTransaction implements IStorageTransaction {
   query: Query
   constructor(query: Query) {

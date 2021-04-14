@@ -1,4 +1,4 @@
-import {config} from 'src/indexer/config'
+import {config} from 'src/config'
 import {ShardID} from 'src/types/blockchain'
 
 // todo drop stats
@@ -30,7 +30,7 @@ export class RPCUrls {
     }
   }
 
-  // naive way to elect the best rpc url
+  // naive way to select the best rpc url
   static getURL = (shardID: ShardID) => {
     const shardUrls = urls[shardID]
 

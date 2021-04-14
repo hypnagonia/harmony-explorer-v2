@@ -2,8 +2,8 @@ import {logger} from './logger'
 import {BlockIndexer} from './indexer/BlockIndexer'
 import {LogIndexer} from './indexer/LogIndexer'
 import {ShardID} from 'src/types/blockchain'
-
-import {config} from 'src/indexer/config'
+import {api} from 'src/api'
+import {config} from 'src/config'
 import {getBlockByNumber} from 'src/indexer/rpc/client'
 
 const l = logger(module)
@@ -11,6 +11,10 @@ const l = logger(module)
 // todo checks on start. shard chainId
 const run = async () => {
   try {
+    if (config.api.isEnabled) {
+      await api()
+    }
+
     if (config.indexer.isEnabled) {
       l.info('Indexer starting...')
 
