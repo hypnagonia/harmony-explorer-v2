@@ -26,7 +26,9 @@ export const isBlockNumber = checkQuery('blockNumber').isInt({min: 0})
 const isError = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({errors: errors.array()})
+    res.status(400)
+    next(errors.array())
+    return
   }
   next()
 }

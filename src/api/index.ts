@@ -1,4 +1,4 @@
-import express, {NextFunction, Router} from 'express'
+import express, {Router} from 'express'
 import {config} from 'src/config'
 import http, {Server} from 'http'
 import bodyParser from 'body-parser'

@@ -6,12 +6,15 @@ import {catchAsync} from 'src/api/server/utils'
 
 export const blockRouter = Router({mergeParams: true})
 
-const v = validate([isBlockNumber, isShard])
-
-blockRouter.get('/number/:blockNumber', v, catchAsync(getBlockByNumber))
+blockRouter.get(
+  '/number/:blockNumber',
+  validate([isBlockNumber, isShard]),
+  catchAsync(getBlockByNumber)
+)
 
 export async function getBlockByNumber(req: Request, res: Response, next: NextFunction) {
   const {blockNumber, shardID} = req.params
-  const block = await stores[0].block.getBlockByNumber(+shardID as ShardID, +blockNumber)
+  const s = +shardID as ShardID
+  const block = await stores[s].block.getBlockByNumber(s, +blockNumber)
   next(block)
 }
