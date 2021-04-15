@@ -4,8 +4,8 @@ import http, {Server} from 'http'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import {logger} from 'src/logger'
-import {blockRouter} from 'src/api/server/routes/block'
-import {transport} from 'src/api/server/transport'
+import {blockRouter} from 'src/api/rest/routes/block'
+import {transport} from 'src/api/rest/transport'
 
 export const api = async () => {
   const l = logger(module)

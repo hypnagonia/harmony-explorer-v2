@@ -5,20 +5,21 @@ export const checkQuery = buildCheckFunction(['params'])
 
 // https://github.com/validatorjs/validator.js#validators
 // isHexadecimal
-export const isHexStringValidator = (f: any) => {
-  // @ts-ignore
-  return f.custom((value, {req}) => {
-    if (value !== req.body.password) {
-      throw new Error('should be hex string starting with 0x')
-    }
+export const isHexStringValidator = (value: string) => {
+  if (/^[xA-F0-9]+$/i.test(value)) {
     return true
-  })
+  }
+
+  throw new Error('should be hex string starting with 0x')
 }
 
-// todo
-export const isInt = (f: any) => f.isInt({allow_leading_zeroes: false})
-export const isLength64 = (f: any) => f.isLength({min: 64, max: 64})
-export const isLength42 = (f: any) => f.isLength({min: 42, max: 42})
+export const isStartWith0x = (value: string) => {
+  if (value[0] === '0' && value[1] === 'x') {
+    return true
+  }
+
+  throw new Error('should be hex string starting with 0x')
+}
 
 export const isShard = checkQuery('shardID').isInt({min: 0, max: 3})
 export const isBlockNumber = checkQuery('blockNumber').isInt({min: 0})
@@ -33,3 +34,8 @@ const isError = (req: Request, res: Response, next: NextFunction) => {
   next()
 }
 export const validate = (args: ValidationChain[]) => [...args, isError]
+
+export const isBlockHash = checkQuery('blockHash')
+  .custom(isHexStringValidator)
+  .custom(isStartWith0x)
+  .isLength({min: 66, max: 66})
