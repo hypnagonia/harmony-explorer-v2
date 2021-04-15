@@ -6,7 +6,7 @@ export const isHexString = (value: string) => {
   throw new Error('should be hex string starting with 0x')
 }
 
-export const isStartWith0x = (value: string) => {
+export const isStartingWith0x = (value: string) => {
   if (value[0] === '0' && value[1] === 'x') {
     return true
   }

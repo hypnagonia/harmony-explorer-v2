@@ -1,25 +1,51 @@
-# harmony-explorer-v2
+# Harmony Blockchain Data Indexer
 
-## Run
+Indexer scrapes blocks, transactions (staking, call traces, logs), tracks contracts, ERC20 (aka HRC20) and ERC721 (aka HRC721) operations and balances
+from Harmony blockchain and writes to postgres db.
 
-Copy `mainnet.env.example` to `.env` and define vars
+API serves REST/JSON and GRPC.
+
+Possible to switch off API and keep active only Indexer and vice-versa.
+
+# Run
+
+## Define env variables
+
+Copy `./mainnet.env.example` to `./.env` and define environment variables
+
+## Development mode
 
 ```
 yarn
 yarn start
 ```
 
+## Production mode
+
+todo
+
+# Indexer
+
+[Postgres scheme](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/src/store/postgres/sql)
+![image info](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/docs/scheme.png)
+
+# API
+
 ## GRPC transport
 
-using [GRPC CLI](https://github.com/grpc/grpc/blob/master/doc/command_line_tool.md)
+[Proto files](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/src/api/grpc/proto)
 
-#### Install
+#### Query
+
+Using [GRPC CLI](https://github.com/grpc/grpc/blob/master/doc/command_line_tool.md)
+
+Install
 
 ```
 brew install grpc
 ```
 
-#### Query
+Query
 
 ```
 grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockByNumber "blockNumber: 1, shardID: 0"
@@ -42,8 +68,6 @@ grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockB
 - [ ] Track HRC721
 
 ### API
-
-- [ ] GRPC API
 
 #### REST
 
