@@ -54,7 +54,6 @@
       }
 
       #messages > div {
-        width: 100%;
         padding: 0.5rem 1rem;
       }
 
@@ -73,9 +72,10 @@
         id="input"
         type="text"
         autocomplete="off"
-        placeholder="syntax: method param1 param2. example: getBlockByNumber 0 1000. type 'methods' to get method list"
+        placeholder="syntax: method param1 param2. example: getBlockByNumber 0 1000"
       />
       <button>Send</button>
+      <button id="showmethods">Show methods</button>
     </form>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -84,6 +84,11 @@
 
       const messages = document.getElementById('messages')
       const form = document.getElementById('form')
+      const showmethods = document.getElementById('showmethods')
+
+      showmethods.addEventListener('click', () => {
+        socket.emit('methods')
+      })
       const input = document.getElementById('input')
 
       form.addEventListener('submit', (e) => {
