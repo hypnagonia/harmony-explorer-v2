@@ -89,7 +89,7 @@
         e.preventDefault()
         if (input.value) {
           const [method, ...params] = input.value.split(' ')
-          const payload = params.map((a) => (isNaN(+a) ? a : +a))
+          const payload = params.map((a) => (+a + '' === a ? +a : a))
           socket.emit(method, payload)
         }
       })
