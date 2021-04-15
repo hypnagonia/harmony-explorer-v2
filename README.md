@@ -27,7 +27,7 @@ todo
 # Indexer
 
 [Postgres scheme](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/src/store/postgres/sql)
-![image info](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/docs/scheme.png)
+![image info](https://github.com/hypnagonia/harmony-explorer-v2/blob/dev/doc/scheme.png)
 
 # API
 
