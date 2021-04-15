@@ -93,6 +93,16 @@
       const prevQuery = decodeURI(location.search.split('query=')[1] || '')
       input.value = prevQuery
 
+      const submit = () => {
+        if (input.value) {
+          const [method, ...params] = input.value.split(' ')
+          const payload = params.map((a) => (+a + '' === a ? +a : a))
+          socket.emit(method, payload)
+        }
+      }
+
+      submit()
+
       input.addEventListener('change', (event)=>{
         const v = event.target.value
         const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?query=' + v;
@@ -101,11 +111,7 @@
 
       form.addEventListener('submit', (e) => {
         e.preventDefault()
-        if (input.value) {
-          const [method, ...params] = input.value.split(' ')
-          const payload = params.map((a) => (+a + '' === a ? +a : a))
-          socket.emit(method, payload)
-        }
+        submit()
       })
 
       socket.onAny((event, messageJSON) => {
