@@ -70,7 +70,6 @@
     <form id="form" action="">
       <input
         id="input"
-        type="text"
         autocomplete="off"
         placeholder="syntax: method param1 param2. example: getBlockByNumber 0 1000"
       />
@@ -90,6 +89,15 @@
         socket.emit('methods')
       })
       const input = document.getElementById('input')
+
+      const prevQuery = decodeURI(location.search.split('query=')[1] || '')
+      input.value = prevQuery
+
+      input.addEventListener('change', (event)=>{
+        const v = event.target.value
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?query=' + v;
+        window.history.pushState({path:newUrl},'',newUrl);
+      })
 
       form.addEventListener('submit', (e) => {
         e.preventDefault()
