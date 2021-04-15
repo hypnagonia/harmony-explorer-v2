@@ -4,7 +4,6 @@ import {LogIndexer} from './indexer/LogIndexer'
 import {ShardID} from 'src/types/blockchain'
 import {api} from 'src/api'
 import {config} from 'src/config'
-import {getBlockByNumber} from 'src/indexer/rpc/client'
 
 const l = logger(module)
 

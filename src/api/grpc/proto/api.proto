@@ -1,7 +1,8 @@
 syntax = "proto3";
 
 service APIService {
-  rpc GetBlockByNumber (BlockNumber) returns (Block) {}
+  rpc GetBlockByNumber (RequestBlockByNumber) returns (Block) {}
+  rpc GetBlockByHash (RequestBlockByHash) returns (Block) {}
 }
 
 message Empty {}
@@ -31,7 +32,14 @@ message Block {
   string viewID = 22;
 }
 
-message BlockNumber {
-  string blockNumber = 1;
+message RequestBlockByNumber {
+  uint64 blockNumber = 1;
+  uint32 shardID = 2;
 }
+
+message RequestBlockByHash {
+  string blockHash = 1;
+  uint32 shardID = 2;
+}
+
 

@@ -6,9 +6,14 @@ import cors from 'cors'
 import {logger} from 'src/logger'
 import {blockRouter} from 'src/api/rest/routes/block'
 import {transport} from 'src/api/rest/transport'
+const l = logger(module)
 
 export const RESTServer = async () => {
-  const l = logger(module)
+  if (!config.api.rest.isEnabled) {
+    l.debug(`RPC API disabled`)
+    return
+  }
+
   const api = express()
   api.use(cors())
   api.use(bodyParser.json())
@@ -24,8 +29,8 @@ export const RESTServer = async () => {
 
   l.info('REST API starting...')
   try {
-    server = http.createServer(api).listen(config.api.port, () => {
-      l.info(`REST API listening at http://localhost:${config.api.port}`)
+    server = http.createServer(api).listen(config.api.rest.port, () => {
+      l.info(`REST API listening at http://localhost:${config.api.rest.port}`)
     })
   } catch (error) {
     l.error('Error when starting up API', {error})

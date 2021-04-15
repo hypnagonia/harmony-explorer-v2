@@ -30,7 +30,14 @@ const getCommaSeparatedList = (list: string | undefined): string[] =>
 export const config = {
   api: {
     isEnabled: true,
-    port: 3000,
+    rest: {
+      isEnabled: true,
+      port: 3000,
+    },
+    grpc: {
+      isEnabled: true,
+      port: 5051,
+    },
   },
   indexer: {
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),

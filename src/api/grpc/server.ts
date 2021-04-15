@@ -2,9 +2,12 @@ import grpc from 'grpc'
 import path from 'path'
 import {loadSync} from '@grpc/proto-loader'
 import * as controllers from 'src/api/controllers'
+import * as methods from 'src/api/grpc/methods'
+import {catchAsync} from 'src/api/grpc/utils'
 
 const protoFile = path.join(__dirname, 'proto', './api.proto')
 import {logger} from 'src/logger'
+import {config} from 'src/config'
 
 const l = logger(module)
 /*
@@ -16,6 +19,11 @@ You can then generate the types like so:
 */
 
 export const RPCServer = async () => {
+  if (!config.api.grpc.isEnabled) {
+    l.debug(`RPC API disabled`)
+    return
+  }
+
   const packageDefinition = loadSync(protoFile, {
     keepCase: true,
     longs: String,
@@ -27,31 +35,14 @@ export const RPCServer = async () => {
 
   const server = new grpc.Server()
 
+  const methodsWithAsyncCatch = Object.keys(methods)
+    // @ts-ignore
+    .reduce((o, k) => ({...o, [k]: catchAsync(methods[k])}), {})
+
   // @ts-ignore
-  server.addService(proto.APIService.service, {
-    GetBlockByNumber: async (
-      call: grpc.ServerUnaryCall<any>,
-      callback: grpc.sendUnaryData<any>
-    ) => {
-      const blockNumber = +call.request.blockNumber
+  server.addService(proto.APIService.service, methodsWithAsyncCatch)
 
-      try {
-        const block = await controllers.getBlockByNumber(0, blockNumber)
-        callback(null, block)
-      } catch (e) {
-        callback(
-          {
-            name: 'Error',
-            code: grpc.status.NOT_FOUND,
-            message: e.message,
-          },
-          null
-        )
-      }
-    },
-  })
-
-  server.bind('127.0.0.1:5051', grpc.ServerCredentials.createInsecure())
-  l.info('RPC API listening at localhost:5051')
+  server.bind(`127.0.0.1:${config.api.grpc.port}`, grpc.ServerCredentials.createInsecure())
+  l.info(`RPC API listening at 127.0.0.1:${config.api.grpc.port}`)
   await server.start()
 }
