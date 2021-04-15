@@ -85,8 +85,11 @@
       const form = document.getElementById('form')
       const showmethods = document.getElementById('showmethods')
 
-      showmethods.addEventListener('click', () => {
+      showmethods.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
         socket.emit('methods')
+        return false
       })
       const input = document.getElementById('input')
 
