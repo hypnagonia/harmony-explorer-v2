@@ -1,6 +1,6 @@
 # harmony-explorer-v2
 
-## Run 
+## Run
 
 Copy `mainnet.env.example` to `.env` and define vars
 
@@ -9,11 +9,26 @@ yarn
 yarn start
 ```
 
+## GRPC transport
+
+using [GRPC CLI](https://github.com/grpc/grpc/blob/master/doc/command_line_tool.md)
+
+#### Install
+
+```
+brew install grpc
+```
+
+#### Query
+
+```
+grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockByNumber "blockNumber: '1'"
+```
+
 ## TODO
 
 ### Indexer
 
-- [ ] A few indexer instances work in parallel
 - [x] Index Blocks
 - [ ] Index Transactions
 - [ ] Index Staking Transactions
@@ -27,6 +42,10 @@ yarn start
 
 ### API
 
+- [ ] GRPC API
+
+#### REST
+
 - [ ] Blocks
 - [ ] Transactions
 - [ ] Staking Transactions
@@ -34,6 +53,8 @@ yarn start
 - [ ] Addresses
 - [ ] Metrics
 - [ ] Documentation
+- [ ] ERC20 tokens
+- [ ] ERC721 tokens
 
 ### Misc
 

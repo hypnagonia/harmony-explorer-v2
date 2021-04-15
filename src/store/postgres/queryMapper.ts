@@ -41,6 +41,14 @@ const toStoreMappers: Record<string, (val: any) => any> = {
   timestamp: (t) => new Date(parseInt(t, 16)),
 }
 
+export const fromSnakeToCamelResponse = (o: Record<any, any>) => {
+  return Object.keys(o).reduce((newO: any, key) => {
+    const newKey: string = mapNaming[key] || key
+    newO[newKey] = o[key]
+    return newO
+  }, {})
+}
+
 export const generateQuery = (o: Record<any, any>) => {
   const fields = Object.keys(o)
     .map((k) => mapNamingReverse[k] || k)

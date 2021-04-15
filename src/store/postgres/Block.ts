@@ -1,7 +1,7 @@
 import {logger} from 'src/logger'
 import {IStorageBlock} from 'src/store/interface'
 import {Block, BlockHash, BlockNumber, ShardID} from 'src/types/blockchain'
-import {generateQuery} from './queryMapper'
+import {generateQuery, fromSnakeToCamelResponse} from './queryMapper'
 
 import {Query} from 'src/store/postgres/types'
 
@@ -28,12 +28,12 @@ export class PostgresStorageBlock implements IStorageBlock {
   getBlockByNumber = async (shardID: ShardID, num: BlockNumber): Promise<Block | null> => {
     const res = await this.query(`select * from blocks where number=$1;`, [num])
 
-    return res[0] as Block
+    return fromSnakeToCamelResponse(res[0]) as Block
   }
 
   getBlockByHash = async (shardID: ShardID, hash: BlockHash): Promise<Block | null> => {
     const res = await this.query(`select * from blocks where hash=$1;`, [hash])
 
-    return res[0] as Block
+    return fromSnakeToCamelResponse(res[0]) as Block
   }
 }
