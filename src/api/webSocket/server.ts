@@ -8,19 +8,25 @@ import {getMethods} from './utils'
 
 const l = logger(module)
 
+const methodsDescription = getMethods()
+
 const runMethod: (
   method: string,
   params: any[]
 ) => Promise<{event: string; response: any}> = async (method: string, params: any[]) => {
   try {
+    if (method === 'methods') {
+      return {event: 'Response', response: methodsDescription}
+    }
+
     // @ts-ignore
-    const f = controllers[method]
+    const f = controllers[method as string]
     if (!f) {
       throw new Error('Method unknown')
     }
 
     const response = await f(...params)
-    return {event: 'Response', response}
+    return {event: `Response`, response}
   } catch (error) {
     return {event: 'Error', response: error.message || error}
   }
@@ -32,15 +38,13 @@ export const webSocketServer = async () => {
     return
   }
 
-  const methods = getMethods()
-
   const api = express()
   const server = http.createServer(api)
   const io = require('socket.io')(server)
 
   io.on('connection', (socket: Socket) => {
     if (config.api.ws.isDemoHTMLPageEnabled) {
-      socket.emit('MethodList', JSON.stringify(methods))
+      socket.emit('MethodList', JSON.stringify(methodsDescription))
     }
 
     socket.onAny(async (event, params) => {
