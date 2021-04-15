@@ -83,14 +83,17 @@
 
       const messages = document.getElementById('messages')
       const form = document.getElementById('form')
-      const showmethods = document.getElementById('showmethods')
+      const showMethods = document.getElementById('showmethods')
 
-      showmethods.addEventListener('click', (e) => {
+      showMethods.addEventListener('click', (e) => {
         e.preventDefault()
         e.stopPropagation()
         socket.emit('methods')
         return false
       })
+
+      showMethods.click()
+
       const input = document.getElementById('input')
 
       const prevQuery = decodeURI(location.search.split('query=')[1] || '')
@@ -106,10 +109,16 @@
 
       submit()
 
-      input.addEventListener('change', (event)=>{
+      input.addEventListener('change', (event) => {
         const v = event.target.value
-        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?query=' + v;
-        window.history.pushState({path:newUrl},'',newUrl);
+        const newUrl =
+          window.location.protocol +
+          '//' +
+          window.location.host +
+          window.location.pathname +
+          '?query=' +
+          v
+        window.history.pushState({path: newUrl}, '', newUrl)
       })
 
       form.addEventListener('submit', (e) => {

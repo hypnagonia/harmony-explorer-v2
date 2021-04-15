@@ -43,10 +43,6 @@ export const webSocketServer = async () => {
   const io = require('socket.io')(server)
 
   io.on('connection', (socket: Socket) => {
-    if (config.api.ws.isDemoHTMLPageEnabled) {
-      socket.emit('MethodList', JSON.stringify(methodsDescription))
-    }
-
     socket.onAny(async (event, params) => {
       const res = await runMethod(event, params)
       socket.emit(res.event, JSON.stringify(res.response))
