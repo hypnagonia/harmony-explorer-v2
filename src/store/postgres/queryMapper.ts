@@ -18,6 +18,15 @@ const mapNaming: Record<string, string> = {
   transaction_hash: 'transactionHash',
   log_index: 'logIndex',
   shard: 'shardID',
+  transaction_type: 'transactionType',
+  parent_id: 'parentId',
+  creator_address: 'creatorAddress',
+  solidity_version: 'solidityVersion',
+  total_supply: 'totalSupply',
+  owner_address: 'ownerAddress',
+  token_address: 'tokenAddress',
+  transaction_count: 'transactionCount',
+  token_id: 'tokenId',
 }
 
 const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((a, k) => {

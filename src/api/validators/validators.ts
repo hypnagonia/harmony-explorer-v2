@@ -14,6 +14,14 @@ export const isStartingWith0x = (value: string) => {
   throw new Error('should be hex string starting with 0x')
 }
 
+export const isOneOf = (value: string, options: string[]) => {
+  if (options.includes(value)) {
+    return true
+  }
+
+  throw new Error(`should be one of [${options.join(', ')}]`)
+}
+
 export const isUint: (value: number, options: {min?: number; max?: number}) => void = (
   value,
   {min, max}

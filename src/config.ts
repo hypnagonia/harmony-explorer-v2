@@ -30,6 +30,11 @@ const getCommaSeparatedList = (list: string | undefined): string[] =>
 export const config = {
   api: {
     isEnabled: true,
+    ws: {
+      isEnabled: true,
+      port: 3001,
+      isDemoHTMLPageEnabled: true,
+    },
     rest: {
       isEnabled: true,
       port: 3000,

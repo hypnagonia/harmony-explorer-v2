@@ -3,7 +3,7 @@
 Indexer scrapes blocks, transactions (staking, call traces, logs), tracks contracts, ERC20 (aka HRC20) and ERC721 (aka HRC721) operations and balances
 from Harmony blockchain and writes to postgres db.
 
-API serves REST/JSON and GRPC.
+API serves REST/JSON and websocket. Also, here is initial draft for GRPC. Will be implemented fully on community demand.
 
 Possible to switch off API and keep active only Indexer and vice-versa.
 
