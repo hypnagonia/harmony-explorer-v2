@@ -18,9 +18,13 @@ You can then generate the types like so:
 ./node_modules/.bin/proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=proto/ proto/*.proto
 */
 
-export const RPCServer = async () => {
+export const GRPCServer = async () => {
+  l.info(`GRPC API is Work in Progress and will be finished on community demand`)
+  return
+
+  // eslint-disable-next-line
   if (!config.api.grpc.isEnabled) {
-    l.debug(`RPC API disabled`)
+    l.debug(`GRPC API disabled`)
     return
   }
 
@@ -43,6 +47,6 @@ export const RPCServer = async () => {
   server.addService(proto.APIService.service, methodsWithAsyncCatch)
 
   server.bind(`127.0.0.1:${config.api.grpc.port}`, grpc.ServerCredentials.createInsecure())
-  l.info(`RPC API listening at 127.0.0.1:${config.api.grpc.port}`)
+  l.info(`GRPC API listening at 127.0.0.1:${config.api.grpc.port}`)
   await server.start()
 }

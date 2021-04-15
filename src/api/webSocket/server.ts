@@ -4,6 +4,7 @@ import express from 'express'
 import {config} from 'src/config'
 import {logger} from 'src/logger'
 import * as controllers from 'src/api/controllers'
+import {getMethods} from './utils'
 
 const l = logger(module)
 
@@ -31,11 +32,17 @@ export const webSocketServer = async () => {
     return
   }
 
+  const methods = getMethods()
+
   const api = express()
   const server = http.createServer(api)
   const io = require('socket.io')(server)
 
   io.on('connection', (socket: Socket) => {
+    if (config.api.ws.isDemoHTMLPageEnabled) {
+      socket.emit('MethodList', JSON.stringify(methods))
+    }
+
     socket.onAny(async (event, params) => {
       const res = await runMethod(event, params)
       socket.emit(res.event, JSON.stringify(res.response))
@@ -43,7 +50,9 @@ export const webSocketServer = async () => {
   })
 
   if (config.api.ws.isDemoHTMLPageEnabled) {
-    l.info(`Demo client is available at http://localhost:${config.api.ws.port}/index.html`)
+    l.info(
+      `Demo WebSocket client is available at http://localhost:${config.api.ws.port}/index.html`
+    )
     api.get('/', (req, res) => {
       res.sendFile(__dirname + '/index.html')
     })

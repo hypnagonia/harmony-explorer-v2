@@ -86,7 +86,6 @@
       const input = document.getElementById('input')
 
       form.addEventListener('submit', (e) => {
-        console.log('hey')
         e.preventDefault()
         if (input.value) {
           const [method, ...params] = input.value.split(' ')
