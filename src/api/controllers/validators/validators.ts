@@ -1,3 +1,13 @@
+import {config} from 'src/config'
+
+export const isShardAvailable = (value: number) => {
+  if (!config.api.shards.includes(value)) {
+    throw new Error(
+      `shard ${value} is not available. Available shards: [${config.api.shards.join(', ')}]`
+    )
+  }
+}
+
 export const isHexString = (value: string) => {
   if (/^0x[A-F0-9]+$/i.test(value)) {
     return true

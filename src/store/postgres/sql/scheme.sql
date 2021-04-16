@@ -71,10 +71,50 @@ create table if not exists transactions
     v                 text
 );
 create index if not exists idx_transactions_hash on transactions using hash (hash);
+create index if not exists idx_transactions_hash_harmony on transactions using hash (hash_harmony);
 create index if not exists idx_transactions_block_hash on transactions using hash (block_hash);
 create index if not exists idx_transactions_block_number on transactions (block_number);
 
-/*todo staking transactions*/
+do
+$$
+    begin
+        create type staking_transaction_type as enum (
+            'CreateValidator',
+            'EditValidator',
+            'CollectRewards',
+            'Undelegate',
+            'Delegate'
+            );
+    exception
+        when duplicate_object then null;
+    end
+$$;
+
+create table if not exists staking_transactions
+(
+    shard             smallint                          not null,
+    hash              char(66) unique primary key       not null,
+    value             numeric,
+    block_hash        char(66) references blocks (hash) not null,
+    block_number      bigint references blocks (number) not null,
+    timestamp         timestamp,
+    "from"            char(42),
+    "to"              char(42),
+    gas               bigint,
+    gas_price         bigint,
+    input             text,
+    nonce             smallint,
+    r                 text,
+    s                 text,
+    to_shard_id       smallint,
+    transaction_index smallint,
+    v                 text,
+    msg               jsonb
+);
+
+create index if not exists idx_staking_transactions_hash on staking_transactions using hash (hash);
+create index if not exists idx_staking_transactions_block_hash on staking_transactions using hash (block_hash);
+create index if not exists idx_staking_transactions_block_number on staking_transactions (block_number);
 
 do
 $$
@@ -136,7 +176,7 @@ create table if not exists contracts
     transaction_hash char(66) references transactions (hash),
     transaction_type transaction_type,
     ipfs_hash        char(64),
-    solidity_version     char(6),
+    solidity_version char(6),
     meta             jsonb
 );
 create index if not exists idx_contracts_address on contracts using hash (address);

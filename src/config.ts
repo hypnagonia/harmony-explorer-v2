@@ -29,6 +29,7 @@ const getCommaSeparatedList = (list: string | undefined): string[] =>
 
 export const config = {
   api: {
+    shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s),
     isEnabled: true,
     ws: {
       isEnabled: true,
@@ -45,6 +46,7 @@ export const config = {
     },
   },
   indexer: {
+    shards: getCommaSeparatedList(process.env.INDEXER_SHARDS).map((s) => +s),
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
     // set to the height where smart contracts were introduced on the chain

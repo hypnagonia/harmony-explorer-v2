@@ -1,4 +1,5 @@
 import {Response, Request, NextFunction} from 'express'
+import {errorToObject} from 'src/api/utils'
 
 export const transport = (data: any, req: Request, res: Response, next: NextFunction) => {
   let error
@@ -6,7 +7,7 @@ export const transport = (data: any, req: Request, res: Response, next: NextFunc
     if (res.statusCode < 400) {
       res.status(500)
     }
-    error = data.message || data
+    error = errorToObject(data)
   }
 
   if (res.statusCode >= 400) {

@@ -5,6 +5,7 @@ import {config} from 'src/config'
 import {logger} from 'src/logger'
 import * as controllers from 'src/api/controllers'
 import {getMethods} from './utils'
+import {errorToObject} from 'src/api/utils'
 
 const l = logger(module)
 
@@ -28,7 +29,7 @@ const runMethod: (
     const response = await f(...params)
     return {event: `Response`, response}
   } catch (error) {
-    return {event: 'Error', response: error.message || error}
+    return {event: 'Error', response: errorToObject(error)}
   }
 }
 
@@ -51,14 +52,17 @@ export const webSocketServer = async () => {
 
   if (config.api.ws.isDemoHTMLPageEnabled) {
     l.info(
-      `Demo WebSocket client is available at http://localhost:${config.api.ws.port}/index.html`
+      `Demo WebSocket [Socket.io] client is available at http://localhost:${config.api.ws.port}/index.html`
     )
     api.get('/', (req, res) => {
       res.sendFile(__dirname + '/index.html')
     })
   }
+  const close = () => server.close()
 
   server.listen(config.api.ws.port, () => {
-    l.info(`WebSocket API listening at ws://localhost:${config.api.ws.port}`)
+    l.info(`WebSocket API [Socket.io] listening at ws://localhost:${config.api.ws.port}`)
   })
+
+  return close
 }

@@ -1,7 +1,6 @@
 import {logger} from 'src/logger'
 import {IStorageIndexer} from 'src/store/interface'
 import {Block, BlockHash, BlockNumber, ShardID} from 'src/types/blockchain'
-import {generateQuery} from './queryMapper'
 
 import {Query} from 'src/store/postgres/types'
 

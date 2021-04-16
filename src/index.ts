@@ -17,7 +17,7 @@ const run = async () => {
     if (config.indexer.isEnabled) {
       l.info('Indexer starting...')
 
-      const shards = [0] as ShardID[]
+      const shards = config.indexer.shards as ShardID[]
       const blockIndexers = shards.map(
         (shardID) =>
           new BlockIndexer(

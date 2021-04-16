@@ -1,9 +1,9 @@
-import {isHexString, isLength, isUint} from './validators'
+import {isHexString, isLength, isUint, isShardAvailable} from './validators'
 
-// todo only active shards
-export const isShardAvailable = () => () => {}
-
-export const isShard = (value: number) => () => isUint(value, {min: 0, max: 3})
+export const isShard = (value: number) => () => [
+  isUint(value, {min: 0, max: 3}),
+  isShardAvailable(value),
+]
 export const isBlockNumber = (value: number) => () => isUint(value, {min: 0})
 
 export const isBlockHash = (value: string) => () => [
