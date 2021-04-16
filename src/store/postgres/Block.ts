@@ -36,4 +36,14 @@ export class PostgresStorageBlock implements IStorageBlock {
 
     return fromSnakeToCamelResponse(res[0]) as Block
   }
+
+  getBlocks = async (
+    shardID: ShardID,
+    offset = 0,
+    limit = 0,
+    orderDirection?: 'asc' | 'desc',
+    orderBy?: 'number' | 'timestamp',
+    fromProperty?: 'number' | 'timestamp',
+    fromValue?: any
+  ) => {}
 }

@@ -30,7 +30,7 @@ const getCommaSeparatedList = (list: string | undefined): string[] =>
 export const config = {
   api: {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s),
-    isEnabled: true,
+    isEnabled: toBool(process.env.API_IS_ENABLED || '0'),
     ws: {
       isEnabled: toBool(process.env.API_WS_IS_ENABLED || '0'),
       port: 3001,

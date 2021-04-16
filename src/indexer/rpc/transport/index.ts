@@ -6,5 +6,7 @@ import {logger} from 'src/logger'
 const l = logger(module)
 
 const isHTTP = config.indexer.rpc.transport === 'http'
-l.info(`RPC transport: ${isHTTP ? 'HTTP' : 'Websocket'}`)
+if (config.indexer.isEnabled) {
+  l.info(`RPC transport: ${isHTTP ? 'HTTP' : 'Websocket'}`)
+}
 export const transport = isHTTP ? HTTPTransport : WSTransport

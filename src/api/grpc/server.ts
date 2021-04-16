@@ -19,15 +19,15 @@ You can then generate the types like so:
 */
 
 export const GRPCServer = async () => {
-  l.info(`GRPC API is Work in Progress and will be finished on community demand`)
-  return
-
-  // eslint-disable-next-line
   if (!config.api.grpc.isEnabled) {
     l.debug(`GRPC API disabled`)
     return
   }
 
+  l.info(`GRPC API is Work in Progress and will be finished on community demand`)
+  return
+
+  // eslint-disable-next-line
   const packageDefinition = loadSync(protoFile, {
     keepCase: true,
     longs: String,
