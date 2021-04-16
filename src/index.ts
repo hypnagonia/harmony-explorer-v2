@@ -1,8 +1,6 @@
 import {logger} from './logger'
-import {BlockIndexer} from './indexer/BlockIndexer'
-import {LogIndexer} from './indexer/LogIndexer'
-import {ShardID} from 'src/types/blockchain'
 import {api} from 'src/api'
+import {indexer} from 'src/indexer'
 import {config} from 'src/config'
 
 const l = logger(module)
@@ -21,22 +19,7 @@ const run = async () => {
 
     if (config.indexer.isEnabled) {
       l.info(`Indexer starting... Shards[${config.indexer.shards.join(', ')}]`)
-
-      const shards = config.indexer.shards as ShardID[]
-      const blockIndexers = shards.map(
-        (shardID) =>
-          new BlockIndexer(
-            shardID,
-            config.indexer.batchCount,
-            config.indexer.initialBlockSyncingHeight
-          )
-      )
-      blockIndexers.forEach((b) => b.loop())
-
-      if (config.indexer.isSyncingLogsEnabled && config.indexer.shards.includes(0)) {
-        const logIndexer0 = new LogIndexer(0)
-        await logIndexer0.loop()
-      }
+      await indexer()
     } else {
       l.debug('Indexer is disabled')
     }

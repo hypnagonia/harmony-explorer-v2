@@ -1,4 +1,5 @@
 import {config} from 'src/config'
+import {ShardID} from 'src/types'
 
 export type Validator = (value: any, params?: any) => void
 export type ParamValidator = () => void
@@ -6,7 +7,7 @@ export type CurryParamValidator = (value: any) => ParamValidator
 
 type ErrorEntry = {error: Error; key: string}
 
-export const isShardAvailable: Validator = (value: number) => {
+export const isShardAvailable: Validator = (value: ShardID) => {
   if (!config.api.shards.includes(value)) {
     throw new Error(
       `shard ${value} is not available. Available shards: [${config.api.shards.join(', ')}]`

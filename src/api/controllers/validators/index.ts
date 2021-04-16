@@ -1,12 +1,4 @@
-import {
-  isHexString,
-  isLength,
-  isUint,
-  isShardAvailable,
-  Validator,
-  ParamValidator,
-  CurryParamValidator,
-} from './validators'
+import {isHexString, isLength, isUint, isShardAvailable, CurryParamValidator} from './validators'
 
 export const isShard: CurryParamValidator = (value: number) => () => [
   isUint(value, {min: 0, max: 3}),

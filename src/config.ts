@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 import assert from 'assert'
 import {TLogLevel} from 'zerg/dist/types'
+import {ShardID} from 'src/types'
 import {getGitCommitHash} from 'src/utils/getGitCommitHash'
 const packageJSON = require('../package.json')
 
@@ -35,7 +36,7 @@ export const config = {
     version: packageJSON.version,
   },
   api: {
-    shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s),
+    shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s) as ShardID[],
     isEnabled: toBool(process.env.API_IS_ENABLED || '0'),
     ws: {
       isEnabled: toBool(process.env.API_WS_IS_ENABLED || '0'),
@@ -52,7 +53,7 @@ export const config = {
     },
   },
   indexer: {
-    shards: getCommaSeparatedList(process.env.INDEXER_SHARDS).map((s) => +s),
+    shards: getCommaSeparatedList(process.env.INDEXER_SHARDS).map((s) => +s) as ShardID[],
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
     isSyncingLogsEnabled: false,
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
