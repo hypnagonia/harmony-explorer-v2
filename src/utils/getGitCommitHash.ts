@@ -1,6 +1,11 @@
 const {execSync} = require('child_process')
 
-export const getGitCommitHash = async () => {
-  const output = execSync(`git rev-parse HEAD`)
-  return output.toString().split('\n')[0]
+let hash: String
+
+export const getGitCommitHash = () => {
+  if (!hash) {
+    const output = execSync(`git rev-parse HEAD`)
+    hash = output.toString().split('\n')[0]
+  }
+  return hash
 }

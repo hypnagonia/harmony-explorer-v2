@@ -1,6 +1,8 @@
 import * as dotenv from 'dotenv'
 import assert from 'assert'
 import {TLogLevel} from 'zerg/dist/types'
+import {getGitCommitHash} from 'src/utils/getGitCommitHash'
+const packageJSON = require('../package.json')
 
 dotenv.config()
 
@@ -28,6 +30,10 @@ const getCommaSeparatedList = (list: string | undefined): string[] =>
     .split(',')
 
 export const config = {
+  info: {
+    gitCommitHash: getGitCommitHash(),
+    version: packageJSON.version,
+  },
   api: {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s),
     isEnabled: toBool(process.env.API_IS_ENABLED || '0'),

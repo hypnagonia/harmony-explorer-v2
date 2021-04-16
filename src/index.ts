@@ -4,16 +4,12 @@ import {LogIndexer} from './indexer/LogIndexer'
 import {ShardID} from 'src/types/blockchain'
 import {api} from 'src/api'
 import {config} from 'src/config'
-import {getGitCommitHash} from 'src/utils/getGitCommitHash'
-
-const packageJSON = require('../package.json')
 
 const l = logger(module)
 
 // todo checks on start. shard chainId
 const run = async () => {
-  const gitCommitHash = await getGitCommitHash()
-  l.info(`Harmony Explorer v${packageJSON.version}. Git commit hash: ${gitCommitHash}`)
+  l.info(`Harmony Explorer v${config.info.version}. Git commit hash: ${config.info.gitCommitHash}`)
 
   try {
     if (config.api.isEnabled) {
