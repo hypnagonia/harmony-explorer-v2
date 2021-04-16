@@ -32,22 +32,23 @@ export const config = {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s),
     isEnabled: true,
     ws: {
-      isEnabled: true,
+      isEnabled: toBool(process.env.API_WS_IS_ENABLED || '0'),
       port: 3001,
       isDemoHTMLPageEnabled: true,
     },
     rest: {
-      isEnabled: true,
+      isEnabled: toBool(process.env.API_REST_IS_ENABLED || '0'),
       port: 3000,
     },
     grpc: {
-      isEnabled: true,
+      isEnabled: toBool(process.env.API_GRPC_IS_ENABLED || '0'),
       port: 5051,
     },
   },
   indexer: {
     shards: getCommaSeparatedList(process.env.INDEXER_SHARDS).map((s) => +s),
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
+    isSyncingLogsEnabled: false,
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
     // set to the height where smart contracts were introduced on the chain
     initialLogsSyncingHeight: 3500000,

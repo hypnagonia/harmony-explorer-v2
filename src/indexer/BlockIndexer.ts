@@ -10,6 +10,7 @@ import {PostgresStorage} from 'src/store/postgres'
 
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 10000
+
 const blockRange = 10
 
 const range = (num: number) => Array(num).fill(0)
@@ -80,7 +81,7 @@ export class BlockIndexer {
         })
       )
 
-      const blocks = res.flatMap((b) => b).filter((b) => b) as Block[]
+      const blocks = res.flatMap((b) => b).filter((b) => b)
       const lastFetchedBlockNumber = blocks.reduce((a, b) => (a < b.number ? b.number : a), 0)
 
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore

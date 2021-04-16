@@ -11,11 +11,14 @@ const l = logger(module)
 const run = async () => {
   try {
     if (config.api.isEnabled) {
+      l.info(`API starting... Shards[${config.api.shards.join(', ')}]`)
       await api()
+    } else {
+      l.debug('API is disabled')
     }
 
     if (config.indexer.isEnabled) {
-      l.info('Indexer starting...')
+      l.info(`Indexer starting... Shards[${config.indexer.shards.join(', ')}]`)
 
       const shards = config.indexer.shards as ShardID[]
       const blockIndexers = shards.map(
@@ -28,8 +31,10 @@ const run = async () => {
       )
       blockIndexers.forEach((b) => b.loop())
 
-      // const logIndexer0 = new LogIndexer(0)
-      // await logIndexer0.loop()
+      if (config.indexer.isSyncingLogsEnabled && config.indexer.shards.includes(0)) {
+        const logIndexer0 = new LogIndexer(0)
+        await logIndexer0.loop()
+      }
     } else {
       l.debug('Indexer is disabled')
     }

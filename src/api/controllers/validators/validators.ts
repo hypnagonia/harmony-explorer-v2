@@ -1,6 +1,12 @@
 import {config} from 'src/config'
 
-export const isShardAvailable = (value: number) => {
+export type Validator = (value: any, params?: any) => void
+export type ParamValidator = () => void
+export type CurryParamValidator = (value: any) => ParamValidator
+
+type ErrorEntry = {error: Error; key: string}
+
+export const isShardAvailable: Validator = (value: number) => {
   if (!config.api.shards.includes(value)) {
     throw new Error(
       `shard ${value} is not available. Available shards: [${config.api.shards.join(', ')}]`
@@ -8,34 +14,31 @@ export const isShardAvailable = (value: number) => {
   }
 }
 
-export const isHexString = (value: string) => {
+export const isHexString: Validator = (value: string) => {
   if (/^0x[A-F0-9]+$/i.test(value)) {
-    return true
+    return
   }
 
   throw new Error('should be hex string starting with 0x')
 }
 
-export const isStartingWith0x = (value: string) => {
+export const isStartingWith0x: Validator = (value: string) => {
   if (value[0] === '0' && value[1] === 'x') {
-    return true
+    return
   }
 
   throw new Error('should be hex string starting with 0x')
 }
 
-export const isOneOf = (value: string, options: string[]) => {
+export const isOneOf: Validator = (value: string, options: string[]) => {
   if (options.includes(value)) {
-    return true
+    return
   }
 
   throw new Error(`should be one of [${options.join(', ')}]`)
 }
 
-export const isUint: (value: number, options: {min?: number; max?: number}) => void = (
-  value,
-  {min, max}
-) => {
+export const isUint: Validator = (value, {min, max}) => {
   if (typeof value !== 'number' || isNaN(value)) {
     throw new Error('should be a number')
   }
@@ -50,10 +53,7 @@ export const isUint: (value: number, options: {min?: number; max?: number}) => v
   }
 }
 
-export const isLength: (value: string, options: {min?: number; max?: number}) => void = (
-  value,
-  {min, max}
-) => {
+export const isLength: Validator = (value, {min, max}) => {
   if (typeof value !== 'string') {
     throw new Error('should be a string')
   }
@@ -65,13 +65,11 @@ export const isLength: (value: string, options: {min?: number; max?: number}) =>
   }
 }
 
-type ErrorEntry = {error: Error; key: string}
-
-export const validator = (validators: Record<string, Function | Function[]>) => {
+export const validator = (validators: Record<string, ParamValidator | ParamValidator[]>) => {
   const errors: ErrorEntry[] = []
   const keys = Object.keys(validators)
 
-  const run = (f: Function, key: string) => {
+  const run = (f: ParamValidator, key: string) => {
     try {
       f()
     } catch (error) {
@@ -79,12 +77,12 @@ export const validator = (validators: Record<string, Function | Function[]>) => 
     }
   }
 
-  keys.forEach((k) => {
-    const v = validators[k]
-    if (Array.isArray(v)) {
-      v.forEach((e) => run(e, k))
+  keys.forEach((key) => {
+    const f = validators[key]
+    if (Array.isArray(f)) {
+      f.forEach((a) => run(a, key))
     } else {
-      run(v as Function, k)
+      run(f, key)
     }
   })
 
