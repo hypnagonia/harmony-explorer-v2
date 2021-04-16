@@ -61,7 +61,7 @@ export class PostgresStorage implements IStorage {
 
   query: Query = async (sql: string, params: any[] = [], retries = defaultRetries) => {
     // lazy start
-    if (!this.isStarted) {
+    if (!this.isStarted && !this.isStarting) {
       return this.start().then(() => this.query(sql, params, retries))
     }
 

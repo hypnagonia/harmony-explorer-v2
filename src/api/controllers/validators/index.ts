@@ -1,4 +1,4 @@
-import {isHexString, isLength, isUint} from 'src/api/validators/validators'
+import {isHexString, isLength, isUint} from './validators'
 
 // todo only active shards
 export const isShardAvailable = () => () => {}

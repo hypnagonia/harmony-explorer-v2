@@ -23,6 +23,26 @@ const mapBlockFromResponse = (block: RPCBlock): Block => {
   } as Block
 }
 
+export const getBlocks = (
+  shardID: ShardID,
+  fromBlock: BlockNumber,
+  toBlock: BlockNumber,
+  isFullInfo = true,
+  withSigners = false,
+  inclStaking = true
+): Promise<Block[]> => {
+  const from = '0x' + fromBlock.toString(16)
+  const to = '0x' + toBlock.toString(16)
+  const o = {
+    isFullInfo,
+    withSigners,
+    inclStaking,
+  }
+  return transport(shardID, 'hmy_getBlocks', [from, to, o]).then((blocks) =>
+    blocks.map(mapBlockFromResponse)
+  )
+}
+
 export const getBlockByNumber = (
   shardID: ShardID,
   num: BlockNumber | 'latest',

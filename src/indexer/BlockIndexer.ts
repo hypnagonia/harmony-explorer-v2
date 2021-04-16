@@ -10,20 +10,21 @@ import {PostgresStorage} from 'src/store/postgres'
 
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 10000
+const blockRange = 10
 
 const range = (num: number) => Array(num).fill(0)
 
 export class BlockIndexer {
   readonly shardID: ShardID
-  private currentHeight: number
+  readonly initialStartBlock: number
   private l: LoggerModule
   private batchCount: number
   readonly store: PostgresStorage
 
-  constructor(shardID: ShardID, batchCount: number = maxBatchCount, startHeight: number = 0) {
+  constructor(shardID: ShardID, batchCount: number = maxBatchCount, initialStartBlock: number = 0) {
     this.l = logger(module, `shard${shardID}`)
     this.shardID = shardID
-    this.currentHeight = startHeight
+    this.initialStartBlock = initialStartBlock
     this.batchCount = batchCount
     this.l.info('Created')
     this.store = stores[shardID]
@@ -47,42 +48,52 @@ export class BlockIndexer {
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
       const latestSyncedBlock = await store.indexer.getLastIndexedBlockNumber(shardID)
 
-      if (latestSyncedBlock) {
-        this.currentHeight = latestSyncedBlock + 1
-      }
+      const startBlock =
+        latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : this.initialStartBlock
 
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number
 
-      const getBlock = (num: BlockNumber) => {
-        return RPCClient.getBlockByNumber(shardID, num)
+      const getBlocks = (from: BlockNumber, to: BlockNumber) => {
+        return RPCClient.getBlocks(shardID, from, to)
       }
 
-      const addBlock = async (block: Block) => {
-        await store.block.addBlock(shardID, block)
-        return block
+      const addBlocks = (blocks: Block[]) => {
+        return Promise.all(
+          blocks.map(async (block) => {
+            await store.block.addBlock(shardID, block)
+            return block
+          })
+        )
       }
 
       const res = await Promise.all(
-        range(this.batchCount).map((_, i) => {
-          const num = this.currentHeight + i
-          if (num <= latestBlockchainBlock) {
-            return getBlock(num).then(addBlock)
+        range(this.batchCount).map(async (_, i) => {
+          const from = startBlock + i * blockRange
+          const to = Math.min(from + blockRange - 1, latestBlockchainBlock)
+
+          if (from > latestBlockchainBlock) {
+            return Promise.resolve([] as Block[])
           }
 
-          return Promise.resolve(null)
+          return await getBlocks(from, to).then(addBlocks)
         })
       )
 
-      const blocks = res.filter((b) => b) as Block[]
+      const blocks = res.flatMap((b) => b).filter((b) => b) as Block[]
       const lastFetchedBlockNumber = blocks.reduce((a, b) => (a < b.number ? b.number : a), 0)
 
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
 
       await store.indexer.setLastIndexedBlockNumber(shardID, lastFetchedBlockNumber)
 
+      const syncedToBlock = Math.min(
+        lastFetchedBlockNumber,
+        startBlock + blockRange * this.batchCount
+      )
+
       this.l.info(
-        `Processed [${this.currentHeight}, ${lastFetchedBlockNumber}] ${
+        `Processed [${startBlock}, ${syncedToBlock}] ${
           blocks.length
         } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
@@ -96,7 +107,7 @@ export class BlockIndexer {
         a.totalQueries = 0
       })
 
-      if (blocks.length === this.batchCount) {
+      if (blocks.length === syncedToBlock - startBlock + 1) {
         if (failedCount > 0) {
           this.decreaseBatchCount()
         } else {

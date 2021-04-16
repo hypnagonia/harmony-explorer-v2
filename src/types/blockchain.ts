@@ -1,5 +1,11 @@
-export type RPCETHMethod = 'eth_getBlockByNumber' | 'eth_getTransactionByHash' | 'eth_getLogs'
-export type RPCHarmonyMethod = 'hmy_getBlockByNumber' | 'hmy_getTransactionByHash'
+export type RPCETHMethod =
+  | 'eth_getBlockByNumber'
+  | 'eth_getTransactionByHash'
+  | 'eth_getLogs'
+  | 'eth_getBlocks'
+
+export type RPCHarmonyMethod = 'hmy_getBlockByNumber' | 'hmy_getTransactionByHash' | 'hmy_getBlocks'
+
 export type ShardID = 0 | 1 | 2 | 3
 
 export type BlockHexNumber = string

@@ -10,9 +10,9 @@ create table if not exists blocks
     gas_used             bigint,
     timestamp            timestamp,
     difficulty           bigint,
-    logs_bloom           text,
+    logs_bloom           char(514),
     mix_hash             char(66),
-    nonce                smallint,
+    nonce                char(18),
     parent_hash          char(66),
     receipts_root        char(66),
     sha3_uncles          char(66),
@@ -29,6 +29,7 @@ create table if not exists blocks
 
 create index if not exists idx_blocks_number on blocks (number);
 create index if not exists idx_blocks_hash on blocks using hash (hash);
+create index if not exists idx_blocks_timestamp on blocks using hash (timestamp);
 
 create table if not exists logs
 (

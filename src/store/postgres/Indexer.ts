@@ -19,8 +19,7 @@ export class PostgresStorageIndexer implements IStorageIndexer {
       []
     )
     const lastIndexedBlock = +res[0][`blocks_last_synced_block_number`]
-
-    return lastIndexedBlock || null
+    return lastIndexedBlock || 0
   }
 
   setLastIndexedBlockNumber = async (shardID: ShardID, num: BlockNumber): Promise<number> => {

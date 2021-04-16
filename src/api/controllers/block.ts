@@ -1,7 +1,7 @@
 import {stores} from 'src/store'
 import {ShardID} from 'src/types/blockchain'
-import {validator} from 'src/api/validators/validators'
-import {isBlockHash, isBlockNumber, isShard} from 'src/api/validators'
+import {validator} from 'src/api/controllers/validators/validators'
+import {isBlockHash, isBlockNumber, isShard} from 'src/api/controllers/validators'
 
 export async function getBlockByNumber(shardID: ShardID, blockNumber: number) {
   validator({
