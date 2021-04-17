@@ -18,9 +18,10 @@ export const buildSQLQuery = (query: Filter) => {
       return `${f.property} ${mapFilterTypeToSQL[f.type]} ${safeSQL(f.value)}`
     })
     .join(' and ')
+
   const where = whereQuery ? `where ${whereQuery}` : ''
   const offset = query.offset ? `offset ${query.offset || 0}` : ''
-  const limit = query.limit ? `limit ${query.limit || 10}` : ''
-  const order = query.orderBy ? `order by ${query.orderBy} ${query.orderDirection || 'asc'}` : ''
+  const limit = `limit ${query.limit || 10}`
+  const order = query.orderBy ? `order by ${query.orderBy} ${query.orderDirection || 'desc'}` : ''
   return `${where} ${order} ${offset} ${limit}`
 }

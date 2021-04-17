@@ -31,19 +31,27 @@ export async function getBlockByHash(shardID: ShardID, blockHash: string) {
   return await stores[shardID].block.getBlockByHash(shardID, blockHash)
 }
 
-export async function getBlocks(shardID: ShardID, filter?: Filter) {
+export async function getBlocks(shardID: ShardID, filter: Filter) {
   validator({
     shardID: isShard(shardID),
   })
+
   if (filter) {
     validator({
-      shardID: isShard(shardID),
       offset: isOffset(filter.offset),
       limit: isLimit(filter.limit),
       orderBy: isOrderBy(filter.orderBy),
       orderDirection: isOrderDirection(filter.orderDirection),
       filters: isFilters(filter.filters),
     })
+  } else {
+    filter = {
+      offset: 0,
+      limit: 10,
+      orderBy: 'number',
+      orderDirection: 'desc',
+      filters: [],
+    }
   }
   return await stores[shardID].block.getBlocks(shardID, filter)
 }

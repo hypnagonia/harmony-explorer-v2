@@ -44,8 +44,9 @@ export class PostgresStorageBlock implements IStorageBlock {
     return fromSnakeToCamelResponse(res[0]) as Block
   }
 
-  getBlocks = async (shardID: ShardID, filter?: Filter): Promise<Block[]> => {
-    const q = filter ? buildSQLQuery(filter) : ''
+  getBlocks = async (shardID: ShardID, filter: Filter): Promise<Block[]> => {
+    const q = buildSQLQuery(filter)
+    console.log({q})
     const res = await this.query(`select * from blocks ${q}`, [])
 
     return res.map(fromSnakeToCamelResponse)
