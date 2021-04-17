@@ -3,7 +3,7 @@ import {ShardID} from 'src/types'
 
 export type Validator = (value: any, params?: any) => void
 export type ParamValidator = () => void
-export type CurryParamValidator = (value: any) => ParamValidator
+export type CurryParamValidator = (value: any, params?: any) => ParamValidator
 
 type ErrorEntry = {error: Error; key: string}
 

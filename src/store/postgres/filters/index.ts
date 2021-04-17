@@ -1,47 +1,26 @@
-// filter lists
-// offset limit //
-// order number | timestamp
-// order direction asc | desc
-// from number | timestamp
+import {FilterType, Filter} from 'src/types'
 
-// block
-// txs
-// logs
-
-// gt >
-// gte >=
-// not
-// lt <
-// lte <
-// e - default
-
-// todo safe trim
-/*
-[
- {
-    type: 'gt',
-    property: 'number',
-    value: '45'
- }
-]
-
-*/
-
-type OrderDirection = 'asc' | 'desc'
-
-export type FilterType = 'gt' | 'gte' | 'lt' | 'lte'
-export type FilterProperty = string // 'number' | 'timestamp'
-
-export type FilterEntry = {
-  type: FilterType
-  property: FilterProperty
-  value: number | string
+const mapFilterTypeToSQL: Record<FilterType, string> = {
+  gt: '>',
+  gte: '>=',
+  lt: '<',
+  lte: '<-',
 }
 
-export type Filter = {
-  offset?: number
-  limit?: number
-  orderDirection: OrderDirection
-  orderBy: 'timestamp' | 'number'
-  filter: FilterEntry
+export const buildSQLQuery = (query: Filter) => {
+  const safeSQL = (value: any) => {
+    // todo
+    return (value + '').split(' ').join('')
+  }
+
+  const whereQuery = query.filters
+    .map((f) => {
+      return `${f.property} ${mapFilterTypeToSQL[f.type]} ${safeSQL(f.value)}`
+    })
+    .join(' and ')
+  const where = whereQuery ? `where ${whereQuery}` : ''
+  const offset = query.offset ? `offset ${query.offset || 0}` : ''
+  const limit = query.limit ? `limit ${query.limit || 10}` : ''
+  const order = query.orderBy ? `order by ${query.orderBy} ${query.orderDirection || 'asc'}` : ''
+  return `${where} ${order} ${offset} ${limit}`
 }
