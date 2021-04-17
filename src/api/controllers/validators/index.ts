@@ -22,4 +22,5 @@ export const isAddress: CurryParamValidator = (value: string) => () => [
 ]
 
 export const isOffset: CurryParamValidator = (value: number) => () => isUint(value, {min: 0})
-export const isLimit: CurryParamValidator = (value: number) => () => isUint(value, {min: 0})
+export const isLimit: CurryParamValidator = (value: number) => () =>
+  isUint(value, {min: 0, max: 100})

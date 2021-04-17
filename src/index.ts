@@ -11,14 +11,12 @@ const run = async () => {
 
   try {
     if (config.api.isEnabled) {
-      l.info(`API starting... Shards[${config.api.shards.join(', ')}]`)
       await api()
     } else {
       l.debug('API is disabled')
     }
 
     if (config.indexer.isEnabled) {
-      l.info(`Indexer starting... Shards[${config.indexer.shards.join(', ')}]`)
       await indexer()
     } else {
       l.debug('Indexer is disabled')

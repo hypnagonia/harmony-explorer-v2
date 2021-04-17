@@ -86,7 +86,9 @@ export class BlockIndexer {
 
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
 
-      await store.indexer.setLastIndexedBlockNumber(shardID, lastFetchedBlockNumber)
+      if (lastFetchedBlockNumber > 0) {
+        await store.indexer.setLastIndexedBlockNumber(shardID, lastFetchedBlockNumber)
+      }
 
       const syncedToBlock = Math.min(
         lastFetchedBlockNumber,
@@ -108,7 +110,7 @@ export class BlockIndexer {
         a.totalQueries = 0
       })
 
-      if (blocks.length === syncedToBlock - startBlock + 1) {
+      if (blocks.length === syncedToBlock - startBlock + 1 && blocks.length > blockRange) {
         if (failedCount > 0) {
           this.decreaseBatchCount()
         } else {

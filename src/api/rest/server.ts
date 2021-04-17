@@ -19,10 +19,11 @@ export const RESTServer = async () => {
   api.use(bodyParser.json())
   api.disable('x-powered-by')
 
-  const mainRouter = Router({mergeParams: true})
-  mainRouter.use('/block', blockRouter)
-  api.use('/shard/:shardID', mainRouter, transport)
-
+  const mainRouter0 = Router({mergeParams: true})
+  mainRouter0.use('/block', blockRouter)
+  const routerWithShards0 = Router({mergeParams: true})
+  routerWithShards0.use('/shard/:shardID', mainRouter0, transport)
+  api.use('/v0', routerWithShards0)
   let server: Server
 
   const close = () => server.close()

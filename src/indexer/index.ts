@@ -5,7 +5,10 @@ import {logger} from 'src/logger'
 
 const l = logger(module)
 
+// todo check if node stuck
 export const indexer = async () => {
+  l.info(`Indexer starting... Shards[${config.indexer.shards.join(', ')}]`)
+
   const shards = config.indexer.shards
   const blockIndexers = shards.map(
     (shardID) =>
