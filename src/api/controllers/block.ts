@@ -42,7 +42,7 @@ export async function getBlocks(shardID: ShardID, filter: Filter) {
       limit: isLimit(filter.limit),
       orderBy: isOrderBy(filter.orderBy),
       orderDirection: isOrderDirection(filter.orderDirection),
-      filters: isFilters(filter.filters),
+      filter: isFilters(filter.filters),
     })
   } else {
     filter = {

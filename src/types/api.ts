@@ -1,5 +1,5 @@
 export type FilterType = 'gt' | 'gte' | 'lt' | 'lte'
-export type FilterProperty = 'number' | 'timestamp'
+export type FilterProperty = 'number'
 
 export type FilterEntry = {
   type: FilterType
@@ -7,7 +7,7 @@ export type FilterEntry = {
   value: number | string
 }
 
-export type FilterOrderBy = 'timestamp' | 'number'
+export type FilterOrderBy = 'number'
 
 export type FilterOrderDirection = 'asc' | 'desc'
 export type Filter = {

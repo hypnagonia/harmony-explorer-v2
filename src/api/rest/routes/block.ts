@@ -32,7 +32,8 @@ export async function getBlocks(req: Request, res: Response, next: NextFunction)
   const {offset, limit, orderBy, orderDirection, type, property, value} = req.query
 
   const filterEntries: FilterEntry[] = []
-  if (type && property && value) {
+
+  if (type && value && property) {
     filterEntries.push({type, property, value} as FilterEntry)
   }
 
@@ -40,7 +41,7 @@ export async function getBlocks(req: Request, res: Response, next: NextFunction)
     offset: (+offset! as number) || 0,
     limit: (+limit! as number) || 0,
     orderBy: (orderBy as FilterOrderBy) || 'number',
-    orderDirection: (orderDirection as FilterOrderDirection) || 'asc',
+    orderDirection: (orderDirection as FilterOrderDirection) || 'desc',
     filters: filterEntries,
   }
 

@@ -41,13 +41,13 @@ export const isOrderDirection: CurryParamValidator = (value: number) => () =>
   isOneOfValidator(value, ['asc', 'desc'])
 
 export const isOrderBy: CurryParamValidator = (value: number) => () =>
-  isOneOfValidator(value, ['number', 'timestamp'])
+  isOneOfValidator(value, ['number'])
 
 // todo check FilterEntry value
 export const isFilters: CurryParamValidator = (value: FilterEntry[]) => () => {
   return value
     .map((f) => [
-      isOneOfValidator(f.property, ['number', 'timestamp']),
+      isOneOfValidator(f.property, ['number']),
       isOneOfValidator(f.type, ['gt', 'gte', 'lt', 'lte']),
     ])
     .flatMap((f) => f)

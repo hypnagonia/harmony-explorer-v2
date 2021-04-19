@@ -110,7 +110,7 @@ export class BlockIndexer {
         a.totalQueries = 0
       })
 
-      if (blocks.length === syncedToBlock - startBlock + 1 && blocks.length > blockRange) {
+      if (blocks.length >= syncedToBlock - startBlock + 1 && blocks.length >= blockRange) {
         if (failedCount > 0) {
           this.decreaseBatchCount()
         } else {
