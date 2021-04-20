@@ -36,6 +36,7 @@
     "object-curly-spacing": "off",
     "max-len": "off",
     "operator-linebreak": "off",
-    "new-cap": "off"
+    "new-cap": "off",
+    "quote-props": "off"
   }
 }

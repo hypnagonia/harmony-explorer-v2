@@ -8,6 +8,7 @@ import {
   TransactionHarmonyHash,
   TransactionHash,
   RPCTransaction,
+  RPCBlockHarmony,
   RPCTransactionHarmony,
   Topic,
   Address,
@@ -15,12 +16,17 @@ import {
   Log,
 } from 'types/blockchain'
 
-const mapBlockFromResponse = (block: RPCBlock): Block => {
+const mapBlockFromResponse = (block: RPCBlockHarmony): Block => {
+  // todo
+  if (parseInt(block.number, 16) === 12003009) {
+    // console.log(block)
+    // process.exit(0)
+  }
+
   // @ts-ignore
   return {
     ...block,
     number: parseInt(block.number, 16),
-    transactionsInEthHash: undefined,
   } as Block
 }
 
@@ -28,14 +34,14 @@ export const getBlocks = (
   shardID: ShardID,
   fromBlock: BlockNumber,
   toBlock: BlockNumber,
-  isFullInfo = true,
+  fullTx = true,
   withSigners = false,
   inclStaking = true
 ): Promise<Block[]> => {
   const from = '0x' + fromBlock.toString(16)
   const to = '0x' + toBlock.toString(16)
   const o = {
-    isFullInfo,
+    fullTx,
     withSigners,
     inclStaking,
   }
@@ -56,7 +62,7 @@ export const getTransactionByHash = (
   shardID: ShardID,
   hash: TransactionHash
 ): Promise<RPCTransactionHarmony> => {
-  return transport(shardID, 'hmy_getTransactionByHash', [hash])
+  return transport(shardID, 'eth_getTransactionByHash', [hash])
 }
 
 export const getLogs = (
@@ -73,4 +79,15 @@ export const getLogs = (
     toBlock: '0x' + toBlock.toString(16),
   }
   return transport(shardID, 'eth_getLogs', [o])
+}
+
+// todo
+export const getBalance = () => {}
+
+export const getTransactionTrace = (
+  shardID: ShardID,
+  hash: TransactionHash,
+  tracer: 'callTracer' = 'callTracer'
+): Promise<RPCTransactionHarmony> => {
+  return transport(shardID, 'debug_traceTransaction', [hash, {tracer}])
 }

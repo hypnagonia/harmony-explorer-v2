@@ -68,6 +68,24 @@ export class BlockIndexer {
         )
       }
 
+      const addTransactions = (blocks: Block[]) => {
+        return Promise.all(
+          blocks.map(async (block) => {
+            await store.transaction.addTransactions(shardID, block.transactions)
+            return block
+          })
+        )
+      }
+
+      const addStakingTransactions = (blocks: Block[]) => {
+        return Promise.all(
+          blocks.map(async (block) => {
+            await store.staking.addStakingTransactions(shardID, block.stakingTransactions)
+            return block
+          })
+        )
+      }
+
       const res = await Promise.all(
         range(this.batchCount).map(async (_, i) => {
           const from = startBlock + i * blockRange
@@ -77,12 +95,17 @@ export class BlockIndexer {
             return Promise.resolve([] as Block[])
           }
 
-          return await getBlocks(from, to).then(addBlocks)
+          return await getBlocks(from, to)
+            .then(addBlocks)
+            .then(addTransactions)
+            .then(addStakingTransactions)
         })
       )
 
       const blocks = res.flatMap((b) => b).filter((b) => b)
       const lastFetchedBlockNumber = blocks.reduce((a, b) => (a < b.number ? b.number : a), 0)
+      const transactionsCount = blocks.reduce((a, b) => a + b.transactions.length, 0)
+      const stakingTransactionsCount = blocks.reduce((a, b) => a + b.stakingTransactions.length, 0)
 
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
 
@@ -98,7 +121,7 @@ export class BlockIndexer {
       this.l.info(
         `Processed [${startBlock}, ${syncedToBlock}] ${
           blocks.length
-        } blocks. Done in ${batchTime()}. Failed requests ${failedCount}`
+        } blocks. ${transactionsCount} txs. ${stakingTransactionsCount} staking txs. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
 
       const u = urls[shardID]

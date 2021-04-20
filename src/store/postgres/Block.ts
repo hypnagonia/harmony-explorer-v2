@@ -20,11 +20,13 @@ export class PostgresStorageBlock implements IStorageBlock {
   addBlock = async (shardID: ShardID, block: Block) => {
     // todo
     // @ts-ignore
-    block.stakingTransactions = []
-    block.transactions = []
-    // @ts-ignore
-    block.transactionsInEthHash = undefined
-    const {query, params} = generateQuery(block)
+
+    const newBlock = {
+      ...block,
+      stakingTransactions: block.stakingTransactions.map(({hash}) => hash),
+      transactions: block.transactions.map(({ethHash}) => ethHash),
+    }
+    const {query, params} = generateQuery(newBlock)
 
     return await this.query(`insert into blocks ${query} on conflict (number) do nothing;`, params)
   }

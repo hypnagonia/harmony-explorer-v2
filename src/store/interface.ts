@@ -1,4 +1,13 @@
-import {ShardID, Block, Log, TransactionHash, BlockNumber, BlockHash} from 'src/types/blockchain'
+import {
+  ShardID,
+  Block,
+  Log,
+  TransactionHash,
+  BlockNumber,
+  BlockHash,
+  RPCTransactionHarmony,
+  RPCStakingTransactionHarmony,
+} from 'src/types/blockchain'
 
 export interface IStorageBlock {
   addBlock: (shardId: ShardID, block: Block) => Promise<any>
@@ -24,11 +33,20 @@ export interface IStorageIndexer {
   setLastIndexedLogsBlockNumber: (shardId: ShardID, num: BlockNumber) => Promise<any>
 }
 
-export interface IStorageTransaction {}
+export interface IStorageTransaction {
+  addTransaction: (shardId: ShardID, block: RPCTransactionHarmony) => Promise<any>
+  addTransactions: (shardId: ShardID, blocks: RPCTransactionHarmony[]) => Promise<any>
+}
+
+export interface IStorageStakingTransaction {
+  addStakingTransaction: (shardId: ShardID, block: RPCStakingTransactionHarmony) => Promise<any>
+  addStakingTransactions: (shardId: ShardID, blocks: RPCStakingTransactionHarmony[]) => Promise<any>
+}
 
 export interface IStorage {
   block: IStorageBlock
   log: IStorageLog
   transaction: IStorageTransaction
+  staking: IStorageStakingTransaction
   indexer: IStorageIndexer
 }

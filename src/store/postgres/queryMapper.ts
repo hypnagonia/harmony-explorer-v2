@@ -2,6 +2,7 @@ const mapNaming: Record<string, string> = {
   extra_data: 'extraData',
   gas_limit: 'gasLimit',
   gas_used: 'gasUsed',
+  gas_price: 'gasPrice',
   logs_bloom: 'logsBloom',
   mix_hash: 'mixHash',
   parent_hash: 'parentHash',
@@ -27,6 +28,8 @@ const mapNaming: Record<string, string> = {
   token_address: 'tokenAddress',
   transaction_count: 'transactionCount',
   token_id: 'tokenId',
+  '"from"': 'from',
+  '"to"': 'to',
 }
 
 const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((a, k) => {

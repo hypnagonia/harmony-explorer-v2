@@ -4,7 +4,7 @@ import LoggerModule from 'zerg/dist/LoggerModule'
 import {RPCUrls} from '../../RPCUrls'
 import {ShardID} from 'src/types/blockchain'
 
-const callTimeout = 10000
+const callTimeout = 20000
 const timeoutPromise = () => new Promise((_, reject) => setTimeout(reject, callTimeout))
 const sleep = () => new Promise((r) => setTimeout(r, 1000))
 

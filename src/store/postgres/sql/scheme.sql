@@ -63,7 +63,7 @@ create table if not exists transactions
     gas               bigint,
     gas_price         bigint,
     input             text,
-    nonce             smallint,
+    nonce             bigint,
     r                 text,
     s                 text,
     to_shard_id       smallint,
@@ -94,7 +94,7 @@ create table if not exists staking_transactions
 (
     shard             smallint                          not null,
     hash              char(66) unique primary key       not null,
-    value             numeric,
+    /*value             numeric,*/
     block_hash        char(66) references blocks (hash) not null,
     block_number      bigint references blocks (number) not null,
     timestamp         timestamp,
@@ -109,7 +109,8 @@ create table if not exists staking_transactions
     to_shard_id       smallint,
     transaction_index smallint,
     v                 text,
-    msg               jsonb
+    msg               jsonb,
+    type staking_transaction_type
 );
 
 create index if not exists idx_staking_transactions_hash on staking_transactions using hash (hash);

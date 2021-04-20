@@ -7,6 +7,7 @@ import {logTime} from 'src/utils/logTime'
 import {Query, PostgresStorageOptions} from './types'
 import {PostgresStorageBlock} from './Block'
 import {PostgresStorageLog} from './Log'
+import {PostgresStorageStakingTransaction} from './StakingTransaction'
 import {PostgresStorageTransaction} from './Transaction'
 import {PostgresStorageIndexer} from 'src/store/postgres/Indexer'
 import LoggerModule from 'zerg/dist/LoggerModule'
@@ -21,6 +22,7 @@ export class PostgresStorage implements IStorage {
   log: PostgresStorageLog
   transaction: PostgresStorageTransaction
   indexer: PostgresStorageIndexer
+  staking: PostgresStorageStakingTransaction
   isStarted = false
   isStarting = false
   l: LoggerModule
@@ -30,6 +32,7 @@ export class PostgresStorage implements IStorage {
     this.block = new PostgresStorageBlock(this.query)
     this.log = new PostgresStorageLog(this.query)
     this.transaction = new PostgresStorageTransaction(this.query)
+    this.staking = new PostgresStorageStakingTransaction(this.query)
     this.indexer = new PostgresStorageIndexer(this.query)
     this.l = logger(module, `shard${options.shardID}`)
     this.options = options
@@ -99,6 +102,8 @@ export class PostgresStorage implements IStorage {
       return rows
     } catch (e) {
       this.l.debug(e.message || e, {sql, params})
+      console.log(e, sql, params)
+      process.exit(0)
       throw new Error(e)
     }
   }

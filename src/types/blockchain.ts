@@ -4,7 +4,11 @@ export type RPCETHMethod =
   | 'eth_getLogs'
   | 'eth_getBlocks'
 
-export type RPCHarmonyMethod = 'hmy_getBlockByNumber' | 'hmy_getTransactionByHash' | 'hmy_getBlocks'
+export type RPCHarmonyMethod =
+  | 'hmy_getBlockByNumber'
+  | 'hmy_getTransactionByHash'
+  | 'hmy_getBlocks'
+  | 'debug_traceTransaction'
 
 export type ShardID = 0 | 1 | 2 | 3
 
@@ -54,7 +58,7 @@ export type RPCBlockHarmony = {
   stateRoot: string
   timestamp: string
   transactions: RPCTransactionHarmony[]
-  stakingTransactions: string[] // todo
+  stakingTransactions: RPCStakingTransactionHarmony[]
   transactionsRoot: string
   uncles: string[]
   epoch: string
@@ -119,6 +123,33 @@ export type RPCTransactionHarmony = {
   transactionIndex: string
   v: string
   value: string
+}
+export type StakingTransactionType =
+  | 'CreateValidator'
+  | 'EditValidator'
+  | 'CollectRewards'
+  | 'Undelegate'
+  | 'Delegate'
+
+export type RPCStakingTransactionHarmony = {
+  type: StakingTransactionType
+  blockHash: BlockHash
+  blockNumber: BlockHexNumber
+  from: AddressHarmony
+  to: AddressHarmony
+  gas: string
+  gasPrice: string
+  hash: TransactionHarmonyHash
+  input: ByteCode
+  nonce: string
+  r: string
+  s: string
+  shardID: ShardID
+  timestamp: string
+  toShardID: ShardID
+  transactionIndex: string
+  v: string
+  msg: any // todo
 }
 
 export type Topic = string
