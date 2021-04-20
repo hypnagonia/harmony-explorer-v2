@@ -59,15 +59,13 @@ export const fromSnakeToCamelResponse = (o: Record<any, any>) => {
 }
 
 export const generateQuery = (o: Record<any, any>) => {
-  const fields = Object.keys(o)
-    .map((k) => mapNamingReverse[k] || k)
-    .join(',')
-  const placeholders = Object.keys(o)
-    .map((_, i) => `$${i + 1}`)
-    .join(',')
+  const filteredKeys = Object.keys(o).filter((k) => o[k] !== undefined)
+
+  const fields = filteredKeys.map((k) => mapNamingReverse[k] || k).join(',')
+  const placeholders = filteredKeys.map((_, i) => `$${i + 1}`).join(',')
 
   const query = `(${fields}) values(${placeholders})`
-  const params = Object.keys(o).map((k) => {
+  const params = filteredKeys.map((k) => {
     if (toStoreMappers[k]) {
       return toStoreMappers[k](o[k])
     }

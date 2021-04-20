@@ -5,7 +5,7 @@ import {
   Block,
   RPCBlock,
   ShardID,
-  TransactionHarmony,
+  TransactionHarmonyHash,
   TransactionHash,
   RPCTransaction,
   RPCTransactionHarmony,
@@ -20,6 +20,7 @@ const mapBlockFromResponse = (block: RPCBlock): Block => {
   return {
     ...block,
     number: parseInt(block.number, 16),
+    transactionsInEthHash: undefined,
   } as Block
 }
 

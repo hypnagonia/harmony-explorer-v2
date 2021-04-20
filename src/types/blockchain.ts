@@ -64,7 +64,7 @@ export type RPCBlockHarmony = {
 type Modify<T, R> = Omit<T, keyof R> & R
 
 export type Block = Modify<
-  RPCBlock,
+  RPCBlockHarmony,
   {
     number: BlockNumber
     epoch: number
@@ -80,7 +80,7 @@ export type Address = string
 export type AddressHarmony = string
 
 export type TransactionHash = string
-export type TransactionHarmony = string
+export type TransactionHarmonyHash = string
 
 export type RPCTransaction = {
   blockHash: BlockHash
@@ -107,7 +107,8 @@ export type RPCTransactionHarmony = {
   to: AddressHarmony
   gas: string
   gasPrice: string
-  hash: TransactionHarmony
+  hash: TransactionHarmonyHash
+  ethHash: TransactionHash
   input: ByteCode
   nonce: string
   r: string

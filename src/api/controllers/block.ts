@@ -31,7 +31,7 @@ export async function getBlockByHash(shardID: ShardID, blockHash: string) {
   return await stores[shardID].block.getBlockByHash(shardID, blockHash)
 }
 
-export async function getBlocks(shardID: ShardID, filter: Filter) {
+export async function getBlocks(shardID: ShardID, filter?: Filter) {
   validator({
     shardID: isShard(shardID),
   })
