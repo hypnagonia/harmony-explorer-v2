@@ -7,13 +7,16 @@ import {
   BlockHash,
   RPCTransactionHarmony,
   RPCStakingTransactionHarmony,
+  Transaction,
 } from 'src/types/blockchain'
+import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types'
 
 export interface IStorageBlock {
   addBlock: (shardId: ShardID, block: Block) => Promise<any>
   addBlocks: (shardId: ShardID, blocks: Block[]) => Promise<any>
   getBlockByNumber: (shardId: ShardID, number: BlockNumber) => Promise<Block | null>
   getBlockByHash: (shardId: ShardID, hash: BlockHash) => Promise<Block | null>
+  getBlocks: (shardID: ShardID, filter: Filter) => Promise<Block[]>
 }
 
 export interface IStorageLog {
@@ -36,6 +39,11 @@ export interface IStorageIndexer {
 export interface IStorageTransaction {
   addTransaction: (shardId: ShardID, block: RPCTransactionHarmony) => Promise<any>
   addTransactions: (shardId: ShardID, blocks: RPCTransactionHarmony[]) => Promise<any>
+  getTransactionByField: (
+    shardID: ShardID,
+    field: TransactionQueryField,
+    value: TransactionQueryValue
+  ) => Promise<Transaction | null>
 }
 
 export interface IStorageStakingTransaction {
@@ -43,6 +51,7 @@ export interface IStorageStakingTransaction {
   addStakingTransactions: (shardId: ShardID, blocks: RPCStakingTransactionHarmony[]) => Promise<any>
 }
 
+// todo shardID redundant
 export interface IStorage {
   block: IStorageBlock
   log: IStorageLog

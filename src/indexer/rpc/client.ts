@@ -40,6 +40,8 @@ export const getBlocks = (
 ): Promise<Block[]> => {
   const from = '0x' + fromBlock.toString(16)
   const to = '0x' + toBlock.toString(16)
+
+  // todo disable including staking txs for mainnet before 3358745 where implemented
   const o = {
     fullTx,
     withSigners,

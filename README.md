@@ -57,8 +57,8 @@ grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockB
 ### Indexer
 
 - [x] Index Blocks
-- [ ] Index Transactions
-- [ ] Index Staking Transactions
+- [x] Index Transactions
+- [x] Index Staking Transactions
 - [x] Index Events
 - [ ] Track transactions for Address
 - [ ] Index Transactions Trace Calls

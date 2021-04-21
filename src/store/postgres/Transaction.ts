@@ -1,15 +1,33 @@
 import {logger} from 'src/logger'
 import {IStorageTransaction} from 'src/store/interface'
-import {Block, BlockHash, BlockNumber, RPCTransactionHarmony, ShardID} from 'src/types/blockchain'
+import {
+  Block,
+  BlockHash,
+  TransactionQueryField,
+  TransactionQueryValue,
+  RPCTransactionHarmony,
+  ShardID,
+  Transaction,
+} from 'src/types'
 import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {Query} from 'src/store/postgres/types'
-import {generateQuery} from 'src/store/postgres/queryMapper'
+import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 
 export class PostgresStorageTransaction implements IStorageTransaction {
   query: Query
 
   constructor(query: Query) {
     this.query = query
+  }
+
+  getTransactionByField = async (
+    shardID: ShardID,
+    field: TransactionQueryField,
+    value: TransactionQueryValue
+  ): Promise<Transaction | null> => {
+    const res = await this.query(`select * from transactions where ${field} = $1;`, [value])
+
+    return fromSnakeToCamelResponse(res[0]) as Transaction
   }
 
   addTransactions = async (shardID: ShardID, txs: RPCTransactionHarmony[]) => {

@@ -5,6 +5,8 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import {logger} from 'src/logger'
 import {blockRouter} from 'src/api/rest/routes/block'
+import {transactionRouter} from 'src/api/rest/routes/transaction'
+
 import {transport} from 'src/api/rest/transport'
 const l = logger(module)
 
@@ -21,6 +23,8 @@ export const RESTServer = async () => {
 
   const mainRouter0 = Router({mergeParams: true})
   mainRouter0.use('/block', blockRouter)
+  mainRouter0.use('/transaction', transactionRouter)
+
   const routerWithShards0 = Router({mergeParams: true})
   routerWithShards0.use('/shard/:shardID', mainRouter0, transport)
   api.use('/v0', routerWithShards0)

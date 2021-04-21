@@ -38,7 +38,7 @@ const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((
 }, {} as Record<string, string>)
 
 const fromHexToNumber = (s: string | number) =>
-  s ? (typeof s === 'number' ? s : parseInt(s, 16)) : s
+  s ? (typeof s === 'number' ? s : BigInt(s).toString()) : s
 const fromStringToNumber = (s: string | number) => +s
 
 const toStoreMappers: Record<string, (val: any) => any> = {
@@ -50,7 +50,7 @@ const toStoreMappers: Record<string, (val: any) => any> = {
   size: fromHexToNumber,
   logIndex: fromHexToNumber,
   transactionIndex: fromHexToNumber,
-  timestamp: (t) => new Date(parseInt(t, 16)),
+  timestamp: (t) => new Date(parseInt(t, 16)), // todo proper
 }
 
 export const fromSnakeToCamelResponse = (o: Record<any, any>) => {

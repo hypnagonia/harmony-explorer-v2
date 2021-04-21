@@ -63,7 +63,7 @@ create table if not exists transactions
     gas               bigint,
     gas_price         bigint,
     input             text,
-    nonce             bigint,
+    nonce             int,
     r                 text,
     s                 text,
     to_shard_id       smallint,
@@ -94,7 +94,6 @@ create table if not exists staking_transactions
 (
     shard             smallint                          not null,
     hash              char(66) unique primary key       not null,
-    /*value             numeric,*/
     block_hash        char(66) references blocks (hash) not null,
     block_number      bigint references blocks (number) not null,
     timestamp         timestamp,
@@ -103,7 +102,7 @@ create table if not exists staking_transactions
     gas               bigint,
     gas_price         bigint,
     input             text,
-    nonce             smallint,
+    nonce             int,
     r                 text,
     s                 text,
     to_shard_id       smallint,
@@ -122,6 +121,7 @@ $$
     begin
         create type transaction_type as enum (
             'transaction',
+            'staking_transaction',
             'internal_transaction');
     exception
         when duplicate_object then null;
@@ -129,6 +129,7 @@ $$
 $$;
 
 /*addresses mentioned in transaction*/
+/* block miner, staking tx data, tx, inner txs*/
 create table if not exists address2transaction
 (
     address          char(42) not null,
