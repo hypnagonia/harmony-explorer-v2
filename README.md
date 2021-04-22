@@ -34,28 +34,39 @@ todo
 #### Block
 list (with filters)
 `http://localhost:3000/v0/shard/0/block`
+
 By hash
 `http://localhost:3000/v0/shard/0/block/hash/0x5824370c68e1b55008e5f25d0bf1e88e4f35b3b31791ae6d7d83544f620f9a19`
+
 By number
 `http://localhost:3000/v0/shard/0/block/number/0`
+
 #### Transaction
 list (with filters)
 `http://localhost:3000/v0/shard/0/transaction/`
+
 by eth hash or harmony hash
 `http://localhost:3000/v0/shard/0/transaction/hash/0xb242fc9b3644e7445c32d199d729be8339f58ac7c0114a3ef4ab343813caa73a`
+
 by block number
 `http://localhost:3000/v0/shard/0/transaction/block/number/11600000`
+
 by block hash
 `http://localhost:3000/v0/shard/0/transaction/block/hash/0x7bd91ded8704e55d9345f21e26b002e4676b776386e7abe734536aca91924922`
+
 #### Staking
 list (with filters)
 `http://localhost:3000/v0/shard/0/stakingTransaction/`
-by eth hash or harmony hash
+
+by ETH hash or Harmony hash
 `http://localhost:3000/v0/shard/0/stakingTransaction/hash/:txHash`
+
 by block number
 `http://localhost:3000/v0/shard/0/stakingTransaction/block/number/:blockNumber`
+
 by block hash
 `http://localhost:3000/v0/shard/0/stakingTransaction/block/hash/:blockHash`
+
 #### Filters
 as GET params
 `orderBy`: `number` for blocks | `block_number` for txs
