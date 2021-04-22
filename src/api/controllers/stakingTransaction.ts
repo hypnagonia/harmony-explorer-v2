@@ -2,7 +2,7 @@ import {stores} from 'src/store'
 import {ShardID} from 'src/types/blockchain'
 import {validator} from 'src/api/controllers/validators/validators'
 import {
-  isBlockHash,
+  is64CharHexHash,
   isBlockNumber,
   isOrderDirection,
   isOrderBy,
@@ -29,7 +29,7 @@ export async function getStakingTransactionsByField(
     })
   } else {
     validator({
-      value: isBlockHash(value),
+      value: is64CharHexHash(value),
     })
   }
 

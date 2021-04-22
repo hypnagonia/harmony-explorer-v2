@@ -53,7 +53,6 @@ export class PostgresStorageTransaction implements IStorageTransaction {
     value: TransactionQueryValue
   ): Promise<Transaction[]> => {
     const res = await this.query(`select * from transactions where ${field}=$1;`, [value])
-    console.log(`select * from transactions where ${field} = $1;`, value, res.length)
     return res.map(fromSnakeToCamelResponse) as Transaction[]
   }
 

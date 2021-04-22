@@ -52,7 +52,6 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
     value: TransactionQueryValue
   ): Promise<StakingTransaction[]> => {
     const res = await this.query(`select * from transactions where ${field}=$1;`, [value])
-    console.log(`select * from staking_transactions where ${field} = $1;`, value, res.length)
     return res.map(fromSnakeToCamelResponse) as StakingTransaction[]
   }
 

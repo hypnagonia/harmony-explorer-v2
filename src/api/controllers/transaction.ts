@@ -1,8 +1,8 @@
 import {stores} from 'src/store'
-import {ShardID} from 'src/types/blockchain'
+import {ShardID, Transaction} from 'src/types/blockchain'
 import {validator} from 'src/api/controllers/validators/validators'
 import {
-  isBlockHash,
+  is64CharHexHash,
   isBlockNumber,
   isOrderDirection,
   isOrderBy,
@@ -19,9 +19,9 @@ export async function getTransactionByField(
   shardID: ShardID,
   field: TransactionQueryField,
   value: TransactionQueryValue
-) {
+): Promise<Transaction | Transaction[] | null> {
   validator({
-    field: isOneOf(field, ['block_number', 'block_hash', 'hash', 'harmony_hash']),
+    field: isOneOf(field, ['block_number', 'block_hash', 'hash', 'hash_harmony']),
   })
   if (field === 'block_number') {
     validator({
@@ -29,16 +29,21 @@ export async function getTransactionByField(
     })
   } else {
     validator({
-      value: isBlockHash(value),
+      value: is64CharHexHash(value),
     })
   }
 
   const txs = await stores[shardID].transaction.getTransactionsByField(shardID, field, value)
   if (!txs!.length) {
+    if (field === 'hash') {
+      // if tx not found by hash, give it another shot with harmony hash
+      return getTransactionByField(shardID, 'hash_harmony', value)
+    }
+
     return null
   }
 
-  if (['hash', 'harmony_hash'].includes(field)) {
+  if (['hash', 'hash_harmony'].includes(field)) {
     return txs![0]
   }
 

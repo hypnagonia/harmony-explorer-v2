@@ -15,7 +15,7 @@ export const isShard: CurryParamValidator = (value: number) => () => [
 ]
 export const isBlockNumber: CurryParamValidator = (value: number) => () => isUint(value, {min: 0})
 
-export const isBlockHash: CurryParamValidator = (value: string) => () => [
+export const is64CharHexHash: CurryParamValidator = (value: string) => () => [
   isHexString(value),
   isLength(value, {min: 66, max: 66}),
 ]

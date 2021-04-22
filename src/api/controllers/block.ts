@@ -2,7 +2,7 @@ import {stores} from 'src/store'
 import {ShardID} from 'src/types/blockchain'
 import {validator} from 'src/api/controllers/validators/validators'
 import {
-  isBlockHash,
+  is64CharHexHash,
   isBlockNumber,
   isOrderDirection,
   isOrderBy,
@@ -26,7 +26,7 @@ export async function getBlockByNumber(shardID: ShardID, blockNumber: number) {
 export async function getBlockByHash(shardID: ShardID, blockHash: string) {
   validator({
     shardID: isShard(shardID),
-    blockHash: isBlockHash(blockHash),
+    blockHash: is64CharHexHash(blockHash),
   })
   return await stores[shardID].block.getBlockByHash(shardID, blockHash)
 }
