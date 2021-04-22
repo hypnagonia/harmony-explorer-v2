@@ -39,11 +39,12 @@ export interface IStorageIndexer {
 export interface IStorageTransaction {
   addTransaction: (shardId: ShardID, block: RPCTransactionHarmony) => Promise<any>
   addTransactions: (shardId: ShardID, blocks: RPCTransactionHarmony[]) => Promise<any>
-  getTransactionByField: (
+  getTransactionsByField: (
     shardID: ShardID,
     field: TransactionQueryField,
     value: TransactionQueryValue
-  ) => Promise<Transaction | null>
+  ) => Promise<Transaction[]>
+  getTransactions: (shardID: ShardID, filter: Filter) => Promise<Transaction[]>
 }
 
 export interface IStorageStakingTransaction {

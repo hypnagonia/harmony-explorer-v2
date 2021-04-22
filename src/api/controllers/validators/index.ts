@@ -7,7 +7,7 @@ import {
   ParamValidator,
   isOneOf as isOneOfValidator,
 } from './validators'
-import {Filter, FilterEntry} from 'src/types'
+import {Filter, FilterEntry, FilterOrderBy} from 'src/types'
 
 export const isShard: CurryParamValidator = (value: number) => () => [
   isUint(value, {min: 0, max: 3}),
@@ -40,14 +40,19 @@ export const isOneOf: CurryParamValidator = (value: number, params: String[]) =>
 export const isOrderDirection: CurryParamValidator = (value: number) => () =>
   isOneOfValidator(value, ['asc', 'desc'])
 
-export const isOrderBy: CurryParamValidator = (value: number) => () =>
-  isOneOfValidator(value, ['number'])
+export const isOrderBy: CurryParamValidator = (
+  value: number,
+  allowedFields: FilterOrderBy[]
+) => () => isOneOfValidator(value, allowedFields)
 
 // todo check FilterEntry value
-export const isFilters: CurryParamValidator = (value: FilterEntry[]) => () => {
+export const isFilters: CurryParamValidator = (
+  value: FilterEntry[],
+  allowedFields: FilterOrderBy[]
+) => () => {
   return value
     .map((f) => [
-      isOneOfValidator(f.property, ['number']),
+      isOneOfValidator(f.property, allowedFields),
       isOneOfValidator(f.type, ['gt', 'gte', 'lt', 'lte']),
     ])
     .flatMap((f) => f)

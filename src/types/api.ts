@@ -15,7 +15,7 @@ export type FilterEntry = {
   value: number | string
 }
 
-export type FilterOrderBy = 'number'
+export type FilterOrderBy = 'number' | 'block_number'
 
 export type FilterOrderDirection = 'asc' | 'desc'
 export type Filter = {

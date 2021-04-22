@@ -5,7 +5,15 @@ import {RPCUrls} from '../../RPCUrls'
 import {ShardID} from 'src/types/blockchain'
 
 const callTimeout = 20000
-const timeoutPromise = () => new Promise((_, reject) => setTimeout(reject, callTimeout))
+const defaultRetries = 3
+const timeoutPromise = () =>
+  new Promise((_, reject) =>
+    setTimeout(
+      () =>
+        reject(new Error(`Websocket did not respond ${defaultRetries} times in ${callTimeout}ms`)),
+      callTimeout
+    )
+  )
 const sleep = () => new Promise((r) => setTimeout(r, 1000))
 
 export class WebSocketRPC {
@@ -25,10 +33,10 @@ export class WebSocketRPC {
     this.ws.on('open', this.onOpen)
   }
 
-  call = (method: string, params: any[]): Promise<any> => {
+  call = (method: string, params: any[], retries = defaultRetries): Promise<any> => {
     const retryPromise = () =>
       sleep().then(() => {
-        return this.call(method, params)
+        return this.call(method, params, retries)
       })
 
     if (!this.open) {
@@ -37,7 +45,11 @@ export class WebSocketRPC {
 
     const catchPromise = (err: any) => {
       // this.l.debug('Call error', { err })
-      // todo
+      retries--
+      if (retries === 0) {
+        throw new Error(err)
+      }
+
       RPCUrls.getURL(this.shardID).submitStatistic(0, true)
       return retryPromise()
     }

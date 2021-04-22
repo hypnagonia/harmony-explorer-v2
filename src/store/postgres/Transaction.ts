@@ -8,10 +8,12 @@ import {
   RPCTransactionHarmony,
   ShardID,
   Transaction,
+  Filter,
 } from 'src/types'
 import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
+import {buildSQLQuery} from 'src/store/postgres/filters'
 
 export class PostgresStorageTransaction implements IStorageTransaction {
   query: Query
@@ -20,14 +22,14 @@ export class PostgresStorageTransaction implements IStorageTransaction {
     this.query = query
   }
 
-  getTransactionByField = async (
+  getTransactionsByField = async (
     shardID: ShardID,
     field: TransactionQueryField,
     value: TransactionQueryValue
-  ): Promise<Transaction | null> => {
-    const res = await this.query(`select * from transactions where ${field} = $1;`, [value])
-
-    return fromSnakeToCamelResponse(res[0]) as Transaction
+  ): Promise<Transaction[]> => {
+    const res = await this.query(`select * from transactions where ${field}=$1;`, [value])
+    console.log(`select * from transactions where ${field} = $1;`, value, res.length)
+    return res.map(fromSnakeToCamelResponse) as Transaction[]
   }
 
   addTransactions = async (shardID: ShardID, txs: RPCTransactionHarmony[]) => {
@@ -53,5 +55,12 @@ export class PostgresStorageTransaction implements IStorageTransaction {
       `insert into transactions ${query} on conflict (hash) do nothing;`,
       params
     )
+  }
+
+  getTransactions = async (shardID: ShardID, filter: Filter): Promise<Transaction[]> => {
+    const q = buildSQLQuery(filter)
+    const res = await this.query(`select * from transactions ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
   }
 }

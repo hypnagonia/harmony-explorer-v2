@@ -40,9 +40,9 @@ export async function getBlocks(shardID: ShardID, filter?: Filter) {
     validator({
       offset: isOffset(filter.offset),
       limit: isLimit(filter.limit),
-      orderBy: isOrderBy(filter.orderBy),
+      orderBy: isOrderBy(filter.orderBy, ['number']),
       orderDirection: isOrderDirection(filter.orderDirection),
-      filter: isFilters(filter.filters),
+      filter: isFilters(filter.filters, ['number']),
     })
   } else {
     filter = {
