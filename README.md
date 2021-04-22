@@ -70,6 +70,7 @@ by block hash
 #### Filters
 
 as GET params
+
 `orderBy`: `number` for blocks | `block_number` for txs
 
 `orderDirection`: `asc` | `desc`
@@ -85,6 +86,9 @@ Composite filters (at the moment only single condition supported)
 `property`: `number` | `block_number` (will be more in the future)
 
 `value`: value
+
+Example
+`/v0/shard/0/block?limit=2&offset=0&orderBy=number&orderDirection=asc&type=gt&property=number&value=40`
 
 
 ## Websocket [Socket.IO](https://socket.io/)
