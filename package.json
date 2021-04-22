@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon",
     "start": "ts-node  -r tsconfig-paths/register src/index.ts",
-    "build": "tsc",
+    "build": "webpack --config webpack.config.js && cp -r src/store/postgres/sql dist && cp .env dist",
     "build:dev": "tsc -w",
     "test": "mocha -w -r ts-node/register src/**/*.test.ts",
     "format": "prettier --write \"**/*.ts\"",
@@ -40,7 +40,7 @@
     "rpc-websockets": "^7.4.11",
     "socket.io": "^4.0.1",
     "twilio": "^3.48.1",
-    "typescript": "^3.7.5",
+    "typescript": "^4.2.4",
     "web-push": "^3.4.4",
     "zerg": "^2.1.2"
   },
@@ -61,8 +61,13 @@
     "nyc": "^15.1.0",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.2",
+    "ts-loader": "^9.1.0",
     "ts-node": "^9.1.1",
-    "tsconfig-paths": "^3.9.0"
+    "tsconfig-paths": "^3.9.0",
+    "typescript-transform-paths": "^2.2.3",
+    "webpack-cli": "^4.6.0",
+    "webpack": "^5.35.0",
+    "webpack-node-externals": "^3.0.0"
   },
   "husky": {
     "hooks": {
