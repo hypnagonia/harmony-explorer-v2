@@ -33,7 +33,7 @@ export async function getStakingTransactionsByField(
     })
   }
 
-  const txs = await stores[shardID].staking.getStakingTransactionsByField(shardID, field, value)
+  const txs = await stores[shardID].staking.getStakingTransactionsByField(field, value)
   if (!txs!.length) {
     return null
   }
@@ -67,5 +67,5 @@ export async function getStakingTransactions(shardID: ShardID, filter?: Filter) 
       filters: [],
     }
   }
-  return await stores[shardID].staking.getStakingTransactions(shardID, filter)
+  return await stores[shardID].staking.getStakingTransactions(filter)
 }

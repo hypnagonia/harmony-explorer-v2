@@ -10,7 +10,7 @@ export class PostgresStorageLog implements IStorageLog {
     this.query = query
   }
 
-  addLog = async (shardID: ShardID, log: Log): Promise<any> => {
+  addLog = async (log: Log): Promise<any> => {
     return await this.query(
       `insert into logs
        (
@@ -39,20 +39,17 @@ export class PostgresStorageLog implements IStorageLog {
     )
   }
 
-  getLogsByTransactionHash = async (
-    shardID: ShardID,
-    TransactionHash: string
-  ): Promise<Log[] | null> => {
+  getLogsByTransactionHash = async (TransactionHash: string): Promise<Log[] | null> => {
     const res = await this.query(`select * from logs where transaction_hash=$1;`, [TransactionHash])
 
     return res as Log[]
   }
-  getLogsByBlockNumber = async (shardID: ShardID, num: BlockNumber): Promise<Log[] | null> => {
+  getLogsByBlockNumber = async (num: BlockNumber): Promise<Log[] | null> => {
     const res = await this.query(`select * from logs where block_number=$1;`, [num])
 
     return res as Log[]
   }
-  getLogsByBlockHash = async (shardID: ShardID, hash: BlockHash): Promise<Log[] | null> => {
+  getLogsByBlockHash = async (hash: BlockHash): Promise<Log[] | null> => {
     const res = await this.query(`select * from logs where block_hash=$1;`, [hash])
 
     return res as Log[]

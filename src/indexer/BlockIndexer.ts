@@ -47,7 +47,7 @@ export class BlockIndexer {
       const store = this.store
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
-      const latestSyncedBlock = await store.indexer.getLastIndexedBlockNumber(shardID)
+      const latestSyncedBlock = await store.indexer.getLastIndexedBlockNumber()
 
       const startBlock =
         latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : this.initialStartBlock
@@ -62,7 +62,7 @@ export class BlockIndexer {
       const addBlocks = (blocks: Block[]) => {
         return Promise.all(
           blocks.map(async (block) => {
-            await store.block.addBlock(shardID, block)
+            await store.block.addBlock(block)
             return block
           })
         )
@@ -71,7 +71,7 @@ export class BlockIndexer {
       const addTransactions = (blocks: Block[]) => {
         return Promise.all(
           blocks.map(async (block) => {
-            await store.transaction.addTransactions(shardID, block.transactions)
+            await store.transaction.addTransactions(block.transactions)
             return block
           })
         )
@@ -80,7 +80,7 @@ export class BlockIndexer {
       const addStakingTransactions = (blocks: Block[]) => {
         return Promise.all(
           blocks.map(async (block) => {
-            await store.staking.addStakingTransactions(shardID, block.stakingTransactions)
+            await store.staking.addStakingTransactions(block.stakingTransactions)
             return block
           })
         )
@@ -110,7 +110,7 @@ export class BlockIndexer {
       const failedCount = RPCUrls.getFailedCount(shardID) - failedCountBefore
 
       if (lastFetchedBlockNumber > 0) {
-        await store.indexer.setLastIndexedBlockNumber(shardID, lastFetchedBlockNumber)
+        await store.indexer.setLastIndexedBlockNumber(lastFetchedBlockNumber)
       }
 
       const syncedToBlock = Math.min(

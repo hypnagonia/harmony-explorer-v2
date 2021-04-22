@@ -22,11 +22,11 @@ export class PostgresStorageTransaction implements IStorageTransaction {
     this.query = query
   }
 
-  addTransactions = async (shardID: ShardID, txs: RPCTransactionHarmony[]) => {
-    return Promise.all(txs.map((t) => this.addTransaction(shardID, t)))
+  addTransactions = async (txs: RPCTransactionHarmony[]) => {
+    return Promise.all(txs.map((t) => this.addTransaction(t)))
   }
 
-  addTransaction = async (shardID: ShardID, tx: RPCTransactionHarmony) => {
+  addTransaction = async (tx: RPCTransactionHarmony) => {
     const newTx = {
       ...tx,
       hash: tx.ethHash,
@@ -48,7 +48,6 @@ export class PostgresStorageTransaction implements IStorageTransaction {
   }
 
   getTransactionsByField = async (
-    shardID: ShardID,
     field: TransactionQueryField,
     value: TransactionQueryValue
   ): Promise<Transaction[]> => {
@@ -56,7 +55,7 @@ export class PostgresStorageTransaction implements IStorageTransaction {
     return res.map(fromSnakeToCamelResponse) as Transaction[]
   }
 
-  getTransactions = async (shardID: ShardID, filter: Filter): Promise<Transaction[]> => {
+  getTransactions = async (filter: Filter): Promise<Transaction[]> => {
     const q = buildSQLQuery(filter)
     const res = await this.query(`select * from transactions ${q}`, [])
 

@@ -11,6 +11,7 @@ import {PostgresStorageStakingTransaction} from './StakingTransaction'
 import {PostgresStorageTransaction} from './Transaction'
 import {PostgresStorageIndexer} from 'src/store/postgres/Indexer'
 import LoggerModule from 'zerg/dist/LoggerModule'
+import {ShardID} from 'src/types'
 
 const defaultRetries = 3
 
@@ -27,12 +28,14 @@ export class PostgresStorage implements IStorage {
   isStarting = false
   l: LoggerModule
   options: PostgresStorageOptions
+  shardID: ShardID
 
   constructor(options: PostgresStorageOptions) {
+    this.shardID = options.shardID
     this.block = new PostgresStorageBlock(this.query)
     this.log = new PostgresStorageLog(this.query)
     this.transaction = new PostgresStorageTransaction(this.query)
-    this.staking = new PostgresStorageStakingTransaction(this.query)
+    this.staking = new PostgresStorageStakingTransaction(this.query, this.shardID)
     this.indexer = new PostgresStorageIndexer(this.query)
     this.l = logger(module, `shard${options.shardID}`)
     this.options = options

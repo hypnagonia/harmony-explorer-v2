@@ -13,50 +13,45 @@ import {
 import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types'
 
 export interface IStorageBlock {
-  addBlock: (shardId: ShardID, block: Block) => Promise<any>
-  addBlocks: (shardId: ShardID, blocks: Block[]) => Promise<any>
-  getBlockByNumber: (shardId: ShardID, number: BlockNumber) => Promise<Block | null>
-  getBlockByHash: (shardId: ShardID, hash: BlockHash) => Promise<Block | null>
-  getBlocks: (shardID: ShardID, filter: Filter) => Promise<Block[]>
+  addBlock: (block: Block) => Promise<any>
+  addBlocks: (blocks: Block[]) => Promise<any>
+  getBlockByNumber: (number: BlockNumber) => Promise<Block | null>
+  getBlockByHash: (hash: BlockHash) => Promise<Block | null>
+  getBlocks: (filter: Filter) => Promise<Block[]>
 }
 
 export interface IStorageLog {
-  addLog: (shardId: ShardID, block: Log) => Promise<any>
-  getLogsByTransactionHash: (
-    shardId: ShardID,
-    transactionHash: TransactionHash
-  ) => Promise<Log[] | null>
-  getLogsByBlockNumber: (shardId: ShardID, num: BlockNumber) => Promise<Log[] | null>
-  getLogsByBlockHash: (shardId: ShardID, hash: BlockHash) => Promise<Log[] | null>
+  addLog: (block: Log) => Promise<any>
+  getLogsByTransactionHash: (transactionHash: TransactionHash) => Promise<Log[] | null>
+  getLogsByBlockNumber: (num: BlockNumber) => Promise<Log[] | null>
+  getLogsByBlockHash: (hash: BlockHash) => Promise<Log[] | null>
 }
 
 export interface IStorageIndexer {
-  getLastIndexedBlockNumber: (shardId: ShardID) => Promise<number | null>
-  setLastIndexedBlockNumber: (shardId: ShardID, num: BlockNumber) => Promise<any>
-  getLastIndexedLogsBlockNumber: (shardId: ShardID) => Promise<number>
-  setLastIndexedLogsBlockNumber: (shardId: ShardID, num: BlockNumber) => Promise<any>
+  getLastIndexedBlockNumber: () => Promise<number | null>
+  setLastIndexedBlockNumber: (num: BlockNumber) => Promise<any>
+  getLastIndexedLogsBlockNumber: () => Promise<number>
+  setLastIndexedLogsBlockNumber: (num: BlockNumber) => Promise<any>
 }
 
 export interface IStorageTransaction {
-  addTransaction: (shardId: ShardID, block: RPCTransactionHarmony) => Promise<any>
-  addTransactions: (shardId: ShardID, blocks: RPCTransactionHarmony[]) => Promise<any>
+  addTransaction: (block: RPCTransactionHarmony) => Promise<any>
+  addTransactions: (blocks: RPCTransactionHarmony[]) => Promise<any>
   getTransactionsByField: (
-    shardID: ShardID,
     field: TransactionQueryField,
     value: TransactionQueryValue
   ) => Promise<Transaction[]>
-  getTransactions: (shardID: ShardID, filter: Filter) => Promise<Transaction[]>
+  getTransactions: (filter: Filter) => Promise<Transaction[]>
 }
 
 export interface IStorageStakingTransaction {
-  addStakingTransaction: (shardId: ShardID, block: RPCStakingTransactionHarmony) => Promise<any>
-  addStakingTransactions: (shardId: ShardID, blocks: RPCStakingTransactionHarmony[]) => Promise<any>
+  addStakingTransaction: (block: RPCStakingTransactionHarmony) => Promise<any>
+  addStakingTransactions: (blocks: RPCStakingTransactionHarmony[]) => Promise<any>
   getStakingTransactionsByField: (
-    shardID: ShardID,
     field: TransactionQueryField,
     value: TransactionQueryValue
   ) => Promise<StakingTransaction[]>
-  getStakingTransactions: (shardID: ShardID, filter: Filter) => Promise<StakingTransaction[]>
+  getStakingTransactions: (filter: Filter) => Promise<StakingTransaction[]>
 }
 
 // todo shardID redundant

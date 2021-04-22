@@ -20,7 +20,7 @@ export const indexerServer = async () => {
 
     const lastSyncedBlocks = await Promise.all(
       shards.map(async (shardID) => {
-        const blockNumber = await stores[shardID].indexer.getLastIndexedBlockNumber(shardID)
+        const blockNumber = await stores[shardID].indexer.getLastIndexedBlockNumber()
 
         return {shardID, blockNumber}
       })

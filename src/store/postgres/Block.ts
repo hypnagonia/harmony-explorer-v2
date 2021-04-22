@@ -13,11 +13,11 @@ export class PostgresStorageBlock implements IStorageBlock {
     this.query = query
   }
 
-  addBlocks = async (shardID: ShardID, blocks: Block[]) => {
-    return Promise.all(blocks.map((b) => this.addBlock(shardID, b)))
+  addBlocks = async (blocks: Block[]) => {
+    return Promise.all(blocks.map((b) => this.addBlock(b)))
   }
 
-  addBlock = async (shardID: ShardID, block: Block) => {
+  addBlock = async (block: Block) => {
     // todo
     // @ts-ignore
 
@@ -31,13 +31,13 @@ export class PostgresStorageBlock implements IStorageBlock {
     return await this.query(`insert into blocks ${query} on conflict (number) do nothing;`, params)
   }
 
-  getBlockByNumber = async (shardID: ShardID, num: BlockNumber): Promise<Block | null> => {
+  getBlockByNumber = async (num: BlockNumber): Promise<Block | null> => {
     const res = await this.query(`select * from blocks where number = $1;`, [num])
 
     return fromSnakeToCamelResponse(res[0]) as Block
   }
 
-  getBlockByHash = async (shardID: ShardID, hash: BlockHash): Promise<Block | null> => {
+  getBlockByHash = async (hash: BlockHash): Promise<Block | null> => {
     const res = await this.query(
       `select *
                                   from blocks
@@ -48,7 +48,7 @@ export class PostgresStorageBlock implements IStorageBlock {
     return fromSnakeToCamelResponse(res[0]) as Block
   }
 
-  getBlocks = async (shardID: ShardID, filter: Filter): Promise<Block[]> => {
+  getBlocks = async (filter: Filter): Promise<Block[]> => {
     const q = buildSQLQuery(filter)
     const res = await this.query(`select * from blocks ${q}`, [])
 

@@ -1,4 +1,5 @@
 import {transport} from './transport'
+import {config} from 'src/config'
 import {
   RPCETHMethod,
   RPCHarmonyMethod,
@@ -17,12 +18,6 @@ import {
 } from 'types/blockchain'
 
 const mapBlockFromResponse = (block: RPCBlockHarmony): Block => {
-  // todo
-  if (parseInt(block.number, 16) === 12003009) {
-    // console.log(block)
-    // process.exit(0)
-  }
-
   // @ts-ignore
   return {
     ...block,
@@ -41,11 +36,11 @@ export const getBlocks = (
   const from = '0x' + fromBlock.toString(16)
   const to = '0x' + toBlock.toString(16)
 
-  // todo disable including staking txs for mainnet before 3358745 where implemented
   const o = {
     fullTx,
     withSigners,
-    inclStaking,
+    // disable including staking txs for main net before 3358745 where implemented
+    inclStaking: config.indexer.chainID === 'mainnet' && +to >= 3358745 ? inclStaking : false,
   }
   return transport(shardID, 'hmy_getBlocks', [from, to, o]).then((blocks) =>
     blocks.map(mapBlockFromResponse)

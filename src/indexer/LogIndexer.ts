@@ -49,7 +49,7 @@ export class LogIndexer {
       const store = this.store
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
-      const latestSyncedBlock = await store.indexer.getLastIndexedLogsBlockNumber(shardID)
+      const latestSyncedBlock = await store.indexer.getLastIndexedLogsBlockNumber()
       const startBlock = latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number
@@ -57,7 +57,7 @@ export class LogIndexer {
       const addLogs = (logs: Log[]) => {
         return Promise.all(
           logs.map(async (log) => {
-            await store.log.addLog(shardID, log)
+            await store.log.addLog(log)
             return log
           })
         )
@@ -90,7 +90,7 @@ export class LogIndexer {
         } blocks. ${logsLength} log entries. Done in ${batchTime()}. Failed requests ${failedCount}`
       )
 
-      await store.indexer.setLastIndexedLogsBlockNumber(shardID, syncedToBlock)
+      await store.indexer.setLastIndexedLogsBlockNumber(syncedToBlock)
 
       if (logs.length === this.batchCount) {
         if (failedCount > 0) {

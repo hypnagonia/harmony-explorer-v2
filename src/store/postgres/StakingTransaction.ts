@@ -18,20 +18,21 @@ import {buildSQLQuery} from 'src/store/postgres/filters'
 
 export class PostgresStorageStakingTransaction implements IStorageStakingTransaction {
   query: Query
-
-  constructor(query: Query) {
+  shardID: ShardID
+  constructor(query: Query, shardID: ShardID) {
     this.query = query
+    this.shardID = shardID
   }
 
-  addStakingTransactions = async (shardID: ShardID, txs: RPCStakingTransactionHarmony[]) => {
-    return Promise.all(txs.map((t) => this.addStakingTransaction(shardID, t)))
+  addStakingTransactions = async (txs: RPCStakingTransactionHarmony[]) => {
+    return Promise.all(txs.map((t) => this.addStakingTransaction(t)))
   }
 
-  addStakingTransaction = async (shardID: ShardID, tx: RPCStakingTransactionHarmony) => {
+  addStakingTransaction = async (tx: RPCStakingTransactionHarmony) => {
     // todo replace one addresses with 0x in staking msg
     const newTx = {
       ...tx,
-      shard: shardID,
+      shard: this.shardID,
       to: normalizeAddress(tx.to),
       from: normalizeAddress(tx.from),
       blockNumber: BigInt(tx.blockNumber).toString(),
@@ -47,7 +48,6 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
   }
 
   getStakingTransactionsByField = async (
-    shardID: ShardID,
     field: TransactionQueryField,
     value: TransactionQueryValue
   ): Promise<StakingTransaction[]> => {
@@ -55,10 +55,7 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
     return res.map(fromSnakeToCamelResponse) as StakingTransaction[]
   }
 
-  getStakingTransactions = async (
-    shardID: ShardID,
-    filter: Filter
-  ): Promise<StakingTransaction[]> => {
+  getStakingTransactions = async (filter: Filter): Promise<StakingTransaction[]> => {
     const q = buildSQLQuery(filter)
     const res = await this.query(`select * from staking_transactions ${q}`, [])
 

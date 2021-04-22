@@ -20,7 +20,7 @@ export async function getBlockByNumber(shardID: ShardID, blockNumber: number) {
     shardID: isShard(shardID),
     blockNumber: isBlockNumber(blockNumber),
   })
-  return await stores[shardID].block.getBlockByNumber(shardID, blockNumber)
+  return await stores[shardID].block.getBlockByNumber(blockNumber)
 }
 
 export async function getBlockByHash(shardID: ShardID, blockHash: string) {
@@ -28,7 +28,7 @@ export async function getBlockByHash(shardID: ShardID, blockHash: string) {
     shardID: isShard(shardID),
     blockHash: is64CharHexHash(blockHash),
   })
-  return await stores[shardID].block.getBlockByHash(shardID, blockHash)
+  return await stores[shardID].block.getBlockByHash(blockHash)
 }
 
 export async function getBlocks(shardID: ShardID, filter?: Filter) {
@@ -53,5 +53,5 @@ export async function getBlocks(shardID: ShardID, filter?: Filter) {
       filters: [],
     }
   }
-  return await stores[shardID].block.getBlocks(shardID, filter)
+  return await stores[shardID].block.getBlocks(filter)
 }

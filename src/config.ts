@@ -53,7 +53,7 @@ export const config = {
     },
   },
   indexer: {
-    chainID: process.env.CHAIN,
+    chainID: process.env.CHAIN as 'mainnet' | 'testnet' | undefined,
     shards: getCommaSeparatedList(process.env.INDEXER_SHARDS).map((s) => +s) as ShardID[],
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
     isSyncingLogsEnabled: false,

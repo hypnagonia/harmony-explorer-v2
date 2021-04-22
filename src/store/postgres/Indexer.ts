@@ -1,6 +1,6 @@
 import {logger} from 'src/logger'
 import {IStorageIndexer} from 'src/store/interface'
-import {Block, BlockHash, BlockNumber, ShardID} from 'src/types/blockchain'
+import {BlockNumber, ShardID} from 'src/types/blockchain'
 
 import {Query} from 'src/store/postgres/types'
 
@@ -12,7 +12,7 @@ export class PostgresStorageIndexer implements IStorageIndexer {
     this.query = query
   }
 
-  getLastIndexedBlockNumber = async (shardID: ShardID): Promise<number | null> => {
+  getLastIndexedBlockNumber = async (): Promise<number | null> => {
     const res = await this.query(
       `select blocks_last_synced_block_number from indexer_state where id=0;`,
       []
@@ -21,13 +21,13 @@ export class PostgresStorageIndexer implements IStorageIndexer {
     return lastIndexedBlock || 0
   }
 
-  setLastIndexedBlockNumber = async (shardID: ShardID, num: BlockNumber): Promise<number> => {
+  setLastIndexedBlockNumber = async (num: BlockNumber): Promise<number> => {
     return this.query(`update indexer_state set blocks_last_synced_block_number=$1 where id=0;`, [
       num,
     ])
   }
 
-  getLastIndexedLogsBlockNumber = async (shardID: ShardID): Promise<number> => {
+  getLastIndexedLogsBlockNumber = async (): Promise<number> => {
     const res = await this.query(
       `select logs_last_synced_block_number from indexer_state where id=0;`,
       []
@@ -37,7 +37,7 @@ export class PostgresStorageIndexer implements IStorageIndexer {
     return lastIndexedBlock || 0
   }
 
-  setLastIndexedLogsBlockNumber = async (shardId: ShardID, num: BlockNumber): Promise<number> => {
+  setLastIndexedLogsBlockNumber = async (num: BlockNumber): Promise<number> => {
     return this.query(`update indexer_state set logs_last_synced_block_number=$1 where id=0;`, [
       num,
     ])
