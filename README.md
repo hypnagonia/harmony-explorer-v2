@@ -43,7 +43,7 @@ By number
 
 #### Transaction
 list (with filters)
-`http://localhost:3000/v0/shard/0/transaction/`
+`http://localhost:3000/v0/shard/0/transaction`
 
 by ETH hash or Harmony hash
 `http://localhost:3000/v0/shard/0/transaction/hash/:hash`
@@ -54,9 +54,9 @@ by block number
 by block hash
 `http://localhost:3000/v0/shard/0/transaction/block/hash/:blockHash`
 
-#### Staking
+#### Staking Transaction
 list (with filters)
-`http://localhost:3000/v0/shard/0/stakingTransaction/`
+`http://localhost:3000/v0/shard/0/stakingTransaction`
 
 by Harmony hash
 `http://localhost:3000/v0/shard/0/stakingTransaction/hash/:txHash`
@@ -76,13 +76,13 @@ as GET params
 
 `offset`: number
 
-`limit`: number (max 100)
+`limit`: number (max `100`)
 
 Composite filters (at the moment only single condition supported)
 
-`type`: 'gt' | 'gte' | 'lt' | 'lte'
+`type`: `gt` | `gte` | `lt` | `lte`
 
-`property`: 'number' | 'block_number' (will be more in the future)
+`property`: `number` | `block_number` (will be more in the future)
 
 `value`: value
 
