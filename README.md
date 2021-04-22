@@ -30,8 +30,11 @@ todo
 ![image info](https://github.com/hypnagonia/harmony-explorer-v2/blob/dev/doc/scheme.png)
 
 # API
+
 ## REST API
+
 #### Block
+
 list (with filters)
 `/v0/shard/0/block`
 
@@ -42,6 +45,7 @@ By number
 `/v0/shard/0/block/number/:number`
 
 #### Transaction
+
 list (with filters)
 `/v0/shard/0/transaction`
 
@@ -55,6 +59,7 @@ by block hash
 `/v0/shard/0/transaction/block/hash/:blockHash`
 
 #### Staking Transaction
+
 list (with filters)
 `/v0/shard/0/stakingTransaction`
 
@@ -90,12 +95,11 @@ Composite filters (at the moment only single condition supported)
 Example
 `/v0/shard/0/block?limit=2&offset=0&orderBy=number&orderDirection=asc&type=gt&property=number&value=40`
 
-
 ## Websocket [Socket.IO](https://socket.io/)
+
 Hit http://localhost:3001 for dev web page
 
-
-## GRPC transport
+## GRPC
 
 [Proto files](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/src/api/grpc/proto)
 

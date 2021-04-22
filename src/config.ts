@@ -70,6 +70,10 @@ export const config = {
         getCommaSeparatedList(process.env.INDEXER_RPC_SHARD3),
       ],
     },
+    infoWebServer: {
+      port: 3002,
+      isEnabled: true,
+    },
   },
   store: {
     postgres: [
