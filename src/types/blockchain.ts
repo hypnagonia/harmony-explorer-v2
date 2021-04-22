@@ -152,6 +152,9 @@ export type RPCStakingTransactionHarmony = {
   msg: any // todo
 }
 
+// todo
+export type StakingTransaction = RPCStakingTransactionHarmony
+
 export type Topic = string
 export type ByteCode = string
 

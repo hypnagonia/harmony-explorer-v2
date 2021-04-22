@@ -1,5 +1,4 @@
 import {Response, Request, Router, NextFunction} from 'express'
-import {stores} from 'src/store'
 import * as controllers from 'src/api/controllers'
 import {ShardID} from 'src/types/blockchain'
 import {catchAsync} from 'src/api/rest/utils'

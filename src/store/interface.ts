@@ -8,6 +8,7 @@ import {
   RPCTransactionHarmony,
   RPCStakingTransactionHarmony,
   Transaction,
+  StakingTransaction,
 } from 'src/types/blockchain'
 import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types'
 
@@ -50,6 +51,12 @@ export interface IStorageTransaction {
 export interface IStorageStakingTransaction {
   addStakingTransaction: (shardId: ShardID, block: RPCStakingTransactionHarmony) => Promise<any>
   addStakingTransactions: (shardId: ShardID, blocks: RPCStakingTransactionHarmony[]) => Promise<any>
+  getStakingTransactionsByField: (
+    shardID: ShardID,
+    field: TransactionQueryField,
+    value: TransactionQueryValue
+  ) => Promise<StakingTransaction[]>
+  getStakingTransactions: (shardID: ShardID, filter: Filter) => Promise<StakingTransaction[]>
 }
 
 // todo shardID redundant

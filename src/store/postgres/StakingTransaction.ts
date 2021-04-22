@@ -5,12 +5,16 @@ import {
   BlockHash,
   BlockNumber,
   RPCTransactionHarmony,
+  StakingTransaction,
   ShardID,
   RPCStakingTransactionHarmony,
+  Transaction,
 } from 'src/types/blockchain'
 import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {Query} from 'src/store/postgres/types'
-import {generateQuery} from 'src/store/postgres/queryMapper'
+import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
+import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types'
+import {buildSQLQuery} from 'src/store/postgres/filters'
 
 export class PostgresStorageStakingTransaction implements IStorageStakingTransaction {
   query: Query
@@ -24,6 +28,7 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
   }
 
   addStakingTransaction = async (shardID: ShardID, tx: RPCStakingTransactionHarmony) => {
+    // todo replace one addresses with 0x in staking msg
     const newTx = {
       ...tx,
       shard: shardID,
@@ -39,5 +44,25 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
       `insert into staking_transactions ${query} on conflict (hash) do nothing;`,
       params
     )
+  }
+
+  getStakingTransactionsByField = async (
+    shardID: ShardID,
+    field: TransactionQueryField,
+    value: TransactionQueryValue
+  ): Promise<StakingTransaction[]> => {
+    const res = await this.query(`select * from transactions where ${field}=$1;`, [value])
+    console.log(`select * from staking_transactions where ${field} = $1;`, value, res.length)
+    return res.map(fromSnakeToCamelResponse) as StakingTransaction[]
+  }
+
+  getStakingTransactions = async (
+    shardID: ShardID,
+    filter: Filter
+  ): Promise<StakingTransaction[]> => {
+    const q = buildSQLQuery(filter)
+    const res = await this.query(`select * from staking_transactions ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
   }
 }
