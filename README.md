@@ -33,39 +33,39 @@ todo
 ## REST API
 #### Block
 list (with filters)
-`http://localhost:3000/v0/shard/0/block`
+`/v0/shard/0/block`
 
 By hash
-`http://localhost:3000/v0/shard/0/block/hash/:hash`
+`/v0/shard/0/block/hash/:hash`
 
 By number
-`http://localhost:3000/v0/shard/0/block/number/:number`
+`/v0/shard/0/block/number/:number`
 
 #### Transaction
 list (with filters)
-`http://localhost:3000/v0/shard/0/transaction`
+`/v0/shard/0/transaction`
 
 by ETH hash or Harmony hash
-`http://localhost:3000/v0/shard/0/transaction/hash/:hash`
+`/v0/shard/0/transaction/hash/:hash`
 
 by block number
-`http://localhost:3000/v0/shard/0/transaction/block/number/:number`
+`/v0/shard/0/transaction/block/number/:number`
 
 by block hash
-`http://localhost:3000/v0/shard/0/transaction/block/hash/:blockHash`
+`/v0/shard/0/transaction/block/hash/:blockHash`
 
 #### Staking Transaction
 list (with filters)
-`http://localhost:3000/v0/shard/0/stakingTransaction`
+`/v0/shard/0/stakingTransaction`
 
 by Harmony hash
-`http://localhost:3000/v0/shard/0/stakingTransaction/hash/:txHash`
+`/v0/shard/0/stakingTransaction/hash/:txHash`
 
 by block number
-`http://localhost:3000/v0/shard/0/stakingTransaction/block/number/:blockNumber`
+`/v0/shard/0/stakingTransaction/block/number/:blockNumber`
 
 by block hash
-`http://localhost:3000/v0/shard/0/stakingTransaction/block/hash/:blockHash`
+`/v0/shard/0/stakingTransaction/block/hash/:blockHash`
 
 #### Filters
 
