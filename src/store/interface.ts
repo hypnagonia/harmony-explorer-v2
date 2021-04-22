@@ -10,7 +10,12 @@ import {
   Transaction,
   StakingTransaction,
 } from 'src/types/blockchain'
-import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types'
+import {
+  Filter,
+  TransactionQueryField,
+  TransactionQueryValue,
+  StakingTransactionQueryQuery,
+} from 'src/types'
 
 export interface IStorageBlock {
   addBlock: (block: Block) => Promise<any>
@@ -48,13 +53,12 @@ export interface IStorageStakingTransaction {
   addStakingTransaction: (block: RPCStakingTransactionHarmony) => Promise<any>
   addStakingTransactions: (blocks: RPCStakingTransactionHarmony[]) => Promise<any>
   getStakingTransactionsByField: (
-    field: TransactionQueryField,
+    field: StakingTransactionQueryQuery,
     value: TransactionQueryValue
   ) => Promise<StakingTransaction[]>
   getStakingTransactions: (filter: Filter) => Promise<StakingTransaction[]>
 }
 
-// todo shardID redundant
 export interface IStorage {
   block: IStorageBlock
   log: IStorageLog

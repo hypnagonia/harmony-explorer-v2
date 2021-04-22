@@ -13,7 +13,12 @@ import {
 import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
-import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types'
+import {
+  Filter,
+  StakingTransactionQueryQuery,
+  TransactionQueryField,
+  TransactionQueryValue,
+} from 'src/types'
 import {buildSQLQuery} from 'src/store/postgres/filters'
 
 export class PostgresStorageStakingTransaction implements IStorageStakingTransaction {
@@ -48,7 +53,7 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
   }
 
   getStakingTransactionsByField = async (
-    field: TransactionQueryField,
+    field: StakingTransactionQueryQuery,
     value: TransactionQueryValue
   ): Promise<StakingTransaction[]> => {
     const res = await this.query(`select * from transactions where ${field}=$1;`, [value])
