@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon",
     "start": "ts-node  -r tsconfig-paths/register src/index.ts",
-    "build": "webpack --config webpack.config.js && cp -r src/store/postgres/sql dist && cp .env dist",
+    "build": "webpack --config webpack.config.js && cp -r src/store/postgres/sql dist && cp .env dist && cp src/api/webSocket/index.html dist",
     "build:dev": "tsc -w",
     "test": "mocha -w -r ts-node/register src/**/*.test.ts",
     "format": "prettier --write \"**/*.ts\"",

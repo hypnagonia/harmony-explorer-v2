@@ -26,5 +26,8 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   node: {},
+  optimization: {
+    minimize: false
+  },
   devtool: 'inline-source-map',
 }
