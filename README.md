@@ -45,7 +45,7 @@ By number
 list (with filters)
 `http://localhost:3000/v0/shard/0/transaction/`
 
-by eth hash or harmony hash
+by ETH hash or Harmony hash
 `http://localhost:3000/v0/shard/0/transaction/hash/0xb242fc9b3644e7445c32d199d729be8339f58ac7c0114a3ef4ab343813caa73a`
 
 by block number
@@ -58,7 +58,7 @@ by block hash
 list (with filters)
 `http://localhost:3000/v0/shard/0/stakingTransaction/`
 
-by ETH hash or Harmony hash
+by Harmony hash
 `http://localhost:3000/v0/shard/0/stakingTransaction/hash/:txHash`
 
 by block number
@@ -68,15 +68,24 @@ by block hash
 `http://localhost:3000/v0/shard/0/stakingTransaction/block/hash/:blockHash`
 
 #### Filters
+
 as GET params
 `orderBy`: `number` for blocks | `block_number` for txs
-`orderDirection`: `asc` | `desc` 
+
+`orderDirection`: `asc` | `desc`
+
 `offset`: number
+
 `limit`: number (max 100)
+
 Composite filters (at the moment only single condition supported)
+
 `type`: 'gt' | 'gte' | 'lt' | 'lte'
+
 `property`: 'number' | 'block_number' (will be more in the future)
+
 `value`: value
+
 
 ## Websocket [Socket.IO](https://socket.io/)
 Hit http://localhost:3001 for dev web page
