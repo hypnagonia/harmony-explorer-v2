@@ -3,7 +3,7 @@ export type FilterType = 'gt' | 'gte' | 'lt' | 'lte'
 export type FilterProperty = 'number'
 
 export type TransactionQueryField = 'block_number' | 'block_hash' | 'hash' | 'hash_harmony'
-export type StakingTransactionQueryQuery = 'block_number' | 'block_hash' | 'hash'
+export type StakingTransactionQueryField = 'block_number' | 'block_hash' | 'hash'
 export type TransactionQueryValue =
   | blockchain.BlockNumber
   | blockchain.BlockHash

@@ -13,11 +13,16 @@ import {
   isFilters,
   Void,
 } from 'src/api/controllers/validators'
-import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types/api'
+import {
+  Filter,
+  TransactionQueryField,
+  TransactionQueryValue,
+  StakingTransactionQueryField,
+} from 'src/types/api'
 
 export async function getStakingTransactionsByField(
   shardID: ShardID,
-  field: TransactionQueryField,
+  field: StakingTransactionQueryField,
   value: TransactionQueryValue
 ) {
   validator({

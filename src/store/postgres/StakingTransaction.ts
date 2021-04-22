@@ -15,7 +15,7 @@ import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {
   Filter,
-  StakingTransactionQueryQuery,
+  StakingTransactionQueryField,
   TransactionQueryField,
   TransactionQueryValue,
 } from 'src/types'
@@ -34,7 +34,16 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
   }
 
   addStakingTransaction = async (tx: RPCStakingTransactionHarmony) => {
-    // todo replace one addresses with 0x in staking msg
+    // convert one1 to 0x
+    // https://docs.harmony.one/home/developers/api/methods/transaction-related-methods/hmy_getstakingtransactionbyblockhashandindex
+    const msg = {...tx.msg}
+    if (msg.validatorAddress) {
+      msg.validatorAddress = normalizeAddress(msg.validatorAddress)
+    }
+    if (msg.delegatorAddress) {
+      msg.delegatorAddress = normalizeAddress(msg.delegatorAddress)
+    }
+
     const newTx = {
       ...tx,
       shard: this.shardID,
@@ -43,6 +52,7 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
       blockNumber: BigInt(tx.blockNumber).toString(),
       gas: BigInt(tx.gas).toString(),
       gasPrice: BigInt(tx.gasPrice).toString(),
+      msg,
     }
 
     const {query, params} = generateQuery(newTx)
@@ -53,7 +63,7 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
   }
 
   getStakingTransactionsByField = async (
-    field: StakingTransactionQueryQuery,
+    field: StakingTransactionQueryField,
     value: TransactionQueryValue
   ): Promise<StakingTransaction[]> => {
     const res = await this.query(`select * from transactions where ${field}=$1;`, [value])

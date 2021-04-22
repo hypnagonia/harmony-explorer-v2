@@ -14,7 +14,7 @@ import {
   Filter,
   TransactionQueryField,
   TransactionQueryValue,
-  StakingTransactionQueryQuery,
+  StakingTransactionQueryField,
 } from 'src/types'
 
 export interface IStorageBlock {
@@ -53,7 +53,7 @@ export interface IStorageStakingTransaction {
   addStakingTransaction: (block: RPCStakingTransactionHarmony) => Promise<any>
   addStakingTransactions: (blocks: RPCStakingTransactionHarmony[]) => Promise<any>
   getStakingTransactionsByField: (
-    field: StakingTransactionQueryQuery,
+    field: StakingTransactionQueryField,
     value: TransactionQueryValue
   ) => Promise<StakingTransaction[]>
   getStakingTransactions: (filter: Filter) => Promise<StakingTransaction[]>

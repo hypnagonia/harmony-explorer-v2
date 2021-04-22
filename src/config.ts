@@ -71,8 +71,8 @@ export const config = {
       ],
     },
     infoWebServer: {
-      port: 3002,
       isEnabled: true,
+      port: 3002,
     },
   },
   store: {
@@ -83,7 +83,7 @@ export const config = {
         database: process.env.SHARD0_POSTGRES_DB,
         password: process.env.SHARD0_POSTGRES_PASSWORD,
         port: +(process.env.SHARD0_POSTGRES_PORT || 5432),
-        poolSize: +(process.env.SHARD0_POSTGRES_POOL_SIZE || 90),
+        poolSize: +(process.env.SHARD0_POSTGRES_POOL_SIZE || 20),
       },
       {
         user: process.env.SHARD1_POSTGRES_USER,
@@ -91,7 +91,7 @@ export const config = {
         database: process.env.SHARD1_POSTGRES_DB,
         password: process.env.SHARD1_POSTGRES_PASSWORD,
         port: +(process.env.SHARD1_POSTGRES_PORT || 5432),
-        poolSize: +(process.env.SHARD1_POSTGRES_POOL_SIZE || 90),
+        poolSize: +(process.env.SHARD1_POSTGRES_POOL_SIZE || 20),
       },
       {
         user: process.env.SHARD2_POSTGRES_USER,
@@ -99,7 +99,7 @@ export const config = {
         database: process.env.SHARD2_POSTGRES_DB,
         password: process.env.SHARD2_POSTGRES_PASSWORD,
         port: +(process.env.SHARD2_POSTGRES_PORT || 5432),
-        poolSize: +(process.env.SHARD2_POSTGRES_POOL_SIZE || 90),
+        poolSize: +(process.env.SHARD2_POSTGRES_POOL_SIZE || 20),
       },
       {
         user: process.env.SHARD3_POSTGRES_USER,
@@ -107,7 +107,7 @@ export const config = {
         database: process.env.SHARD3_POSTGRES_DB,
         password: process.env.SHARD3_POSTGRES_PASSWORD,
         port: +(process.env.SHARD3_POSTGRES_PORT || 5432),
-        poolSize: +(process.env.SHARD3_POSTGRES_POOL_SIZE || 90),
+        poolSize: +(process.env.SHARD3_POSTGRES_POOL_SIZE || 20),
       },
     ],
   },

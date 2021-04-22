@@ -142,9 +142,9 @@ grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockB
 
 #### REST
 
-- [ ] Blocks
-- [ ] Transactions
-- [ ] Staking Transactions
+- [x] Blocks
+- [x] Transactions
+- [x] Staking Transactions
 - [ ] Internal Transactions
 - [ ] Addresses
 - [ ] Metrics
