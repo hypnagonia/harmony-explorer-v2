@@ -26,8 +26,8 @@ todo
 
 # Indexer
 
-[Postgres scheme](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/src/store/postgres/sql)
-![image info](https://github.com/hypnagonia/harmony-explorer-v2/blob/dev/doc/scheme.png)
+[Postgres scheme](https://github.com/hypnagonia/harmony-explorer-v2/tree/master/src/store/postgres/sql)
+![image info](https://github.com/hypnagonia/harmony-explorer-v2/blob/master/doc/scheme.png)
 
 # API
 
@@ -101,7 +101,7 @@ Hit http://localhost:3001 for dev web page
 
 ## GRPC
 
-[Proto files](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev/src/api/grpc/proto)
+[Proto files](https://github.com/hypnagonia/harmony-explorer-v2/tree/master/src/api/grpc/proto)
 
 #### Query
 

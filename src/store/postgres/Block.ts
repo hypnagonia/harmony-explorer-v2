@@ -19,8 +19,8 @@ export class PostgresStorageBlock implements IStorageBlock {
 
   addBlock = async (block: Block) => {
     // todo
+    // convert miner
     // @ts-ignore
-
     const newBlock = {
       ...block,
       stakingTransactions: block.stakingTransactions.map(({hash}) => hash),
@@ -55,3 +55,10 @@ export class PostgresStorageBlock implements IStorageBlock {
     return res.map(fromSnakeToCamelResponse)
   }
 }
+
+/*
+estimate count
+SELECT reltuples::bigint
+FROM pg_catalog.pg_class
+WHERE relname = 'blocks';
+*/
