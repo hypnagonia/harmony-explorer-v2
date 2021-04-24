@@ -15,15 +15,9 @@ import {
   Address,
   BlockNumber,
   Log,
+  InternalTransaction,
 } from 'types/blockchain'
-
-const mapBlockFromResponse = (block: RPCBlockHarmony): Block => {
-  // @ts-ignore
-  return {
-    ...block,
-    number: parseInt(block.number, 16),
-  } as Block
-}
+import {mapBlockFromResponse, mapInternalTransactionFromBlockTrace} from './mappers'
 
 export const getBlocks = (
   shardID: ShardID,
@@ -85,6 +79,14 @@ export const getTransactionTrace = (
   shardID: ShardID,
   hash: TransactionHash,
   tracer: 'callTracer' = 'callTracer'
-): Promise<RPCTransactionHarmony> => {
+): Promise<InternalTransaction> => {
   return transport(shardID, 'debug_traceTransaction', [hash, {tracer}])
+}
+
+// todo block 4864036 always fails
+export const traceBlock = (shardID: ShardID, num: BlockNumber): Promise<InternalTransaction[]> => {
+  const hex = '0x' + num.toString(16)
+  return transport(shardID, 'trace_block', [hex]).then((txs) =>
+    txs.map(mapInternalTransactionFromBlockTrace)
+  )
 }

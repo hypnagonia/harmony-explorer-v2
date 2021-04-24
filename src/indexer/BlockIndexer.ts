@@ -7,6 +7,7 @@ import LoggerModule from 'zerg/dist/LoggerModule'
 import {stores} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 import {PostgresStorage} from 'src/store/postgres'
+import {AddressIndexer} from './addressIndexer'
 
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 10000
@@ -55,6 +56,8 @@ export class BlockIndexer {
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number
 
+      const addressIndexer = AddressIndexer()
+
       const getBlocks = (from: BlockNumber, to: BlockNumber) => {
         return RPCClient.getBlocks(shardID, from, to)
       }
@@ -68,9 +71,37 @@ export class BlockIndexer {
         )
       }
 
+      const addTraceBlocks = async (blocks: Block[]) => {
+        return Promise.all(
+          blocks.map(async (block) => {
+            if (!block.transactions.length) {
+              return Promise.resolve(block)
+            }
+
+            if (!block.transactions.reduce((a, b) => a || b.input.length > 3, false)) {
+              return Promise.resolve(block)
+            }
+
+            const txs = await RPCClient.traceBlock(shardID, block.number)
+
+            txs.forEach((tx) => {
+              addressIndexer.add(block, tx.transactionHash, tx.from, tx.to)
+            })
+
+            await Promise.all(txs.map((tx) => store.internalTransaction.addInternalTransaction(tx)))
+
+            return block
+          })
+        )
+      }
+
       const addTransactions = (blocks: Block[]) => {
         return Promise.all(
           blocks.map(async (block) => {
+            block.transactions.forEach((tx) => {
+              addressIndexer.add(block, tx.ethHash, tx.from, tx.to)
+            })
+
             await store.transaction.addTransactions(block.transactions)
             return block
           })
@@ -80,13 +111,22 @@ export class BlockIndexer {
       const addStakingTransactions = (blocks: Block[]) => {
         return Promise.all(
           blocks.map(async (block) => {
+            block.stakingTransactions.forEach((tx) => {
+              addressIndexer.add(block, tx.hash, tx.msg.delegatorAddress, tx.msg.validatorAddress)
+            })
+
             await store.staking.addStakingTransactions(block.stakingTransactions)
             return block
           })
         )
       }
 
-      const res = await Promise.all(
+      const addAddresses = () => {
+        const entries = addressIndexer.get()
+        return Promise.all(entries.map((e) => store.address.addAddress2Transaction(e)))
+      }
+
+      const blocks = await Promise.all(
         range(this.batchCount).map(async (_, i) => {
           const from = startBlock + i * blockRange
           const to = Math.min(from + blockRange - 1, latestBlockchainBlock)
@@ -99,10 +139,12 @@ export class BlockIndexer {
             .then(addBlocks)
             .then(addTransactions)
             .then(addStakingTransactions)
+            .then(addTraceBlocks)
         })
-      )
+      ).then((res) => res.flatMap((b) => b).filter((b) => b))
 
-      const blocks = res.flatMap((b) => b).filter((b) => b)
+      await addAddresses()
+
       const lastFetchedBlockNumber = blocks.reduce((a, b) => (a < b.number ? b.number : a), 0)
       const transactionsCount = blocks.reduce((a, b) => a + b.transactions.length, 0)
       const stakingTransactionsCount = blocks.reduce((a, b) => a + b.stakingTransactions.length, 0)
@@ -146,7 +188,7 @@ export class BlockIndexer {
         setTimeout(this.loop, approximateBlockMintingTime)
       }
     } catch (err) {
-      this.l.warn(`Batch failed. Retrying in ${approximateBlockMintingTime}ms`, err)
+      this.l.warn(`Batch failed. Retrying in ${approximateBlockMintingTime}ms`, err.message || err)
       this.decreaseBatchCount()
       setTimeout(this.loop, approximateBlockMintingTime)
     }

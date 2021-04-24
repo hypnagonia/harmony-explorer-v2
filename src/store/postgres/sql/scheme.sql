@@ -133,9 +133,10 @@ $$;
 create table if not exists address2transaction
 (
     address          char(42) not null,
-    block_number     char(66) not null,
+    block_number     bigint,
     transaction_hash char(66) references transactions (hash),
-    transaction_type transaction_type
+    transaction_type transaction_type,
+    unique(address, transaction_hash)
 );
 
 create index if not exists idx_address2transaction_address on address2transaction using hash (address);
@@ -143,7 +144,8 @@ create index if not exists idx_address2transaction_block_number on transactions 
 
 create table if not exists internal_transactions
 (
-    id               bigserial primary key,
+    index            smallint,
+    block_number     bigint,
     "from"           char(42),
     "to"             char(42),
     gas              bigint,
@@ -154,10 +156,11 @@ create table if not exists internal_transactions
     value            numeric,
     transaction_hash char(66) references transactions (hash),
     time             time,
-    parent_id        bigint
+    unique(transaction_hash, index)
 );
 
 create index if not exists idx_internal_transactions_transaction_hash on internal_transactions using hash (transaction_hash);
+create index if not exists idx_internal_transactions_block_number on internal_transactions (block_number);
 
 create table if not exists transaction_traces
 (

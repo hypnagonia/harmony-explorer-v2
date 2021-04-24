@@ -5,6 +5,7 @@ import {Filter} from 'src/types/api'
 import {generateQuery, fromSnakeToCamelResponse} from './queryMapper'
 import {buildSQLQuery} from './filters'
 import {Query} from 'src/store/postgres/types'
+import {normalizeAddress} from 'src/utils/normalizeAddress'
 
 export class PostgresStorageBlock implements IStorageBlock {
   query: Query
@@ -19,7 +20,6 @@ export class PostgresStorageBlock implements IStorageBlock {
 
   addBlock = async (block: Block) => {
     // todo
-    // convert miner
     // @ts-ignore
     const newBlock = {
       ...block,
@@ -58,6 +58,7 @@ export class PostgresStorageBlock implements IStorageBlock {
 
 /*
 estimate count
+https://wiki.postgresql.org/wiki/Count_estimate
 SELECT reltuples::bigint
 FROM pg_catalog.pg_class
 WHERE relname = 'blocks';

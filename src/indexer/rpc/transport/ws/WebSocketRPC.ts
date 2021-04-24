@@ -44,10 +44,11 @@ export class WebSocketRPC {
     }
 
     const catchPromise = (err: any) => {
+      // console.log(err, params)
       // this.l.debug('Call error', { err })
       retries--
       if (retries === 0) {
-        throw new Error(err)
+        throw new Error(JSON.stringify(err))
       }
 
       RPCUrls.getURL(this.shardID).submitStatistic(0, true)

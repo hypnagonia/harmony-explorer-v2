@@ -31,8 +31,6 @@ export class PostgresStorageTransaction implements IStorageTransaction {
       ...tx,
       hash: tx.ethHash,
       hash_harmony: tx.hash,
-      to: normalizeAddress(tx.to),
-      from: normalizeAddress(tx.from),
       ethHash: undefined,
       blockNumber: BigInt(tx.blockNumber).toString(),
       value: BigInt(tx.value).toString(),

@@ -34,25 +34,12 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
   }
 
   addStakingTransaction = async (tx: RPCStakingTransactionHarmony) => {
-    // convert one1 to 0x
-    // https://docs.harmony.one/home/developers/api/methods/transaction-related-methods/hmy_getstakingtransactionbyblockhashandindex
-    const msg = {...tx.msg}
-    if (msg.validatorAddress) {
-      msg.validatorAddress = normalizeAddress(msg.validatorAddress)
-    }
-    if (msg.delegatorAddress) {
-      msg.delegatorAddress = normalizeAddress(msg.delegatorAddress)
-    }
-
     const newTx = {
       ...tx,
       shard: this.shardID,
-      to: normalizeAddress(tx.to),
-      from: normalizeAddress(tx.from),
       blockNumber: BigInt(tx.blockNumber).toString(),
       gas: BigInt(tx.gas).toString(),
       gasPrice: BigInt(tx.gasPrice).toString(),
-      msg,
     }
 
     const {query, params} = generateQuery(newTx)

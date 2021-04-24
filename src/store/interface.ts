@@ -9,6 +9,7 @@ import {
   RPCStakingTransactionHarmony,
   Transaction,
   StakingTransaction,
+  Address2Transaction,
 } from 'src/types/blockchain'
 import {
   Filter,
@@ -59,10 +60,17 @@ export interface IStorageStakingTransaction {
   getStakingTransactions: (filter: Filter) => Promise<StakingTransaction[]>
 }
 
+export interface IStorageInternalTransaction {}
+export interface IStorageAddress {
+  addAddress2Transaction: (entry: Address2Transaction) => Promise<any>
+}
+
 export interface IStorage {
   block: IStorageBlock
   log: IStorageLog
   transaction: IStorageTransaction
   staking: IStorageStakingTransaction
   indexer: IStorageIndexer
+  internalTransaction: IStorageInternalTransaction
+  address: IStorageAddress
 }

@@ -3,6 +3,7 @@ import express from 'express'
 import {config} from 'src/config'
 import {logger} from 'src/logger'
 import {stores} from 'src/store'
+import * as RPCClient from 'src/indexer/rpc/client'
 
 const l = logger(module)
 
@@ -20,9 +21,12 @@ export const indexerServer = async () => {
 
     const lastSyncedBlocks = await Promise.all(
       shards.map(async (shardID) => {
-        const blockNumber = await stores[shardID].indexer.getLastIndexedBlockNumber()
+        const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
+          .number
 
-        return {shardID, blockNumber}
+        const blockNumber = await stores[shardID].indexer.getLastIndexedBlockNumber()
+        const isSynced = blockNumber ? latestBlockchainBlock - blockNumber < 10 : false
+        return {shardID, blockNumber, isSynced}
       })
     )
     const state = {lastSyncedBlocks}

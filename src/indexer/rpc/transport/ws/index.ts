@@ -17,13 +17,22 @@ const connections =
       )
     : []
 
+const connectionIndexes: ShardID[] = config.indexer.rpc.urls.map((_, shardID) => 0)
+const getConnectionIndex = (shardID: ShardID) => {
+  const res = connectionIndexes[shardID]
+  connectionIndexes[shardID]++
+  if (connectionIndexes[shardID] === connections[shardID].length) {
+    connectionIndexes[shardID] = 0
+  }
+  return res
+}
+
 export const WSTransport = (
   shardID: ShardID,
   method: RPCETHMethod | RPCHarmonyMethod,
   params: any[]
 ) => {
-  // todo robin round pool of ws connections
-  const c = connections[shardID][0]
+  const c = connections[shardID][getConnectionIndex(shardID)]
 
   if (c.getConnection() === null) {
     c.connect()

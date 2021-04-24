@@ -3,6 +3,7 @@ export type RPCETHMethod =
   | 'eth_getTransactionByHash'
   | 'eth_getLogs'
   | 'eth_getBlocks'
+  | 'trace_block'
 
 export type RPCHarmonyMethod =
   | 'hmy_getBlockByNumber'
@@ -175,8 +176,29 @@ export type TraceCallTypes = 'CALL' | 'STATICCALL' | 'CREATE' | 'CREATE2' | 'DEL
 // how to extract see explorer-dashboard
 export type TraceCallErrorToRevert = string
 
-export type TraceCall = {
+export type RPCInternalTransactionFromBlockTrace = {
+  result?: {
+    gasUsed: string
+    output: ByteCode
+  }
+  action: {
+    callType: TraceCallTypes
+    from: Address
+    gas: string
+    input: ByteCode
+    to: Address
+    value: string
+  }
+  blockHash: BlockHash
+  blockNumber: BlockNumber
+  transactionHash: TransactionHash
+  traceAddress: number[]
+  type: TraceCallTypes
+}
+
+export type InternalTransaction = {
   error?: TraceCallErrorToRevert
+  index: number
   from: Address
   to: Address
   gas: string
@@ -186,10 +208,20 @@ export type TraceCall = {
   time: string
   type: TraceCallTypes
   value: string
-  calls: TraceCall[]
+  blockHash: BlockHash
+  blockNumber: BlockNumber
+  transactionHash: TransactionHash
 }
 
 export type Transaction = {
   harmony: RPCTransactionHarmony
   eth: RPCTransaction
+}
+
+export type AddressTransactionType = 'transaction' | 'staking_transaction' | 'internal_transaction'
+export type Address2Transaction = {
+  blockNumber: BlockNumber
+  transactionHash: TransactionHash | TransactionHarmonyHash
+  address: Address
+  transactionType?: AddressTransactionType
 }
