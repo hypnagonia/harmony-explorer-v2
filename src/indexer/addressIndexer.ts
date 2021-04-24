@@ -5,17 +5,19 @@ import {
   Block,
   TransactionHash,
   TransactionHarmonyHash,
+  AddressTransactionType,
 } from 'src/types'
 
 export const AddressIndexer = () => {
-  const sets: Record<BlockHash, Set<Address>> = {}
+  const sets: Record<string, Set<Address>> = {}
 
   const add = (
     block: Block,
     transactionHash: TransactionHash | TransactionHarmonyHash,
+    transactionType: AddressTransactionType,
     ...addresses: Address[]
   ) => {
-    const key = `${block.number}:${transactionHash}`
+    const key = `${block.number}:${transactionHash}:${transactionType}`
     if (!sets[key]) {
       sets[key] = new Set()
     }
@@ -26,9 +28,14 @@ export const AddressIndexer = () => {
 
   const get = () => {
     return Object.keys(sets).reduce((a, key: BlockHash) => {
-      const [blockNumber, transactionHash] = key.split(':')
+      const [blockNumber, transactionHash, transactionType] = key.split(':')
       sets[key].forEach((address) => {
-        a.push({blockNumber: +blockNumber, transactionHash, address})
+        a.push({
+          blockNumber: +blockNumber,
+          transactionHash,
+          address,
+          transactionType,
+        } as Address2Transaction)
       })
 
       return a

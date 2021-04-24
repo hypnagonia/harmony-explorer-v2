@@ -85,7 +85,7 @@ export class BlockIndexer {
             const txs = await RPCClient.traceBlock(shardID, block.number)
 
             txs.forEach((tx) => {
-              addressIndexer.add(block, tx.transactionHash, tx.from, tx.to)
+              addressIndexer.add(block, tx.transactionHash, 'internal_transaction', tx.from, tx.to)
             })
 
             await Promise.all(txs.map((tx) => store.internalTransaction.addInternalTransaction(tx)))
@@ -99,7 +99,7 @@ export class BlockIndexer {
         return Promise.all(
           blocks.map(async (block) => {
             block.transactions.forEach((tx) => {
-              addressIndexer.add(block, tx.ethHash, tx.from, tx.to)
+              addressIndexer.add(block, tx.ethHash, 'transaction', tx.from, tx.to)
             })
 
             await store.transaction.addTransactions(block.transactions)
@@ -112,7 +112,13 @@ export class BlockIndexer {
         return Promise.all(
           blocks.map(async (block) => {
             block.stakingTransactions.forEach((tx) => {
-              addressIndexer.add(block, tx.hash, tx.msg.delegatorAddress, tx.msg.validatorAddress)
+              addressIndexer.add(
+                block,
+                tx.hash,
+                'staking_transaction',
+                tx.msg.delegatorAddress,
+                tx.msg.validatorAddress
+              )
             })
 
             await store.staking.addStakingTransactions(block.stakingTransactions)

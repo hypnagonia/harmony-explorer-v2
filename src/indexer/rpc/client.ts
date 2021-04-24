@@ -83,8 +83,12 @@ export const getTransactionTrace = (
   return transport(shardID, 'debug_traceTransaction', [hash, {tracer}])
 }
 
-// todo block 4864036 always fails
 export const traceBlock = (shardID: ShardID, num: BlockNumber): Promise<InternalTransaction[]> => {
+  // this block always fails
+  if (config.indexer.chainID === 'mainnet' && num === 4864036) {
+    return Promise.resolve([])
+  }
+
   const hex = '0x' + num.toString(16)
   return transport(shardID, 'trace_block', [hex]).then((txs) =>
     txs.map(mapInternalTransactionFromBlockTrace)

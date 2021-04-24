@@ -223,5 +223,5 @@ export type Address2Transaction = {
   blockNumber: BlockNumber
   transactionHash: TransactionHash | TransactionHarmonyHash
   address: Address
-  transactionType?: AddressTransactionType
+  transactionType: AddressTransactionType
 }

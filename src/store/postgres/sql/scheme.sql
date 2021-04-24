@@ -129,18 +129,18 @@ $$
 $$;
 
 /*addresses mentioned in transaction*/
-/* block miner, staking tx data, tx, inner txs*/
 create table if not exists address2transaction
 (
     address          char(42) not null,
     block_number     bigint,
-    transaction_hash char(66) references transactions (hash),
+    transaction_hash char(66),
     transaction_type transaction_type,
     unique(address, transaction_hash)
 );
 
 create index if not exists idx_address2transaction_address on address2transaction using hash (address);
 create index if not exists idx_address2transaction_block_number on transactions (block_number);
+/* todo partial index by type */
 
 create table if not exists internal_transactions
 (
