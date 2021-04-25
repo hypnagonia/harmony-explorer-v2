@@ -21,7 +21,7 @@ export class PostgresStorageAddress implements IStorageAddress {
     )
   }
 
-  getRelatedTransactions = async (address: Address, filter: Filter): Promise<Block[]> => {
+  getRelatedTransactions = async (filter: Filter): Promise<Block[]> => {
     const q = buildSQLQuery(filter)
     const res = await this.query(`select * from address2transaction ${q}`, [])
 

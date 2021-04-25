@@ -34,5 +34,12 @@ export async function getRelatedTransactions(shardID: ShardID, address: Address,
       filters: [],
     }
   }
-  return await stores[shardID].address.getRelatedTransactions(address, filter)
+
+  filter.filters.push({
+    value: `'${address}'`,
+    type: 'eq',
+    property: 'address',
+  })
+
+  return await stores[shardID].address.getRelatedTransactions(filter)
 }

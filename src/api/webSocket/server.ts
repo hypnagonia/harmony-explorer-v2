@@ -6,6 +6,7 @@ import {logger} from 'src/logger'
 import * as controllers from 'src/api/controllers'
 import {getMethods} from './utils'
 import {errorToObject} from 'src/api/utils'
+import cors from 'cors'
 
 const l = logger(module)
 
@@ -41,12 +42,14 @@ export const webSocketServer = async () => {
 
   const api = express()
   const server = http.createServer(api)
-  const io = require('socket.io')(server)
+  const io = require('socket.io')(server, {cors: {origin: '*'}})
+
+  api.use(cors())
 
   io.on('connection', (socket: Socket) => {
-    socket.onAny(async (event, params) => {
+    socket.onAny(async (event, params, callback) => {
       const res = await runMethod(event, params)
-      socket.emit(res.event, JSON.stringify(res.response))
+      callback({event: res.event, payload: JSON.stringify(res.response)})
     })
   })
 

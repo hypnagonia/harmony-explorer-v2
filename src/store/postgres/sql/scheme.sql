@@ -162,16 +162,6 @@ create table if not exists internal_transactions
 create index if not exists idx_internal_transactions_transaction_hash on internal_transactions using hash (transaction_hash);
 create index if not exists idx_internal_transactions_block_number on internal_transactions (block_number);
 
-create table if not exists transaction_traces
-(
-    block_number bigint not null,
-    hash         char(66) references transactions (hash),
-    error        text default (null),
-    raw          jsonb
-);
-
-create index if not exists idx_transaction_traces_hash on transaction_traces using hash (hash);
-
 /*tracking create/create2 */
 create table if not exists contracts
 (

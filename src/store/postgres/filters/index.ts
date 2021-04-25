@@ -5,6 +5,7 @@ const mapFilterTypeToSQL: Record<FilterType, string> = {
   gte: '>=',
   lt: '<',
   lte: '<=',
+  eq: '=',
 }
 
 export const buildSQLQuery = (query: Filter) => {
