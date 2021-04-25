@@ -1,6 +1,6 @@
 import {logger} from 'src/logger'
 import {IStorageAddress} from 'src/store/interface'
-import {Address2Transaction} from 'src/types'
+import {Address2Transaction, Block, Filter, Address} from 'src/types'
 import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
@@ -19,5 +19,12 @@ export class PostgresStorageAddress implements IStorageAddress {
       `insert into address2transaction ${query} on conflict (address, transaction_hash) do nothing;`,
       params
     )
+  }
+
+  getRelatedTransactions = async (address: Address, filter: Filter): Promise<Block[]> => {
+    const q = buildSQLQuery(filter)
+    const res = await this.query(`select * from address2transaction ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
   }
 }

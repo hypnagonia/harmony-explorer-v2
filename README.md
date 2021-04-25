@@ -72,6 +72,11 @@ by block number
 by block hash
 `/v0/shard/0/stakingTransaction/block/hash/:blockHash`
 
+#### Address
+
+related transactions (with filters)
+`/v0/shard/0/address/:address/transactions`
+
 #### Filters
 
 as GET params

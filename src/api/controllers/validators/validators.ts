@@ -16,11 +16,11 @@ export const isShardAvailable: Validator = (value: ShardID) => {
 }
 
 export const isHexString: Validator = (value: string) => {
-  if (/^0x[A-F0-9]+$/i.test(value)) {
+  if (/^0x[a-f0-9]+$/.test(value)) {
     return
   }
 
-  throw new Error('should be hex string starting with 0x')
+  throw new Error('should be lowercase hex string starting with 0x')
 }
 
 export const isStartingWith0x: Validator = (value: string) => {

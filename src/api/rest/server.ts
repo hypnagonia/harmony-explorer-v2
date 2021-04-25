@@ -7,6 +7,7 @@ import {logger} from 'src/logger'
 import {blockRouter} from 'src/api/rest/routes/block'
 import {transactionRouter} from 'src/api/rest/routes/transaction'
 import {stakingTransactionRouter} from 'src/api/rest/routes/stakingTransaction'
+import {addressRouter} from 'src/api/rest/routes/address'
 import {transport} from 'src/api/rest/transport'
 const l = logger(module)
 
@@ -25,6 +26,7 @@ export const RESTServer = async () => {
   mainRouter0.use('/block', blockRouter)
   mainRouter0.use('/transaction', transactionRouter)
   mainRouter0.use('/stakingTransaction', stakingTransactionRouter)
+  mainRouter0.use('/address', addressRouter)
 
   const routerWithShards0 = Router({mergeParams: true})
   routerWithShards0.use('/shard/:shardID', mainRouter0, transport)
