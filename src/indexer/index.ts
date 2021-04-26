@@ -16,7 +16,7 @@ export const indexer = async () => {
     (shardID) =>
       new BlockIndexer(shardID, config.indexer.batchCount, config.indexer.initialBlockSyncingHeight)
   )
-  blockIndexers.forEach((b) => b.loop())
+  // blockIndexers.forEach((b) => b.loop())
 
   await indexerServer()
 
