@@ -3,6 +3,7 @@ import * as controllers from 'src/api/controllers'
 import {ShardID} from 'src/types/blockchain'
 import {catchAsync} from 'src/api/rest/utils'
 import {FilterEntry, Filter, FilterType, FilterOrderDirection, FilterOrderBy} from 'src/types'
+import {stakingTransactionRouter} from 'src/api/rest/routes/stakingTransaction'
 
 export const transactionRouter = Router({mergeParams: true})
 
@@ -58,10 +59,11 @@ export async function getTransactions(req: Request, res: Response, next: NextFun
   next(block)
 }
 
-/*
-todo
-paginated by block timestamp
+transactionRouter.get('/count', catchAsync(getCount))
 
-tx trace
-tx logs
-*/
+export async function getCount(req: Request, res: Response, next: NextFunction) {
+  const {shardID} = req.params
+  const s = +shardID as ShardID
+  const block = await controllers.getCount(s, 'transactions')
+  next(block)
+}

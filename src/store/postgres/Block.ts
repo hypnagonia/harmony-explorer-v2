@@ -55,11 +55,3 @@ export class PostgresStorageBlock implements IStorageBlock {
     return res.map(fromSnakeToCamelResponse)
   }
 }
-
-/*
-estimate count
-https://wiki.postgresql.org/wiki/Count_estimate
-SELECT reltuples::bigint
-FROM pg_catalog.pg_class
-WHERE relname = 'blocks';
-*/

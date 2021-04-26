@@ -3,6 +3,7 @@ import * as controllers from 'src/api/controllers'
 import {ShardID} from 'src/types/blockchain'
 import {catchAsync} from 'src/api/rest/utils'
 import {FilterEntry, Filter, FilterType, FilterOrderDirection, FilterOrderBy} from 'src/types'
+import {blockRouter} from 'src/api/rest/routes/block'
 
 export const internalTransactionRouter = Router({mergeParams: true})
 
@@ -45,4 +46,13 @@ export async function getInternalTransactionsByTransactionHash(
   const s = +shardID as ShardID
   const txs = await controllers.getInternalTransactionByField(s, 'transaction_hash', txHash)
   next(txs)
+}
+
+internalTransactionRouter.get('/count', catchAsync(getCount))
+
+export async function getCount(req: Request, res: Response, next: NextFunction) {
+  const {shardID} = req.params
+  const s = +shardID as ShardID
+  const block = await controllers.getCount(s, 'internalTransactions')
+  next(block)
 }

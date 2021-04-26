@@ -49,3 +49,12 @@ export async function getBlocks(req: Request, res: Response, next: NextFunction)
   const block = await controllers.getBlocks(s, filter)
   next(block)
 }
+
+blockRouter.get('/count', catchAsync(getBlockCount))
+
+export async function getBlockCount(req: Request, res: Response, next: NextFunction) {
+  const {shardID} = req.params
+  const s = +shardID as ShardID
+  const block = await controllers.getCount(s, 'blocks')
+  next(block)
+}

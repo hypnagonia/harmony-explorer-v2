@@ -1,4 +1,4 @@
-const mapNaming: Record<string, string> = {
+export const mapNaming: Record<string, string> = {
   extra_data: 'extraData',
   gas_limit: 'gasLimit',
   gas_used: 'gasUsed',
@@ -30,9 +30,10 @@ const mapNaming: Record<string, string> = {
   token_id: 'tokenId',
   '"from"': 'from',
   '"to"': 'to',
+  internal_transactions: 'internalTransactions',
 }
 
-const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((a, k) => {
+export const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((a, k) => {
   a[mapNaming[k]] = k
   return a
 }, {} as Record<string, string>)

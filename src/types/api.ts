@@ -6,6 +6,13 @@ export type TransactionQueryField = 'block_number' | 'block_hash' | 'hash' | 'ha
 export type StakingTransactionQueryField = 'block_number' | 'block_hash' | 'hash'
 export type InternalTransactionQueryField = 'block_number' | 'transaction_hash' | 'block_hash'
 
+export type CountEntities =
+  | 'transactions'
+  | 'blocks'
+  | 'Logs'
+  | 'stakingTransactions'
+  | 'internalTransactions'
+
 export type TransactionQueryValue =
   | blockchain.BlockNumber
   | blockchain.BlockHash

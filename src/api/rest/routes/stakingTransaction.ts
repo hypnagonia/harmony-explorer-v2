@@ -3,6 +3,7 @@ import * as controllers from 'src/api/controllers'
 import {ShardID} from 'src/types/blockchain'
 import {catchAsync} from 'src/api/rest/utils'
 import {FilterEntry, Filter, FilterType, FilterOrderDirection, FilterOrderBy} from 'src/types'
+import {internalTransactionRouter} from 'src/api/rest/routes/internalTransaction'
 
 export const stakingTransactionRouter = Router({mergeParams: true})
 
@@ -66,5 +67,14 @@ export async function getStakingTransactions(req: Request, res: Response, next: 
 
   const s = +shardID as ShardID
   const block = await controllers.getStakingTransactions(s, filter)
+  next(block)
+}
+
+stakingTransactionRouter.get('/count', catchAsync(getCount))
+
+export async function getCount(req: Request, res: Response, next: NextFunction) {
+  const {shardID} = req.params
+  const s = +shardID as ShardID
+  const block = await controllers.getCount(s, 'stakingTransactions')
   next(block)
 }
