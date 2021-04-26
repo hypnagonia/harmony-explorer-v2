@@ -66,7 +66,7 @@ export const mapInternalTransactionFromBlockTrace = (tx: RPCInternalTransactionF
     input: tx.action.input,
     output: tx.result ? tx.result.output : null,
     type: tx.action.callType || tx.type,
-    index: tx.traceAddress[0] || 0, // // can be empty arr
+    index: tx.traceAddress[0] || null,
     value: tx.action.value || '0x0', // can be undefined
   } as InternalTransaction
 }

@@ -59,7 +59,7 @@ export const webSocketServer = async () => {
 
   if (config.api.ws.isDemoHTMLPageEnabled) {
     l.info(
-      `Console WebSocket [Socket.io] client is available at http://localhost:${config.api.ws.port}/index.html`
+      `Console WebSocket [Socket.io] client is available at http://localhost:${config.api.ws.port}`
     )
     api.get('/', (req, res) => {
       res.sendFile(__dirname + '/index.html')

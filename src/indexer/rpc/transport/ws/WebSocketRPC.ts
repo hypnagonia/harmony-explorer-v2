@@ -3,9 +3,10 @@ import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
 import {RPCUrls, urls} from '../../RPCUrls'
 import {ShardID} from 'src/types/blockchain'
-
+import {RPCErrorPrefix} from 'src/indexer/rpc/transport/constants'
 const callTimeout = 20000
 const defaultRetries = 3
+
 const timeoutPromise = () =>
   new Promise((_, reject) =>
     setTimeout(
@@ -44,11 +45,10 @@ export class WebSocketRPC {
     }
 
     const catchPromise = (err: any) => {
-      // console.log(err, params)
       // this.l.debug('Call error', { err })
       retries--
       if (retries === 0) {
-        throw new Error(JSON.stringify(err))
+        throw new Error(RPCErrorPrefix + ': ' + JSON.stringify(err))
       }
 
       urls[this.shardID].find((u) => this.url === u.url)!.submitStatistic(0, true)

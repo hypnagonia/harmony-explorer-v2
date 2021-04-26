@@ -6,12 +6,12 @@ import {config} from 'src/config'
 import {RPCUrls} from '../../RPCUrls'
 import {ShardID} from 'src/types/blockchain'
 import {logTime} from 'src/utils/logTime'
+import {RPCErrorPrefix} from 'src/indexer/rpc/transport/constants'
 
 const l = logger(module)
 
 const defaultFetchTimeout = 10000
 const defaultRetries = 5
-const RPCErrorPrefix = 'RPC Error'
 const increaseTimeout = (retry: number) => defaultFetchTimeout
 
 export const HTTPTransport = async (

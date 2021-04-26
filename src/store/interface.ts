@@ -10,12 +10,14 @@ import {
   Transaction,
   StakingTransaction,
   Address2Transaction,
+  InternalTransaction,
 } from 'src/types/blockchain'
 import {
   Filter,
   TransactionQueryField,
   TransactionQueryValue,
   StakingTransactionQueryField,
+  InternalTransactionQueryField,
 } from 'src/types'
 
 export interface IStorageBlock {
@@ -60,7 +62,13 @@ export interface IStorageStakingTransaction {
   getStakingTransactions: (filter: Filter) => Promise<StakingTransaction[]>
 }
 
-export interface IStorageInternalTransaction {}
+export interface IStorageInternalTransaction {
+  getInternalTransactionsByField: (
+    field: InternalTransactionQueryField,
+    value: TransactionQueryValue
+  ) => Promise<InternalTransaction[]>
+}
+
 export interface IStorageAddress {
   addAddress2Transaction: (entry: Address2Transaction) => Promise<any>
 }

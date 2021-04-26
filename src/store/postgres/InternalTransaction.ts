@@ -5,7 +5,7 @@ import {
   BlockHash,
   TransactionQueryField,
   TransactionQueryValue,
-  RPCTransactionHarmony,
+  InternalTransactionQueryField,
   ShardID,
   Transaction,
   Filter,
@@ -35,8 +35,16 @@ export class PostgresStorageInternalTransaction implements IStorageInternalTrans
 
     const {query, params} = generateQuery(newTx)
     return await this.query(
-      `insert into internal_transactions ${query} on conflict (transaction_hash, index) do nothing;`,
+      `insert into internal_transactions ${query} on conflict (transaction_hash, index, from, to, input) do nothing;`,
       params
     )
+  }
+
+  getInternalTransactionsByField = async (
+    field: InternalTransactionQueryField,
+    value: TransactionQueryValue
+  ): Promise<InternalTransaction[]> => {
+    const res = await this.query(`select * from internal_transactions where ${field}=$1;`, [value])
+    return res.map(fromSnakeToCamelResponse) as InternalTransaction[]
   }
 }

@@ -142,6 +142,13 @@ create index if not exists idx_address2transaction_address on address2transactio
 create index if not exists idx_address2transaction_block_number on transactions (block_number);
 /* todo partial index by type */
 
+/*
+types
+call
+staticcall
+create
+delegatecall
+*/
 create table if not exists internal_transactions
 (
     index            smallint,
@@ -156,6 +163,7 @@ create table if not exists internal_transactions
     value            numeric,
     transaction_hash char(66) references transactions (hash),
     time             time,
+
     unique(transaction_hash, index)
 );
 
