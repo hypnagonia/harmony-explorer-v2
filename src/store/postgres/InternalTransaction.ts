@@ -35,7 +35,7 @@ export class PostgresStorageInternalTransaction implements IStorageInternalTrans
 
     const {query, params} = generateQuery(newTx)
     return await this.query(
-      `insert into internal_transactions ${query} on conflict (transaction_hash, index, from, to, input) do nothing;`,
+      `insert into internal_transactions ${query} on conflict (transaction_hash, index) do nothing;`,
       params
     )
   }

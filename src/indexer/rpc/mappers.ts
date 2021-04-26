@@ -55,6 +55,8 @@ const mapStakingTransaction = (tx: RPCStakingTransactionHarmony) => {
 }
 
 export const mapInternalTransactionFromBlockTrace = (tx: RPCInternalTransactionFromBlockTrace) => {
+  const index = tx.traceAddress[0] !== undefined ? tx.traceAddress[0] : null
+
   return {
     blockHash: tx.blockHash,
     blockNumber: tx.blockNumber,
@@ -66,7 +68,7 @@ export const mapInternalTransactionFromBlockTrace = (tx: RPCInternalTransactionF
     input: tx.action.input,
     output: tx.result ? tx.result.output : null,
     type: tx.action.callType || tx.type,
-    index: tx.traceAddress[0] || null,
+    index,
     value: tx.action.value || '0x0', // can be undefined
   } as InternalTransaction
 }
