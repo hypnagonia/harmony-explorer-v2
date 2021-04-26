@@ -20,7 +20,7 @@ import {
   TransactionQueryValue,
 } from 'src/types/api'
 
-export async function getInternalTransactionByField(
+export async function getInternalTransactionsByField(
   shardID: ShardID,
   field: InternalTransactionQueryField,
   value: TransactionQueryValue

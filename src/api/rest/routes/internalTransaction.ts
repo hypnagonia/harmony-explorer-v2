@@ -2,17 +2,22 @@ import {Response, Request, Router, NextFunction} from 'express'
 import * as controllers from 'src/api/controllers'
 import {ShardID} from 'src/types/blockchain'
 import {catchAsync} from 'src/api/rest/utils'
-import {FilterEntry, Filter, FilterType, FilterOrderDirection, FilterOrderBy} from 'src/types'
-import {blockRouter} from 'src/api/rest/routes/block'
 
 export const internalTransactionRouter = Router({mergeParams: true})
 
-internalTransactionRouter.get('/block/number/:blockNumber', catchAsync(getTransactionBlockNumber))
+internalTransactionRouter.get(
+  '/block/number/:blockNumber',
+  catchAsync(getInternalTransactionsByBlockNumber)
+)
 
-export async function getTransactionBlockNumber(req: Request, res: Response, next: NextFunction) {
+export async function getInternalTransactionsByBlockNumber(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const {blockNumber, shardID} = req.params
   const s = +shardID as ShardID
-  const txs = await controllers.getTransactionByField(s, 'block_number', +blockNumber)
+  const txs = await controllers.getInternalTransactionsByField(s, 'block_number', +blockNumber)
   next(txs)
 }
 
@@ -28,7 +33,7 @@ export async function getInternalTransactionsByBlockHash(
 ) {
   const {blockHash, shardID} = req.params
   const s = +shardID as ShardID
-  const txs = await controllers.getInternalTransactionByField(s, 'block_hash', blockHash)
+  const txs = await controllers.getInternalTransactionsByField(s, 'block_hash', blockHash)
   next(txs)
 }
 
@@ -44,7 +49,7 @@ export async function getInternalTransactionsByTransactionHash(
 ) {
   const {txHash, shardID} = req.params
   const s = +shardID as ShardID
-  const txs = await controllers.getInternalTransactionByField(s, 'transaction_hash', txHash)
+  const txs = await controllers.getInternalTransactionsByField(s, 'transaction_hash', txHash)
   next(txs)
 }
 
