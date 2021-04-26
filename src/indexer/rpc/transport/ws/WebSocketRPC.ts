@@ -1,7 +1,7 @@
 import {Client} from 'rpc-websockets'
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {RPCUrls} from '../../RPCUrls'
+import {RPCUrls, urls} from '../../RPCUrls'
 import {ShardID} from 'src/types/blockchain'
 
 const callTimeout = 20000
@@ -51,7 +51,8 @@ export class WebSocketRPC {
         throw new Error(JSON.stringify(err))
       }
 
-      RPCUrls.getURL(this.shardID).submitStatistic(0, true)
+      urls[this.shardID].find((u) => this.url === u.url)!.submitStatistic(0, true)
+
       return retryPromise()
     }
 
@@ -60,7 +61,7 @@ export class WebSocketRPC {
 
   private onError = (err: any) => {
     this.open = false
-    RPCUrls.getURL(this.shardID).submitStatistic(0, true)
+    urls[this.shardID].find((u) => this.url === u.url)!.submitStatistic(0, true)
     this.l.debug(`Error ${err.message || JSON.stringify(err)}`)
   }
 

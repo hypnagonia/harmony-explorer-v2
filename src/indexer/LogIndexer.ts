@@ -87,7 +87,7 @@ export class LogIndexer {
       this.l.info(
         `Processed [${startBlock},${syncedToBlock}] ${
           syncedToBlock - startBlock
-        } blocks. ${logsLength} log entries. Done in ${batchTime()}. Failed requests ${failedCount}`
+        } blocks. ${logsLength} log entries. Done in ${batchTime()}.`
       )
 
       await store.indexer.setLastIndexedLogsBlockNumber(syncedToBlock)
@@ -105,7 +105,7 @@ export class LogIndexer {
         setTimeout(this.loop, approximateBlockMintingTime)
       }
     } catch (err) {
-      this.l.warn(`Batch failed. Retrying in ${approximateBlockMintingTime}ms`, err)
+      this.l.warn(`Batch failed. Retrying in ${approximateBlockMintingTime}ms`, err.message || err)
       this.decreaseBatchCount()
       setTimeout(this.loop, approximateBlockMintingTime)
     }
