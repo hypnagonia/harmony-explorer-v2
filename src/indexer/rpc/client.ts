@@ -94,6 +94,6 @@ export const traceBlock = (
 
   const hex = '0x' + blockNumber.toString(16)
   return transport(shardID, 'trace_block', [hex]).then((txs) =>
-    txs.map(mapInternalTransactionFromBlockTrace)
+    txs ? txs.map(mapInternalTransactionFromBlockTrace) : []
   )
 }
