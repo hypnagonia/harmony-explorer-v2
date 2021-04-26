@@ -44,6 +44,9 @@ By hash
 By number
 `/v0/shard/0/block/number/:number`
 
+Approximate count
+`/v0/shard/0/block/count`
+
 #### Transaction
 
 list (with filters)
@@ -58,6 +61,9 @@ by block number
 by block hash
 `/v0/shard/0/transaction/block/hash/:blockHash`
 
+Approximate count
+`/v0/shard/0/transaction/count`
+
 #### Staking Transaction
 
 list (with filters)
@@ -71,6 +77,9 @@ by block number
 
 by block hash
 `/v0/shard/0/stakingTransaction/block/hash/:blockHash`
+
+Approximate count
+`/v0/shard/0/stakingTransaction/count`
 
 #### Address
 
@@ -103,6 +112,7 @@ Example
 ## Websocket [Socket.IO](https://socket.io/)
 
 Hit http://localhost:3001 for dev web page
+Check the [controllers](https://github.com/hypnagonia/harmony-explorer-v2/tree/dev2/src/api/controllers) files for method names and params
 
 ## GRPC
 

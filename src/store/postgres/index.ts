@@ -1,5 +1,4 @@
 import {Pool} from 'pg'
-import {config} from 'src/config'
 import {logger} from 'src/logger'
 import {scheme} from './scheme'
 import {IStorage} from 'src/store/interface'
@@ -13,14 +12,12 @@ import {PostgresStorageIndexer} from 'src/store/postgres/Indexer'
 import {PostgresStorageInternalTransaction} from 'src/store/postgres/InternalTransaction'
 import {PostgresStorageAddress} from 'src/store/postgres/Address'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {ShardID, CountEntities} from 'src/types'
+import {ShardID, CountableEntities} from 'src/types'
 import {mapNamingReverse} from 'src/store/postgres/queryMapper'
 
 const defaultRetries = 3
 
 const sleep = () => new Promise((r) => setTimeout(r, 1000))
-
-type Tables = 'blocks' | 'transactions' | 'staking_transactions' | 'internal_transactions' | 'logs'
 
 export class PostgresStorage implements IStorage {
   db: Pool
@@ -120,7 +117,7 @@ export class PostgresStorage implements IStorage {
   }
 
   // approximate count
-  getCount = async (table: CountEntities) => {
+  getCount = async (table: CountableEntities) => {
     const [
       {reltuples: count},
     ] = await this.query(`select reltuples::bigint from pg_catalog.pg_class where relname = $1`, [
