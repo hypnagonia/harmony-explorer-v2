@@ -45,7 +45,7 @@ export const config = {
     },
     rest: {
       isEnabled: toBool(process.env.API_REST_IS_ENABLED || '0'),
-      port: 8000,
+      port: +(process.env.API_REST_PORT || 3000),
     },
     grpc: {
       isEnabled: toBool(process.env.API_GRPC_IS_ENABLED || '0'),

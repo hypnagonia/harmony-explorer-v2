@@ -48,6 +48,10 @@ export const webSocketServer = async () => {
 
   io.on('connection', (socket: Socket) => {
     socket.onAny(async (event, params, callback) => {
+      if (typeof callback !== 'function') {
+        return
+      }
+
       const res = await runMethod(event, params)
       callback({event: res.event, payload: JSON.stringify(res.response)})
     })
