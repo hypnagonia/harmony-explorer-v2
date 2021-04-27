@@ -18,6 +18,7 @@ import {
   InternalTransaction,
 } from 'types/blockchain'
 import {mapBlockFromResponse, mapInternalTransactionFromBlockTrace} from './mappers'
+import {mainnetChainID} from 'src/constants'
 
 export const getBlocks = (
   shardID: ShardID,
@@ -34,7 +35,7 @@ export const getBlocks = (
     fullTx,
     withSigners,
     // disable including staking txs for main net before 3358745 where implemented
-    inclStaking: config.indexer.chainID === 'mainnet' && +to >= 3358745 ? inclStaking : false,
+    inclStaking: config.indexer.chainID === mainnetChainID && +to >= 3358745 ? inclStaking : false,
   }
   return transport(shardID, 'hmy_getBlocks', [from, to, o]).then((blocks) =>
     blocks.map(mapBlockFromResponse)
@@ -88,7 +89,7 @@ export const traceBlock = (
   blockNumber: BlockNumber
 ): Promise<InternalTransaction[]> => {
   // this block always fails
-  if (config.indexer.chainID === 'mainnet' && blockNumber === 4864036) {
+  if (config.indexer.chainID === mainnetChainID && blockNumber === 4864036) {
     return Promise.resolve([])
   }
 
@@ -96,4 +97,8 @@ export const traceBlock = (
   return transport(shardID, 'trace_block', [hex]).then((txs) =>
     txs ? txs.map(mapInternalTransactionFromBlockTrace) : []
   )
+}
+
+export const getChainID = (shardID: ShardID): Promise<number> => {
+  return transport(shardID, 'eth_chainId', []).then((r) => parseInt(r, 16))
 }

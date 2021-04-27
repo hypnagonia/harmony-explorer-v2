@@ -30,6 +30,13 @@ const getCommaSeparatedList = (list: string | undefined): string[] =>
     .join('')
     .split(',')
 
+const getChainID = (v: any): number => {
+  if (v === 'mainnet') {
+    return 1666600000
+  }
+  return +v
+}
+
 export const config = {
   info: {
     gitCommitHash: getGitCommitHash(),
@@ -53,7 +60,7 @@ export const config = {
     },
   },
   indexer: {
-    chainID: process.env.CHAIN as 'mainnet' | 'testnet' | undefined,
+    chainID: getChainID(process.env.CHAIN_ID || 'mainnet'),
     shards: getCommaSeparatedList(process.env.INDEXER_SHARDS).map((s) => +s) as ShardID[],
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
     isSyncingLogsEnabled: toBool(process.env.INDEXER_LOGS_IS_ENABLED || '0'),

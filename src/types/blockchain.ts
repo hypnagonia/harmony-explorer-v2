@@ -4,6 +4,7 @@ export type RPCETHMethod =
   | 'eth_getLogs'
   | 'eth_getBlocks'
   | 'trace_block'
+  | 'eth_chainId'
 
 export type RPCHarmonyMethod =
   | 'hmy_getBlockByNumber'

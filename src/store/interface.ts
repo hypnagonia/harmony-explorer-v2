@@ -40,6 +40,7 @@ export interface IStorageIndexer {
   setLastIndexedBlockNumber: (num: BlockNumber) => Promise<any>
   getLastIndexedLogsBlockNumber: () => Promise<number>
   setLastIndexedLogsBlockNumber: (num: BlockNumber) => Promise<any>
+  getChainID: () => Promise<number>
 }
 
 export interface IStorageTransaction {
