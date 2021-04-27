@@ -102,3 +102,7 @@ export const traceBlock = (
 export const getChainID = (shardID: ShardID): Promise<number> => {
   return transport(shardID, 'eth_chainId', []).then((r) => parseInt(r, 16))
 }
+
+export const getCode = (shardID: ShardID, address: Address): Promise<number> => {
+  return transport(shardID, 'eth_getCode', [address, 'latest'])
+}

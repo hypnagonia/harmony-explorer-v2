@@ -1,6 +1,6 @@
 import {config} from 'src/config'
-import {BlockIndexer} from 'src/indexer/BlockIndexer'
-import {LogIndexer} from 'src/indexer/LogIndexer'
+import {BlockIndexer} from './indexer/BlockIndexer'
+import {LogIndexer} from './indexer/LogIndexer'
 import {indexerServer} from 'src/indexer/server'
 import {ShardID} from 'src/types'
 import {logger} from 'src/logger'
@@ -35,15 +35,15 @@ export const indexer = async () => {
 const checkChainID = async (shardID: ShardID) => {
   const u = urls[shardID]
   const chainID = await stores[shardID].indexer.getChainID()
-  await Promise.all(
-    u.map((o) =>
-      RPCClient.getChainID(shardID).then((nodeChainID) => {
-        if (nodeChainID !== chainID) {
-          throw new Error(
-            `Wrong chain. ${o.url} returned chain ID ${nodeChainID}. Expected: ${chainID}.`
-          )
-        }
-      })
-    )
-  )
+
+  const validate = (o: RPCUrls) =>
+    RPCClient.getChainID(shardID).then((nodeChainID) => {
+      if (nodeChainID !== chainID) {
+        throw new Error(
+          `Wrong chain. ${o.url} returned chain ID ${nodeChainID}. Expected: ${chainID}.`
+        )
+      }
+    })
+
+  await Promise.all(u.map(validate))
 }

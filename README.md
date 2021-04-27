@@ -147,8 +147,8 @@ grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockB
 - [x] Track transactions for Address
 - [x] Index Transactions Trace Calls
 - [x] Index Internal Transactions
+- [x] Detect Contracts
 - [ ] Track Balances
-- [ ] Detect Contracts
 - [ ] Track HRC20
 - [ ] Track HRC721
 

@@ -53,6 +53,8 @@ export interface IStorageTransaction {
   getTransactions: (filter: Filter) => Promise<Transaction[]>
 }
 
+export interface IStorageContract {}
+
 export interface IStorageStakingTransaction {
   addStakingTransaction: (block: RPCStakingTransactionHarmony) => Promise<any>
   addStakingTransactions: (blocks: RPCStakingTransactionHarmony[]) => Promise<any>
@@ -82,4 +84,5 @@ export interface IStorage {
   indexer: IStorageIndexer
   internalTransaction: IStorageInternalTransaction
   address: IStorageAddress
+  contract: IStorageContract
 }

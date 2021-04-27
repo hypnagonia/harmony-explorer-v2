@@ -62,7 +62,7 @@ export const mapInternalTransactionFromBlockTrace = (tx: RPCInternalTransactionF
     blockNumber: tx.blockNumber,
     transactionHash: tx.transactionHash,
     from: tx.action.from,
-    to: tx.action.to,
+    to: tx.action.to || (tx.result ? tx.result.address : null),
     gas: tx.action.gas || '0x0', // can be undefined
     gasUsed: tx.result ? tx.result.gasUsed : '0x0',
     input: tx.action.input,
@@ -70,5 +70,6 @@ export const mapInternalTransactionFromBlockTrace = (tx: RPCInternalTransactionF
     type: tx.action.callType || tx.type,
     index,
     value: tx.action.value || '0x0', // can be undefined
+    deployedBytecode: tx.result && tx.result.code ? tx.result.code : undefined,
   } as InternalTransaction
 }

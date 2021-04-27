@@ -27,6 +27,7 @@ export class PostgresStorageInternalTransaction implements IStorageInternalTrans
   addInternalTransaction = async (tx: InternalTransaction) => {
     const newTx = {
       ...tx,
+      deployedBytecode: undefined,
       blockHash: undefined,
       value: BigInt(tx.value).toString(),
       gas: BigInt(tx.gas).toString(),

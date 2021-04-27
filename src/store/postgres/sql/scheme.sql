@@ -109,7 +109,7 @@ create table if not exists staking_transactions
     transaction_index smallint,
     v                 text,
     msg               jsonb,
-    type staking_transaction_type
+    type              staking_transaction_type
 );
 
 create index if not exists idx_staking_transactions_hash on staking_transactions using hash (hash);
@@ -135,7 +135,7 @@ create table if not exists address2transaction
     block_number     bigint,
     transaction_hash char(66),
     transaction_type transaction_type,
-    unique(address, transaction_hash)
+    unique (address, transaction_hash)
 );
 
 create index if not exists idx_address2transaction_address on address2transaction using hash (address);
@@ -143,11 +143,7 @@ create index if not exists idx_address2transaction_block_number on transactions 
 /* todo partial index by type */
 
 /*
-types
-call
-staticcall
-create
-delegatecall
+types call staticcall create delegatecall
 */
 create table if not exists internal_transactions
 (
@@ -164,7 +160,7 @@ create table if not exists internal_transactions
     transaction_hash char(66) references transactions (hash),
     time             time,
 
-    unique(transaction_hash, index)
+    unique (transaction_hash, index)
 );
 
 create index if not exists idx_internal_transactions_transaction_hash on internal_transactions using hash (transaction_hash);
@@ -176,13 +172,15 @@ create table if not exists contracts
     address          char(42) unique not null,
     creator_address  char(42)        not null,
     block_hash       char(66)        not null,
+    block_number     bigint not null,
     transaction_hash char(66) references transactions (hash),
-    transaction_type transaction_type,
     ipfs_hash        char(64),
     solidity_version char(6),
-    meta             jsonb
+    meta             jsonb,
+    bytecode         text
 );
 create index if not exists idx_contracts_address on contracts using hash (address);
+create index if not exists idx_contracts_block_number on contracts (block_number);
 
 create table if not exists erc20
 (

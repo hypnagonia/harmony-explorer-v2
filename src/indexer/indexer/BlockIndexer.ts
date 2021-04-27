@@ -1,6 +1,6 @@
 import * as RPCClient from 'src/indexer/rpc/client'
 import {urls, RPCUrls} from 'src/indexer/rpc/RPCUrls'
-import {ShardID, Block, BlockNumber} from 'src/types/blockchain'
+import {ShardID, Block, BlockNumber, InternalTransaction} from 'src/types/blockchain'
 
 import {logger} from 'src/logger'
 import LoggerModule from 'zerg/dist/LoggerModule'
@@ -8,6 +8,7 @@ import {stores} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 import {PostgresStorage} from 'src/store/postgres'
 import {AddressIndexer} from './addressIndexer'
+import {ContractIndexer} from './contractIndexer'
 
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 10000
@@ -50,8 +51,8 @@ export class BlockIndexer {
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
       const latestSyncedBlock = await store.indexer.getLastIndexedBlockNumber()
 
-      const startBlock =
-        latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : this.initialStartBlock
+      const startBlock = 11364162
+      // latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : this.initialStartBlock
 
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number
@@ -89,6 +90,13 @@ export class BlockIndexer {
             })
 
             await Promise.all(txs.map((tx) => store.internalTransaction.addInternalTransaction(tx)))
+
+            await Promise.all(
+              txs
+                .map(ContractIndexer)
+                .filter((contract) => contract)
+                .map((contract) => store.contract.addContract(contract!))
+            )
 
             return block
           })
