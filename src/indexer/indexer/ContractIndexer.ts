@@ -1,16 +1,7 @@
-import {
-  InternalTransaction,
-  Contract,
-  Address,
-  BlockHash,
-  TransactionHash,
-  Block,
-  RPCTransactionHarmony,
-  ShardID,
-  ByteCode,
-} from 'src/types'
+import {InternalTransaction, Contract, ByteCode} from 'src/types'
 import {logger} from 'src/logger'
 import base58 from 'bs58'
+const l = logger(module)
 
 export const ContractIndexer = (tx: InternalTransaction) => {
   if (!['create', 'create2'].includes(tx.type)) {
@@ -18,6 +9,10 @@ export const ContractIndexer = (tx: InternalTransaction) => {
   }
 
   const {IPFSHash, solidityVersion} = extractMetaFromBytecode(tx.deployedBytecode)
+
+  if (!tx.deployedBytecode) {
+    l.warn('Bytecode is missing from trace_block internal transaction result.code', tx)
+  }
 
   const contract: Contract = {
     address: tx.to,
@@ -66,7 +61,7 @@ const extractMetaFromBytecode = (bytecode: ByteCode | undefined) => {
 
   const IPFSHashKeyHex = splitByKey(IPFSHashKey, 68)
   if (IPFSHashKeyHex) {
-    const bytes = Buffer.from(IPFSHashKeyHex as string, 'hex')
+    const bytes = Buffer.from(IPFSHashKeyHex, 'hex')
     IPFSHash = base58.encode(bytes)
   }
 
