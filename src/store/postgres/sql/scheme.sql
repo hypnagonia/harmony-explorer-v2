@@ -36,12 +36,13 @@ create table if not exists logs
     address           char(42)                          not null,
     topics            char(66)[],
     data              text,
-    block_number      bigint references blocks (number) not null,
+    block_number      bigint  not null,
     transaction_hash  char(66)                          not null,
     transaction_index smallint,
-    block_hash        char(66) references blocks (hash) not null,
+    block_hash        char(66)  not null,
     log_index         smallint,
-    removed           boolean
+    removed           boolean,
+    unique(transaction_hash, log_index)
 );
 
 create index if not exists idx_logs_transaction_hash on logs using hash (transaction_hash);

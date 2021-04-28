@@ -24,7 +24,7 @@ export class PostgresStorageLog implements IStorageLog {
         log_index,
         removed
        ) values
-       ($1,$2,$3,$4,$5,$6,$7,$8,$9);`,
+       ($1,$2,$3,$4,$5,$6,$7,$8,$9) on conflict (transaction_hash, log_index) do nothing;`,
       [
         log.address,
         log.topics,
