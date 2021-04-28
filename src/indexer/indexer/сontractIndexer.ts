@@ -4,6 +4,10 @@ import base58 from 'bs58'
 const l = logger(module)
 
 export const contractIndexer = (tx: InternalTransaction) => {
+  if (tx.error) {
+    return
+  }
+
   if (!['create', 'create2'].includes(tx.type)) {
     return
   }

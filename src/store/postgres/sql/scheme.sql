@@ -4,11 +4,11 @@ create table if not exists blocks
 (
     number               bigint          not null,
     hash                 char(66) unique not null,
-    miner                char(42) not null,
+    miner                char(42)        not null,
     extra_data           text,
     gas_limit            bigint,
     gas_used             bigint,
-    timestamp            timestamp not null,
+    timestamp            timestamp       not null,
     difficulty           bigint,
     logs_bloom           char(514),
     mix_hash             char(66),
@@ -33,16 +33,16 @@ create index if not exists idx_blocks_timestamp on blocks using hash (timestamp)
 
 create table if not exists logs
 (
-    address           char(42)                          not null,
+    address           char(42) not null,
     topics            char(66)[],
     data              text,
-    block_number      bigint  not null,
-    transaction_hash  char(66)                          not null,
+    block_number      bigint   not null,
+    transaction_hash  char(66) not null,
     transaction_index smallint,
-    block_hash        char(66)  not null,
+    block_hash        char(66) not null,
     log_index         smallint,
     removed           boolean,
-    unique(transaction_hash, log_index)
+    unique (transaction_hash, log_index)
 );
 
 create index if not exists idx_logs_transaction_hash on logs using hash (transaction_hash);
@@ -58,8 +58,8 @@ create table if not exists transactions
     value             numeric,
     block_hash        char(66) references blocks (hash) not null,
     block_number      bigint references blocks (number) not null,
-    timestamp         timestamp not null,
-    "from"            char(42)  not null,
+    timestamp         timestamp                         not null,
+    "from"            char(42)                          not null,
     "to"              char(42),
     gas               bigint,
     gas_price         bigint,
@@ -97,8 +97,8 @@ create table if not exists staking_transactions
     hash              char(66) unique primary key       not null,
     block_hash        char(66) references blocks (hash) not null,
     block_number      bigint references blocks (number) not null,
-    timestamp         timestamp not null,
-    "from"            char(42)  not null,
+    timestamp         timestamp                         not null,
+    "from"            char(42)                          not null,
     "to"              char(42),
     gas               bigint,
     gas_price         bigint,
@@ -132,9 +132,9 @@ $$;
 /*addresses mentioned in transaction*/
 create table if not exists address2transaction
 (
-    address          char(42) not null,
-    block_number     bigint not null,
-    transaction_hash char(66) not null,
+    address          char(42)         not null,
+    block_number     bigint           not null,
+    transaction_hash char(66)         not null,
     transaction_type transaction_type not null,
     unique (address, transaction_hash)
 );
@@ -149,17 +149,18 @@ types call staticcall create delegatecall
 create table if not exists internal_transactions
 (
     index            smallint,
-    block_number     bigint not null,
-    "from"           char(42) not null,
-    "to"             char(42) not null,
+    block_number     bigint                                  not null,
+    "from"           char(42)                                not null,
+    "to"             char(42), /*can be empty if error*/
     gas              bigint,
     gas_used         bigint,
     input            text,
     output           text,
-    type             text not null,
+    type             text                                    not null,
     value            numeric,
-    transaction_hash char(66) references transactions (hash)  not null,
+    transaction_hash char(66) references transactions (hash) not null,
     time             time,
+    error            text,
 
     unique (transaction_hash, index)
 );
@@ -173,12 +174,12 @@ create table if not exists contracts
     address          char(42) unique not null,
     creator_address  char(42)        not null,
     block_hash       char(66)        not null,
-    block_number     bigint not null,
+    block_number     bigint          not null,
     transaction_hash char(66) references transactions (hash),
     ipfs_hash        char(64),
     solidity_version char(6),
     meta             jsonb,
-    bytecode         text  not null
+    bytecode         text            not null
 );
 create index if not exists idx_contracts_address on contracts using hash (address);
 create index if not exists idx_contracts_block_number on contracts (block_number);

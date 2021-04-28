@@ -179,6 +179,7 @@ export type TraceCallTypes = 'call' | 'staticcall' | 'create' | 'create2' | 'del
 export type TraceCallErrorToRevert = string
 
 export type RPCInternalTransactionFromBlockTrace = {
+  error?: TraceCallErrorToRevert
   result?: {
     address?: Address
     code?: ByteCode // deployed bytecode
