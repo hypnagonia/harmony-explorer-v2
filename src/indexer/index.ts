@@ -8,8 +8,6 @@ import {stores} from 'src/store'
 import * as RPCClient from 'src/indexer/rpc/client'
 import {urls, RPCUrls} from 'src/indexer/rpc/RPCUrls'
 
-import {TablePaginator} from 'src/indexer/utils/TablePaginator'
-
 const l = logger(module)
 
 export const indexer = async () => {

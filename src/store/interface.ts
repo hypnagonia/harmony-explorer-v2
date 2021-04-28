@@ -18,7 +18,7 @@ import {
   TransactionQueryValue,
   StakingTransactionQueryField,
   InternalTransactionQueryField,
-  TablePaginatorTableNames,
+  EntityIteratorEntities,
 } from 'src/types'
 
 export interface IStorageBlock {
@@ -86,10 +86,4 @@ export interface IStorage {
   internalTransaction: IStorageInternalTransaction
   address: IStorageAddress
   contract: IStorageContract
-  getTablePage: (
-    table: TablePaginatorTableNames,
-    fromBlock: number,
-    toBlock: number | 'latest',
-    limit?: number
-  ) => Promise<any>
 }
