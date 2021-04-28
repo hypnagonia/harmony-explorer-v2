@@ -37,7 +37,7 @@ const checkChainID = async (shardID: ShardID) => {
 
   const validate = (o: RPCUrls) =>
     RPCClient.getChainID(shardID).then((nodeChainID) => {
-      if (nodeChainID !== chainID) {
+      if (nodeChainID !== chainID + shardID) {
         throw new Error(
           `Wrong chain. ${o.url} returned chain ID ${nodeChainID}. Expected: ${chainID}.`
         )
