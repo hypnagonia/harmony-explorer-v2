@@ -13,8 +13,8 @@ import {PostgresStorageInternalTransaction} from 'src/store/postgres/InternalTra
 import {PostgresStorageAddress} from 'src/store/postgres/Address'
 import {PostgresStorageContract} from 'src/store/postgres/Contract'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {ShardID, CountableEntities} from 'src/types'
-import {mapNamingReverse} from 'src/store/postgres/queryMapper'
+import {ShardID, CountableEntities, TablePaginatorTableNames} from 'src/types'
+import {fromSnakeToCamelResponse, mapNamingReverse} from 'src/store/postgres/queryMapper'
 
 const defaultRetries = 3
 
@@ -128,6 +128,22 @@ export class PostgresStorage implements IStorage {
     ])
 
     return {count}
+  }
+
+  getTablePage = async (
+    table: TablePaginatorTableNames,
+    fromBlock: number | null,
+    toBlock: number = 0,
+    limit = 100
+  ) => {
+    let q = ''
+    if (fromBlock) {
+      q = `where block_number < ${fromBlock} and`
+    }
+    return this.query(
+      `select * from $1 where ${q} block_number > ${toBlock} order by block_number desc limit $3`,
+      [table, q, limit]
+    ).then((res) => (res ? res.map(fromSnakeToCamelResponse) : []))
   }
 
   async stop() {
