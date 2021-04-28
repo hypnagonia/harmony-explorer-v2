@@ -133,16 +133,17 @@ export class PostgresStorage implements IStorage {
 
   getTablePage = async (
     table: TablePaginatorTableNames,
-    fromBlock: number | 'latest',
-    toBlock: number = 0,
+    fromBlock: number = 0,
+    toBlock: number | 'latest' = 'latest',
     limit = 100
   ) => {
     let q = ''
-    if (fromBlock !== 'latest') {
-      q = `where block_number <= ${fromBlock} and`
+    if (toBlock !== 'latest') {
+      q = `where block_number <= ${toBlock} and`
     }
+
     return this.query(
-      `select * from ${table} where ${q} block_number >= ${toBlock} order by block_number asc limit ${limit}`,
+      `select * from ${table} where ${q} block_number >= ${fromBlock} order by block_number asc limit ${limit}`,
       []
     ).then((res) => (res ? res.map(fromSnakeToCamelResponse) : []))
   }

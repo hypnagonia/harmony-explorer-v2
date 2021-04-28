@@ -15,12 +15,6 @@ const l = logger(module)
 export const indexer = async () => {
   l.info(`Indexer starting... Shards[${config.indexer.shards.join(', ')}]`)
 
-  const t = TablePaginator('contracts')
-
-  while (t.hasNext()) {
-    const {value, hasNext} = await t.next()
-  }
-
   const shards = config.indexer.shards
 
   await Promise.all(shards.map(checkChainID))

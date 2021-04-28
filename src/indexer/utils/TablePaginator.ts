@@ -8,17 +8,24 @@ const tablesQueries: Record<TablePaginatorTableNames, any> = {
   contracts: (
     table: TablePaginatorTableNames,
     fromBlock: number,
-    toBlock: number,
+    toBlock: number | 'latest',
     batchSize: number
   ) => store.getTablePage(table, fromBlock, toBlock, batchSize),
+  // todo sort by block number and index
   logs: () => {},
+  // todo sort by block number and index
   internal_transactions: () => {},
 }
 
-export const TablePaginator = (table: TablePaginatorTableNames, toBlock = 0, batchSize = 100) => {
+export const TablePaginator = (
+  table: TablePaginatorTableNames,
+  fromBlock = 0,
+  toBlock: number | 'latest' = 'latest',
+  batchSize = 100
+) => {
   let value: any[] = []
   let hasNext = true
-  let fromBlock: number | 'latest' = 'latest'
+
   const cb = tablesQueries[table]
 
   const next = async () => {
@@ -28,7 +35,7 @@ export const TablePaginator = (table: TablePaginatorTableNames, toBlock = 0, bat
 
     value = await cb(table, fromBlock, toBlock, batchSize)
     if (value.length) {
-      fromBlock = value[value.length - 1].blockNumber + 1
+      fromBlock = +value[value.length - 1].blockNumber + 1
     }
 
     if (batchSize > value.length) {
