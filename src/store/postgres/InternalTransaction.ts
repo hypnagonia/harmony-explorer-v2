@@ -11,6 +11,7 @@ import {
   Filter,
   InternalTransaction,
   TransactionHash,
+  Contract,
 } from 'src/types'
 import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {Query} from 'src/store/postgres/types'
@@ -46,6 +47,13 @@ export class PostgresStorageInternalTransaction implements IStorageInternalTrans
     value: TransactionQueryValue
   ): Promise<InternalTransaction[]> => {
     const res = await this.query(`select * from internal_transactions where ${field}=$1;`, [value])
-    return res.map(fromSnakeToCamelResponse) as InternalTransaction[]
+    return res.map(fromSnakeToCamelResponse)
+  }
+
+  getInternalTransactions = async (filter: Filter): Promise<InternalTransaction[]> => {
+    const q = buildSQLQuery(filter)
+    const res = await this.query(`select * from internal_transactions ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
   }
 }

@@ -17,46 +17,50 @@ type EntityQueryReturn = {
   nextIndex: number
 }
 
-const entityQueries: Record<
-  EntityIteratorEntities,
-  (index: number, limit: number) => Promise<EntityQueryReturn>
-> = {
-  logs: async (index, limit) => ({value: [], nextIndex: 0}),
-  internalTransactions: async (index, limit) => ({value: [], nextIndex: 0}),
-  contracts: async (fromBlock = 0, limit = 100) => {
-    const filter: Filter = {
-      limit,
-      offset: 0,
-      orderDirection: 'asc',
-      orderBy: 'block_number',
-      filters: [
-        {
-          type: 'gt',
-          property: 'block_number',
-          value: fromBlock,
-        },
-      ],
-    }
-    const value = await store.contract.getContracts(filter)
-    const nextIndex = value.length ? +value[value.length - 1].blockNumber : -1
-    return {
-      value,
-      nextIndex,
-    }
-  },
+type EntityQueryCallback = (o: EntityQueryCallbackParams) => Promise<EntityQueryReturn>
+export type EntityQueryCallbackParams = {
+  index: number
+  batchSize: number
+}
+
+const contracts = async ({index = 0, batchSize = 100}) => {
+  const filter: Filter = {
+    limit: batchSize,
+    offset: 0,
+    orderDirection: 'asc',
+    orderBy: 'block_number',
+    filters: [
+      {
+        type: 'gt',
+        property: 'block_number',
+        value: index,
+      },
+    ],
+  }
+  const value = await store.contract.getContracts(filter)
+  const nextIndex = value.length ? +value[value.length - 1].blockNumber : -1
+  return {
+    value,
+    nextIndex,
+  }
+}
+
+const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
+  logs: async (o) => ({value: [], nextIndex: 0}),
+  internalTransactions: async (o) => ({value: [], nextIndex: 0}),
+  contracts,
 }
 
 export async function* EntityIterator(
   entity: EntityIteratorEntities,
-  initialIndex = 0,
-  batchSize = 100
+  {index: initialIndex, batchSize}: EntityQueryCallbackParams
 ) {
   let index = initialIndex
 
   const cb = entityQueries[entity]
 
   while (true) {
-    const {nextIndex, value} = await cb(index, batchSize)
+    const {nextIndex, value} = await cb({index, batchSize})
     index = nextIndex
 
     if (batchSize > value.length) {
