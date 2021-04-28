@@ -88,7 +88,7 @@ export interface IStorage {
   contract: IStorageContract
   getTablePage: (
     table: TablePaginatorTableNames,
-    fromBlock: number | null,
+    fromBlock: number | 'latest',
     toBlock: number,
     limit?: number
   ) => Promise<any>

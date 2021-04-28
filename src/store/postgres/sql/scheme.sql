@@ -99,7 +99,7 @@ create table if not exists staking_transactions
     block_number      bigint references blocks (number) not null,
     timestamp         timestamp not null,
     "from"            char(42)  not null,
-    "to"              char(42)  not null,
+    "to"              char(42),
     gas               bigint,
     gas_price         bigint,
     input             text,

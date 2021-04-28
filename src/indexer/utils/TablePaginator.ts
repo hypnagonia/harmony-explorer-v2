@@ -15,25 +15,34 @@ const tablesQueries: Record<TablePaginatorTableNames, any> = {
   internal_transactions: () => {},
 }
 
-export const Paginator = (table: TablePaginatorTableNames, toBlock = 0, batchSize = 100) => {
+export const TablePaginator = (table: TablePaginatorTableNames, toBlock = 0, batchSize = 100) => {
   let value: any[] = []
-  let fromBlock: number | null = null
+  let hasNext = true
+  let fromBlock: number | 'latest' = 'latest'
   const cb = tablesQueries[table]
 
   const next = async () => {
-    value = await cb(table, fromBlock, toBlock, batchSize)
-
-    if (value.length) {
-      fromBlock = value[value.length - 1].blockNumber
+    if (!hasNext) {
+      return response()
     }
 
-    return response
+    value = await cb(table, fromBlock, toBlock, batchSize)
+    if (value.length) {
+      fromBlock = value[value.length - 1].blockNumber + 1
+    }
+
+    if (batchSize > value.length) {
+      hasNext = false
+    }
+
+    return response()
   }
 
   const response = () => ({
     value,
-    next: batchSize === value.length ? next : null,
+    next,
+    hasNext: () => hasNext,
   })
 
-  return response
+  return response()
 }
