@@ -3,7 +3,7 @@ import {logger} from 'src/logger'
 import base58 from 'bs58'
 const l = logger(module)
 
-export const ContractIndexer = (tx: InternalTransaction) => {
+export const contractIndexer = (tx: InternalTransaction) => {
   if (!['create', 'create2'].includes(tx.type)) {
     return
   }

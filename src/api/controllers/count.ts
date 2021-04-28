@@ -1,5 +1,5 @@
 import {stores} from 'src/store'
-import {ShardID, Transaction, CountableEntities} from 'src/types'
+import {ShardID, CountableEntities} from 'src/types'
 import {validator} from 'src/api/controllers/validators/validators'
 import {isOneOf} from 'src/api/controllers/validators'
 

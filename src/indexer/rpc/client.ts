@@ -1,15 +1,10 @@
 import {transport} from './transport'
 import {config} from 'src/config'
 import {
-  RPCETHMethod,
-  RPCHarmonyMethod,
   Block,
   RPCBlock,
   ShardID,
-  TransactionHarmonyHash,
   TransactionHash,
-  RPCTransaction,
-  RPCBlockHarmony,
   RPCTransactionHarmony,
   Topic,
   Address,
@@ -20,6 +15,7 @@ import {
 import {mapBlockFromResponse, mapInternalTransactionFromBlockTrace} from './mappers'
 import {mainnetChainID} from 'src/constants'
 
+// todo remove shard ID
 export const getBlocks = (
   shardID: ShardID,
   fromBlock: BlockNumber,

@@ -10,7 +10,6 @@ import {urls, RPCUrls} from 'src/indexer/rpc/RPCUrls'
 
 const l = logger(module)
 
-// todo check if node stuck
 export const indexer = async () => {
   l.info(`Indexer starting... Shards[${config.indexer.shards.join(', ')}]`)
 
