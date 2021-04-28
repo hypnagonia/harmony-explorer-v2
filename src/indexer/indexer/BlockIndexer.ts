@@ -51,8 +51,8 @@ export class BlockIndexer {
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
       const latestSyncedBlock = await store.indexer.getLastIndexedBlockNumber()
 
-      const startBlock =
-        latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : this.initialStartBlock
+      const startBlock = 1013749
+      // latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : this.initialStartBlock
 
       // todo check if node stuck
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
@@ -85,7 +85,6 @@ export class BlockIndexer {
             }
 
             const txs = await RPCClient.traceBlock(shardID, block.number)
-
             txs.forEach((tx) => {
               addressIndexer.add(block, tx.transactionHash, 'internal_transaction', tx.from, tx.to)
             })

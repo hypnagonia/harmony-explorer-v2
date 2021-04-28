@@ -54,12 +54,15 @@ const mapStakingTransaction = (tx: RPCStakingTransactionHarmony) => {
   }
 }
 
-export const mapInternalTransactionFromBlockTrace = (tx: RPCInternalTransactionFromBlockTrace) => {
+export const mapInternalTransactionFromBlockTrace = (blockNumber: BlockNumber) => (
+  tx: RPCInternalTransactionFromBlockTrace
+) => {
   const index = tx.traceAddress[0] !== undefined ? tx.traceAddress[0] : null
 
   return {
     blockHash: tx.blockHash,
-    blockNumber: tx.blockNumber,
+    // block number is currently missing in the response sometimes
+    blockNumber: tx.blockNumber || blockNumber,
     transactionHash: tx.transactionHash,
     from: tx.action.from,
     to: tx.action.to || (tx.result ? tx.result.address : null),
