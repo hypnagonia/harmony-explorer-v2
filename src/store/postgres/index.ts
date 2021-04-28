@@ -114,7 +114,6 @@ export class PostgresStorage implements IStorage {
 
       return rows
     } catch (e) {
-      console.log({sql, params})
       this.l.debug(e.message || e, {sql, params})
       throw new Error(e)
     }
