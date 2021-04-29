@@ -245,3 +245,14 @@ export type Contract = {
   meta?: string
   bytecode: string
 }
+
+export type IERC20 = {
+  address: Address
+  decimals: number
+  symbol: string
+  name: string
+  totalSupply?: string
+  holders?: number
+  transactionCount?: number
+  lastUpdateBlockNumber?: number
+}

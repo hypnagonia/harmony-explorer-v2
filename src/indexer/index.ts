@@ -31,8 +31,10 @@ export const indexer = async () => {
     logIndexer0.loop()
   }
 
-  const contractIndexer = new ContractIndexer()
-  contractIndexer.loop()
+  if (config.indexer.isSyncingContractsEnabled && config.indexer.shards.includes(0)) {
+    const contractIndexer0 = new ContractIndexer()
+    contractIndexer0.loop()
+  }
 }
 
 const checkChainID = async (shardID: ShardID) => {

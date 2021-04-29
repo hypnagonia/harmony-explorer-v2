@@ -1,5 +1,5 @@
 import {Filter, ShardID, Address} from 'src/types'
-import {validator} from 'src/api/controllers/validators/validators'
+import {validator} from 'src/utils/validators/validators'
 import {
   isAddress,
   isFilters,
@@ -8,7 +8,7 @@ import {
   isOrderBy,
   isOrderDirection,
   isShard,
-} from 'src/api/controllers/validators'
+} from 'src/utils/validators'
 import {stores} from 'src/store'
 
 export async function getRelatedTransactions(shardID: ShardID, address: Address, filter?: Filter) {

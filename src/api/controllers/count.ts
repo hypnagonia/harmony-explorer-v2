@@ -1,7 +1,7 @@
 import {stores} from 'src/store'
 import {ShardID, CountableEntities} from 'src/types'
-import {validator} from 'src/api/controllers/validators/validators'
-import {isOneOf} from 'src/api/controllers/validators'
+import {validator} from 'src/utils/validators//validators'
+import {isOneOf} from 'src/utils/validators'
 
 export async function getCount(
   shardID: ShardID,

@@ -1,9 +1,10 @@
 import {Contract, Log} from 'src/types'
+import {PostgresStorage} from 'src/store/postgres'
 
 export interface ContractTracker {
   name: string
-  trackEvents: (logs: Log[]) => Promise<any>
-  addContract: (contract: Contract) => Promise<any>
+  trackEvents: (store: PostgresStorage, logs: Log[]) => Promise<any>
+  addContract: (store: PostgresStorage, contract: Contract) => Promise<any>
 }
 
 export type ABIEventSignature = string

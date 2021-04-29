@@ -15,6 +15,7 @@ import {PostgresStorageContract} from 'src/store/postgres/Contract'
 import LoggerModule from 'zerg/dist/LoggerModule'
 import {ShardID, CountableEntities} from 'src/types'
 import {fromSnakeToCamelResponse, mapNamingReverse} from 'src/store/postgres/queryMapper'
+import {PostgresStorageERC20} from 'src/store/postgres/ERC20'
 
 const defaultRetries = 3
 
@@ -30,6 +31,7 @@ export class PostgresStorage implements IStorage {
   staking: PostgresStorageStakingTransaction
   address: PostgresStorageAddress
   contract: PostgresStorageContract
+  erc20: PostgresStorageERC20
   isStarted = false
   isStarting = false
   l: LoggerModule
@@ -46,6 +48,7 @@ export class PostgresStorage implements IStorage {
     this.indexer = new PostgresStorageIndexer(this.query)
     this.address = new PostgresStorageAddress(this.query)
     this.contract = new PostgresStorageContract(this.query)
+    this.erc20 = new PostgresStorageERC20(this.query)
 
     this.l = logger(module, `shard${options.shardID}`)
     this.options = options

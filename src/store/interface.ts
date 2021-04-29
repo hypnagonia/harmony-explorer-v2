@@ -85,6 +85,8 @@ export interface IStorageAddress {
   getRelatedTransactions: (filter: Filter) => Promise<Address2Transaction[]>
 }
 
+export interface IStorageERC20 {}
+
 export interface IStorage {
   block: IStorageBlock
   log: IStorageLog
@@ -94,4 +96,5 @@ export interface IStorage {
   internalTransaction: IStorageInternalTransaction
   address: IStorageAddress
   contract: IStorageContract
+  erc20: IStorageERC20
 }

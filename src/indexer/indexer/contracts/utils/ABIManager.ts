@@ -18,7 +18,7 @@ export const ABIManager = (abi: IABI) => {
       }
 
       if (e.type === 'function' && (!e.outputs || !e.outputs.length)) {
-        throw new Error(`outputs definition expected for function "${e.name}"`)
+        throw new Error(`ABI outputs definition expected for function "${e.name}"`)
       }
 
       return {
@@ -30,9 +30,11 @@ export const ABIManager = (abi: IABI) => {
       }
     })
 
+  const getEntryByName = (name: string) => entries.find((e) => e.name === name)
+
   const hasAllSignatures = (names: string[], hexData: ByteCode) =>
     names.reduce((acc, name) => {
-      const entry = entries.find((e) => e.name === name)
+      const entry = getEntryByName(name)
       if (!entry || !entry.signatureWithout0x) {
         return false
       }
@@ -40,12 +42,12 @@ export const ABIManager = (abi: IABI) => {
       return hexData.indexOf(entry.signatureWithout0x) !== -1 && acc
     }, true)
 
-  const callAll = (address: Address, methods: string[]) => {
+  const callAll = (address: Address, methodsNames: string[]) => {
     return Promise.all(
-      methods.map(async (method) => {
-        const entry = entries.find((e) => e.name === method)
+      methodsNames.map(async (methodName) => {
+        const entry = getEntryByName(methodName)
         if (!entry || entry.type !== 'function') {
-          throw new Error(`${method} not found`)
+          throw new Error(`${methodName} not found`)
         }
 
         const response = await RPCClient.call(0, {
@@ -53,7 +55,7 @@ export const ABIManager = (abi: IABI) => {
           data: entry.signature,
         })
 
-        const result = web3.eth.abi.decodeParameters(entry!.outputs, response)['0']
+        const result = web3.eth.abi.decodeParameters(entry.outputs, response)['0']
         return {[entry.name]: result}
       })
     ).then((r) => r.reduce((a, b) => ({...a, ...b}), {}))

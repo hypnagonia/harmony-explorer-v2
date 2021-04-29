@@ -39,7 +39,7 @@ export const isOneOf: Validator = (value: string, options: string[]) => {
   throw new Error(`should be one of [${options.join(', ')}]`)
 }
 
-export const isUint: Validator = (value, {min, max}) => {
+export const isUint: Validator = (value, {min, max} = {}) => {
   if (typeof value !== 'number' || isNaN(value)) {
     throw new Error('should be a number')
   }

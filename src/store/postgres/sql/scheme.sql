@@ -193,7 +193,7 @@ create table if not exists erc20
     total_supply             numeric default (0),
     holders                  numeric default (0),
     transaction_count        bigint  default (0),
-    last_update_block_number bigint
+    last_update_block_number bigint  default (0)
 );
 
 create index if not exists idx_erc20_address on erc20 using hash (address);
@@ -203,7 +203,8 @@ create table if not exists erc20_balance
     owner_address            char(42)                            not null,
     token_address            char(42) references erc20 (address) not null,
     balance                  numeric,
-    last_update_block_number bigint
+    last_update_block_number bigint,
+    unique(owner_address, token_address)
 );
 create index if not exists idx_erc20_balance_address on erc20_balance using hash (owner_address);
 create index if not exists idx_erc20_balance_token_address on erc20_balance using hash (token_address);
@@ -217,7 +218,7 @@ create table if not exists erc721
     total_supply             numeric default (0),
     holders                  numeric default (0),
     transaction_count        bigint  default (0),
-    last_update_block_number bigint
+    last_update_block_number bigint  default (0)
 );
 
 create index if not exists idx_erc721_address on erc721 using hash (address);
@@ -228,7 +229,8 @@ create table if not exists erc721_asset
     token_address            char(42) references erc721 (address) not null,
     token_id                 text,
     meta                     jsonb,
-    last_update_block_number bigint
+    last_update_block_number bigint,
+    unique(owner_address, token_address, token_id)
 );
 
 create index if not exists idx_erc721_asset_owner_address on erc721_asset using hash (owner_address);

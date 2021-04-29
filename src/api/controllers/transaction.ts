@@ -1,6 +1,6 @@
 import {stores} from 'src/store'
 import {ShardID, Transaction} from 'src/types/blockchain'
-import {validator} from 'src/api/controllers/validators/validators'
+import {validator} from 'src/utils/validators/validators'
 import {
   is64CharHexHash,
   isBlockNumber,
@@ -11,8 +11,7 @@ import {
   isLimit,
   isOneOf,
   isFilters,
-  Void,
-} from 'src/api/controllers/validators'
+} from 'src/utils/validators'
 import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types/api'
 
 export async function getTransactionByField(

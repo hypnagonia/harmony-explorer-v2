@@ -32,6 +32,7 @@ export const mapNaming: Record<string, string> = {
   '"to"': 'to',
   internal_transactions: 'internalTransactions',
   ipfs_hash: 'IPFSHash',
+  last_update_block_number: 'lastUpdateBlockNumber',
 }
 
 export const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((a, k) => {

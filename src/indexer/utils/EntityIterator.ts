@@ -76,20 +76,6 @@ const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
   ),
 }
 
-/*
- example
- const c = EntityIterator('address2Transactions',
-    {
-      batchSize: 1,
-      address: '0x4b7d24e31d16733d3b56fd27f6237ff27e872e39'
-    })
-
-  for await (const value of c) {
-    console.log('chunk')
-    console.log(value.map(({blockNumber, address}) => ({blockNumber, address})))
-  }
-*/
-
 export async function* EntityIterator(
   entity: EntityIteratorEntities,
   {index: initialIndex = 0, batchSize = 100, ...rest}: EntityQueryCallbackParams
