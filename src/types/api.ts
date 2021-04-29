@@ -30,7 +30,7 @@ export type FilterOrderDirection = 'asc' | 'desc'
 export type Filter = {
   offset?: number
   limit?: number
-  orderDirection: FilterOrderDirection
-  orderBy: FilterOrderBy
+  orderDirection?: FilterOrderDirection
+  orderBy?: FilterOrderBy
   filters: FilterEntry[]
 }

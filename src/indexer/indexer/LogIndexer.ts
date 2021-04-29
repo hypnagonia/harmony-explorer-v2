@@ -50,6 +50,7 @@ export class LogIndexer {
       const batchTime = logTime()
       const failedCountBefore = RPCUrls.getFailedCount(shardID)
       const latestSyncedBlock = await store.indexer.getLastIndexedLogsBlockNumber()
+      // todo check in full sync
       const startBlock = latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
       const latestBlockchainBlock = (await RPCClient.getBlockByNumber(shardID, 'latest', false))
         .number

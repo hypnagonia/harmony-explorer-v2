@@ -18,11 +18,17 @@ export const indexer = async () => {
 
   await Promise.all(shards.map(checkChainID))
 
-  const blockIndexers = shards.map(
-    (shardID) =>
-      new BlockIndexer(shardID, config.indexer.batchCount, config.indexer.initialBlockSyncingHeight)
-  )
-  blockIndexers.forEach((b) => b.loop())
+  if (config.indexer.isSyncingBlocksEnabled) {
+    const blockIndexers = shards.map(
+      (shardID) =>
+        new BlockIndexer(
+          shardID,
+          config.indexer.batchCount,
+          config.indexer.initialBlockSyncingHeight
+        )
+    )
+    blockIndexers.forEach((b) => b.loop())
+  }
 
   await indexerServer()
 

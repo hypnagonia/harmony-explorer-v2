@@ -42,6 +42,15 @@ export const ABIManager = (abi: IABI) => {
       return hexData.indexOf(entry.signatureWithout0x) !== -1 && acc
     }, true)
 
+  const decodeLog = (inputName: string, data: ByteCode, topics: string[]) => {
+    const event = abi.find((e) => e.name === inputName)
+    if (!event) {
+      throw new Error(`No input for event "${inputName}"`)
+    }
+
+    return web3.eth.abi.decodeLog(event.inputs, data, topics)
+  }
+
   const callAll = (address: Address, methodsNames: string[]) => {
     return Promise.all(
       methodsNames.map(async (methodName) => {
@@ -66,5 +75,6 @@ export const ABIManager = (abi: IABI) => {
     getEntryByName,
     hasAllSignatures,
     callAll,
+    decodeLog,
   }
 }

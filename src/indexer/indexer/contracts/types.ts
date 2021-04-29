@@ -3,7 +3,7 @@ import {PostgresStorage} from 'src/store/postgres'
 
 export interface ContractTracker {
   name: string
-  trackEvents: (store: PostgresStorage, logs: Log[]) => Promise<any>
+  trackEvents: (store: PostgresStorage, logs: Log[], params: any) => Promise<any>
   addContract: (store: PostgresStorage, contract: Contract) => Promise<any>
 }
 

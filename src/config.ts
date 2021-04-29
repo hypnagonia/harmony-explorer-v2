@@ -63,11 +63,12 @@ export const config = {
     chainID: getChainID(process.env.CHAIN_ID || 'mainnet'),
     shards: getCommaSeparatedList(process.env.INDEXER_SHARDS).map((s) => +s) as ShardID[],
     isEnabled: toBool(process.env.INDEXER_IS_ENABLED || '0'),
+    isSyncingBlocksEnabled: toBool(process.env.INDEXER_BLOCKS_IS_ENABLED || '0'),
     isSyncingLogsEnabled: toBool(process.env.INDEXER_LOGS_IS_ENABLED || '0'),
     isSyncingContractsEnabled: toBool(process.env.INDEXER_CONTRACTS_IS_ENABLED || '0'),
     initialBlockSyncingHeight: +(process.env.INDEXER_INITIAL_BLOCK_SYNCING_HEIGHT || 0),
     // set to the height where smart contracts were introduced on the chain
-    initialLogsSyncingHeight: 3500000, // todo refine number use chainID
+    initialLogsSyncingHeight: +(process.env.INDEXER_LOG_INITIAL_BLOCK_SYNCING_HEIGHT || 3500000),
     batchCount: +(process.env.INDEXER_BATCH_COUNT || 100),
     rpc: {
       transport: process.env.INDEXER_RPC_TRANSPORT || 'ws',

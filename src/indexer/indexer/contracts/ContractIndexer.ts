@@ -6,6 +6,7 @@ import {tasks} from './tasks'
 import {ContractTracker} from 'src/indexer/indexer/contracts/types'
 import {PostgresStorage} from 'src/store/postgres'
 import {trackEvents} from 'src/indexer/indexer/contracts/erc20/trackEvents'
+import {IERC20} from 'src/types'
 
 const syncingIntervalMs = 1000 * 60 * 5
 const contractBatchSize = 10
@@ -39,7 +40,7 @@ export class ContractIndexer {
     )
     const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
 
-    this.l.info(`${task.name} from block ${startBlock}`)
+    this.l.info(`${task.name} contracts from block ${startBlock}`)
     const contractsIterator = EntityIterator('contracts', {
       batchSize: contractBatchSize,
       index: startBlock,
@@ -73,23 +74,43 @@ export class ContractIndexer {
     )
     const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
 
-    // todo iterate erc20
+    this.l.info(`${task.name} entries from block ${startBlock}`)
 
-    this.l.info(`${task.name} from block ${startBlock}`)
-    const logsIterator = EntityIterator('logs', {
-      batchSize: contractBatchSize,
+    const tokensIterator = EntityIterator('erc20', {
+      batchSize: 1,
       index: startBlock,
-      address: '', // todo
     })
 
-    for await (const logs of logsIterator) {
-      await Promise.all(logs.map((c) => task.trackEvents(this.store, c)))
+    for await (const tokens of tokensIterator) {
+      if (!tokens.length) {
+        break
+      }
+
+      const token: IERC20 = tokens[0]
+
+      const logsIterator = EntityIterator('logs', {
+        batchSize: eventBatchSize,
+        index: startBlock,
+        address: token.address,
+      })
+
+      // todo try catch a contract to let others continue
+
+      for await (const logs of logsIterator) {
+        if (!logs.length) {
+          continue
+        }
+
+        await task.trackEvents(this.store, logs, {token})
+      }
     }
 
+    /*
     await this.store.indexer.setLastIndexedBlockNumberByName(
       `${task.name}_entries`,
       latestSyncedBlockIndexerBlock
     )
+    */
   }
 
   loop = async () => {
@@ -99,7 +120,7 @@ export class ContractIndexer {
         l.info('hi from there')
 
         await this.addContracts(task)
-        // await this.trackEvents(task) // contract address / generate topic
+        await this.trackEvents(task)
       } catch (err) {
         l.warn('Batch failed', err.message || err)
       }

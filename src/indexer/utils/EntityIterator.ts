@@ -6,6 +6,7 @@ export type EntityIteratorEntities =
   | 'internalTransactions'
   | 'logs'
   | 'address2Transactions'
+  | 'erc20'
 
 // only shard #0
 const store = stores[0]
@@ -51,6 +52,25 @@ const listByBlockNumber = (
   }
 }
 
+const listByOffset = (
+  f: (f: Filter) => Promise<any[]>,
+  extraFilters?: ((params: EntityQueryCallbackParams) => FilterEntry)[]
+) => async (params: EntityQueryCallbackParams) => {
+  const filters = extraFilters ? extraFilters.map((f) => f(params)) : []
+  const filter: Filter = {
+    limit: params.batchSize,
+    offset: params.index,
+    filters: [],
+  }
+  const value = await f(filter)
+  // @ts-ignore
+  const nextIndex = params.index + params.batchSize
+  return {
+    value,
+    nextIndex,
+  }
+}
+
 type EqualFields = 'address'
 const withEqual = (property: EqualFields) => (params: EntityQueryCallbackParams) => {
   const value = params[property]
@@ -73,6 +93,7 @@ const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
   address2Transactions: listByBlockNumber(store.address.getRelatedTransactions, [
     withEqual('address'),
   ]),
+  erc20: listByOffset(store.erc20.getERC20),
 }
 
 export async function* EntityIterator(

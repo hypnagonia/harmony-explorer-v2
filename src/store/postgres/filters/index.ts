@@ -28,6 +28,11 @@ export const buildSQLQuery = (query: Filter) => {
   const where = whereQuery ? `where ${whereQuery}` : ''
   const offset = query.offset ? `offset ${query.offset || 0}` : ''
   const limit = `limit ${query.limit || 10}`
-  const order = `order by ${query.orderBy || 'number'} ${query.orderDirection || 'desc'}`
+
+  let order = ''
+  if (query.orderBy && query.orderDirection) {
+    order = `order by ${query.orderBy || 'number'} ${query.orderDirection || 'desc'}`
+  }
+
   return `${where} ${order} ${offset} ${limit}`
 }
