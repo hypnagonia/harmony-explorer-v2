@@ -21,13 +21,14 @@ export type EntityQueryCallbackParams = {
   index?: number
   batchSize?: number
   address?: string
+  topic?: string
 }
 
 const listByBlockNumber = (
   f: (f: Filter) => Promise<any[]>,
-  extraFilters?: (params: EntityQueryCallbackParams) => FilterEntry[]
+  extraFilters?: ((params: EntityQueryCallbackParams) => FilterEntry)[]
 ) => async (params: EntityQueryCallbackParams) => {
-  const filters = extraFilters ? extraFilters(params) : []
+  const filters = extraFilters ? extraFilters.map((f) => f(params)) : []
   const filter: Filter = {
     limit: params.batchSize,
     offset: 0,
@@ -57,23 +58,21 @@ const withEqual = (property: EqualFields) => (params: EntityQueryCallbackParams)
     throw new Error(`${value} field must be defined`)
   }
 
-  return [
-    {
-      value: `'${value}'`,
-      type: 'eq',
-      property,
-    },
-  ] as FilterEntry[]
+  return {
+    value: `'${value}'`,
+    type: 'eq',
+    property,
+  } as FilterEntry
 }
 
 const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
-  logs: listByBlockNumber(store.log.getLogs, withEqual('address')),
+  // logs by address
+  logs: listByBlockNumber(store.log.getLogs, [withEqual('address')]),
   internalTransactions: listByBlockNumber(store.internalTransaction.getInternalTransactions),
   contracts: listByBlockNumber(store.contract.getContracts),
-  address2Transactions: listByBlockNumber(
-    store.address.getRelatedTransactions,
-    withEqual('address')
-  ),
+  address2Transactions: listByBlockNumber(store.address.getRelatedTransactions, [
+    withEqual('address'),
+  ]),
 }
 
 export async function* EntityIterator(

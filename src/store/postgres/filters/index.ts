@@ -6,6 +6,7 @@ const mapFilterTypeToSQL: Record<FilterType, string> = {
   lt: '<',
   lte: '<=',
   eq: '=',
+  startsFrom: 'startsFrom',
 }
 
 export const buildSQLQuery = (query: Filter) => {
@@ -16,6 +17,10 @@ export const buildSQLQuery = (query: Filter) => {
 
   const whereQuery = query.filters
     .map((f) => {
+      if (f.type === 'startsFrom') {
+        return `${f.property} like '${safeSQL(f.value)}%'`
+      }
+
       return `${f.property} ${mapFilterTypeToSQL[f.type]} ${safeSQL(f.value)}`
     })
     .join(' and ')

@@ -1,12 +1,10 @@
 import {Address, ByteCode, Contract, IERC20} from 'src/types'
-import ERC20ABI from './ERC20ABI.json'
-import {ContractTracker, IABI} from 'src/indexer/indexer/contracts/types'
-import {ABIManager} from 'src/indexer/indexer/contracts/utils/ABIManager'
 import {validator, isUint, isLength} from 'src/utils/validators/validators'
 import {logger} from 'src/logger'
-import {stores} from 'src/store'
 import {PostgresStorage} from 'src/store/postgres'
-const {hasAllSignatures, callAll} = ABIManager(ERC20ABI as IABI)
+import {ABI} from './ABI'
+
+const {hasAllSignatures, callAll} = ABI
 const l = logger(module)
 
 // https://eips.ethereum.org/EIPS/eip-20
