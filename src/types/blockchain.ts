@@ -11,6 +11,7 @@ export type RPCHarmonyMethod =
   | 'hmy_getBlockByNumber'
   | 'hmy_getTransactionByHash'
   | 'hmy_getBlocks'
+  | 'hmy_call'
   | 'debug_traceTransaction'
 
 export type ShardID = 0 | 1 | 2 | 3

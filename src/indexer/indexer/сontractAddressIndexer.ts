@@ -3,7 +3,7 @@ import {logger} from 'src/logger'
 import base58 from 'bs58'
 const l = logger(module)
 
-export const contractIndexer = (tx: InternalTransaction) => {
+export const contractAddressIndexer = (tx: InternalTransaction) => {
   if (tx.error) {
     return
   }

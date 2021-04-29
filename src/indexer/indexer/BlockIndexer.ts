@@ -8,7 +8,7 @@ import {stores} from 'src/store'
 import {logTime} from 'src/utils/logTime'
 import {PostgresStorage} from 'src/store/postgres'
 import {AddressIndexer} from './addressIndexer'
-import {contractIndexer} from './сontractIndexer'
+import {contractAddressIndexer} from './сontractAddressIndexer'
 
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 10000
@@ -93,7 +93,7 @@ export class BlockIndexer {
 
             await Promise.all(
               txs
-                .map(contractIndexer)
+                .map(contractAddressIndexer)
                 .filter((contract) => contract)
                 .map((contract) => store.contract.addContract(contract!))
             )

@@ -51,7 +51,7 @@ export class PostgresStorageIndexer implements IStorageIndexer {
     )
   }
 
-  getLastIndexedByName = async (name: string): Promise<number> => {
+  getLastIndexedBlockNumberByName = async (name: string): Promise<number> => {
     const res = await this.query(
       `select last_synced_block_number from indexer_state where indexer_name=$1;`,
       [name]
@@ -61,7 +61,7 @@ export class PostgresStorageIndexer implements IStorageIndexer {
     return lastIndexedBlock || 0
   }
 
-  setLastIndexedLogsByName = async (name: string, num: BlockNumber): Promise<number> => {
+  setLastIndexedBlockNumberByName = async (name: string, num: BlockNumber): Promise<number> => {
     return this.query(
       `update indexer_state set last_synced_block_number=$1 where indexer_name=$2;`,
       [num, name]

@@ -1,31 +1,35 @@
-import {Contract} from 'src/types'
-import {ERC20ABI} from 'src/indexer/indexer/contracts/erc20/ABI'
-import {ContractTracker} from 'src/indexer/indexer/contracts/types'
-import {ABISignatures} from 'src/indexer/indexer/contracts/utils/ABISignatures'
+import {Address, ByteCode, Contract} from 'src/types'
+import ERC20ABI from './ERC20ABI.json'
+import {ContractTracker, IABI} from 'src/indexer/indexer/contracts/types'
+import {ABIManager} from 'src/indexer/indexer/contracts/utils/ABIManager'
 
-const {signatures, hasAllSignatures} = ABISignatures(ERC20ABI)
+const {hasAllSignatures, callAll} = ABIManager(ERC20ABI as IABI)
 
-// specs https://eips.ethereum.org/EIPS/eip-20
-export const addContract = async (contract: Contract) => {}
+// https://eips.ethereum.org/EIPS/eip-20
+const expectedMethodsAndEvents = [
+  'Transfer',
+  'Approval',
+  'totalSupply',
+  'decimals',
+  'transfer',
+  'balanceOf',
+  'symbol',
+  'name',
+  'approve',
+]
 
-/*
+const callableMethods = ['symbol', 'name', 'decimals']
 
- signatures: [
-    'ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
-    '70a08231',
-    '18160ddd'
-  ]
+export const addContract = async (contract: Contract) => {
+  // console.log('contract', contract.address)
+  if (!hasAllSignatures(expectedMethodsAndEvents, contract.bytecode)) {
+    return
+  }
 
- signatures: [
-    'ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
-    '8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925',
-    '06fdde03',
-    '95d89b41',
-    '313ce567',
-    '18160ddd',
-    '70a08231',
-    'a9059cbb'
-  ]
-
-
-* */
+  try {
+    const res = await callAll(contract.address, callableMethods)
+    // console.log('blah', {res}, contract.address)
+  } catch (e) {
+    // console.log('invalid')
+  }
+}

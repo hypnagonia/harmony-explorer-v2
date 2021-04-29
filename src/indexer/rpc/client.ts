@@ -11,6 +11,7 @@ import {
   BlockNumber,
   Log,
   InternalTransaction,
+  ByteCode,
 } from 'types/blockchain'
 import {mapBlockFromResponse, mapInternalTransactionFromBlockTrace} from './mappers'
 import {mainnetChainID} from 'src/constants'
@@ -101,4 +102,20 @@ export const getChainID = (shardID: ShardID): Promise<number> => {
 
 export const getCode = (shardID: ShardID, address: Address): Promise<number> => {
   return transport(shardID, 'eth_getCode', [address, 'latest'])
+}
+
+type Call = {
+  to: Address
+  from?: Address
+  gas?: string
+  gasPrice?: string
+  data: string
+  value?: string
+}
+export const call = (
+  shardID: ShardID,
+  params: Call,
+  blockNumber: BlockNumber | 'latest' | 'earliest' | 'pending' = 'latest'
+): Promise<ByteCode> => {
+  return transport(shardID, 'hmy_call', [params, blockNumber])
 }

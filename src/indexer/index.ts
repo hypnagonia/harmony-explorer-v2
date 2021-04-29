@@ -1,6 +1,7 @@
 import {config} from 'src/config'
 import {BlockIndexer} from './indexer/BlockIndexer'
 import {LogIndexer} from './indexer/LogIndexer'
+import {ContractIndexer} from 'src/indexer/indexer/contracts/ContractIndexer'
 import {indexerServer} from 'src/indexer/server'
 import {ShardID} from 'src/types'
 import {logger} from 'src/logger'
@@ -27,8 +28,11 @@ export const indexer = async () => {
 
   if (config.indexer.isSyncingLogsEnabled && config.indexer.shards.includes(0)) {
     const logIndexer0 = new LogIndexer(0)
-    await logIndexer0.loop()
+    logIndexer0.loop()
   }
+
+  const contractIndexer = new ContractIndexer()
+  contractIndexer.loop()
 }
 
 const checkChainID = async (shardID: ShardID) => {
