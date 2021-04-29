@@ -42,7 +42,6 @@ const listByBlockNumber = (
       ...filters,
     ],
   }
-  console.log(JSON.stringify(filter.filters))
   const value = await f(filter)
   const nextIndex = value.length ? +value[value.length - 1].blockNumber : -1
   return {
