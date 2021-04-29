@@ -1,11 +1,9 @@
-import {logger} from 'src/logger'
 import {IStorageBlock} from 'src/store/interface'
 import {Block, BlockHash, BlockNumber, ShardID} from 'src/types/blockchain'
 import {Filter} from 'src/types/api'
 import {generateQuery, fromSnakeToCamelResponse} from './queryMapper'
 import {buildSQLQuery} from './filters'
 import {Query} from 'src/store/postgres/types'
-import {normalizeAddress} from 'src/utils/normalizeAddress'
 
 export class PostgresStorageBlock implements IStorageBlock {
   query: Query

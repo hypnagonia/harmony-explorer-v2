@@ -1,24 +1,9 @@
-import {logger} from 'src/logger'
 import {IStorageStakingTransaction} from 'src/store/interface'
-import {
-  Block,
-  BlockHash,
-  BlockNumber,
-  RPCTransactionHarmony,
-  StakingTransaction,
-  ShardID,
-  RPCStakingTransactionHarmony,
-  Transaction,
-} from 'src/types/blockchain'
-import {normalizeAddress} from 'src/utils/normalizeAddress'
+import {StakingTransaction, ShardID, RPCStakingTransactionHarmony} from 'src/types/blockchain'
+
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
-import {
-  Filter,
-  StakingTransactionQueryField,
-  TransactionQueryField,
-  TransactionQueryValue,
-} from 'src/types'
+import {Filter, StakingTransactionQueryField, TransactionQueryValue} from 'src/types'
 import {buildSQLQuery} from 'src/store/postgres/filters'
 
 export class PostgresStorageStakingTransaction implements IStorageStakingTransaction {

@@ -1,15 +1,10 @@
-import {Contract, Log} from 'src/types'
+import {ContractTracker} from 'src/indexer/indexer/contracts/types'
 
-export const ERC20 = {
-  name: 'ERC20',
-  trackEvents: (logs: Log[]) => {
-    // if event update contract and owners
-    //
-  },
-  addContract: (contract: Contract) => {
-    // if contract add record
-  },
-  // not needed use name
-  getLastSyncedBlock: () => {},
-  setLastSyncedBlock: () => {},
+import {addContract} from './addContract'
+import {trackEvents} from './trackEvents'
+
+const ERC20Indexer: ContractTracker = {
+  name: 'erc20',
+  addContract,
+  trackEvents,
 }

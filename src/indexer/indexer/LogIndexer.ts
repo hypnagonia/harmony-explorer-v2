@@ -15,10 +15,10 @@ const maxBatchCount = 100
 
 const range = (num: number) => Array(num).fill(0)
 
+// todo make a part of blockindexer
 export class LogIndexer {
   readonly shardID: ShardID
   private l: LoggerModule
-  // todo config
   private batchCount = 10
   readonly store: PostgresStorage
 
