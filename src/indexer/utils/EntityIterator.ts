@@ -1,5 +1,11 @@
-import {EntityIteratorEntities, Filter, Contract} from 'src/types'
+import {Filter, FilterEntry} from 'src/types'
 import {stores} from 'src/store'
+
+export type EntityIteratorEntities =
+  | 'contracts'
+  | 'internalTransactions'
+  | 'logs'
+  | 'address2Transactions'
 
 // only shard #0
 const store = stores[0]
@@ -12,8 +18,9 @@ const store = stores[0]
   }
 */
 
+// todo add generics
 type EntityQueryReturn = {
-  value: any[] | Contract[]
+  value: any[]
   nextIndex: number
 }
 
@@ -21,11 +28,16 @@ type EntityQueryCallback = (o: EntityQueryCallbackParams) => Promise<EntityQuery
 export type EntityQueryCallbackParams = {
   index: number
   batchSize: number
+  address?: string
 }
 
-const contracts = async ({index = 0, batchSize = 100}) => {
+const filteredQueries = (
+  f: (f: Filter) => Promise<any[]>,
+  extraFilters?: (params: EntityQueryCallbackParams) => FilterEntry[]
+) => async (params: EntityQueryCallbackParams) => {
+  const filters = extraFilters ? extraFilters(params) : []
   const filter: Filter = {
-    limit: batchSize,
+    limit: params.batchSize,
     offset: 0,
     orderDirection: 'asc',
     orderBy: 'block_number',
@@ -33,11 +45,12 @@ const contracts = async ({index = 0, batchSize = 100}) => {
       {
         type: 'gt',
         property: 'block_number',
-        value: index,
+        value: params.index,
       },
+      ...filters,
     ],
   }
-  const value = await store.contract.getContracts(filter)
+  const value = await f(filter)
   const nextIndex = value.length ? +value[value.length - 1].blockNumber : -1
   return {
     value,
@@ -45,10 +58,27 @@ const contracts = async ({index = 0, batchSize = 100}) => {
   }
 }
 
+type EqualFields = 'address'
+const withEqual = (property: EqualFields) => (params: EntityQueryCallbackParams) => {
+  const value = params[property]
+  if (!value) {
+    throw new Error(`${value} field must be defined`)
+  }
+
+  return [
+    {
+      value: `'${value}'`,
+      type: 'eq',
+      property,
+    },
+  ] as FilterEntry[]
+}
+
 const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
-  logs: async (o) => ({value: [], nextIndex: 0}),
-  internalTransactions: async (o) => ({value: [], nextIndex: 0}),
-  contracts,
+  logs: filteredQueries(store.log.getLogs, withEqual('address')),
+  internalTransactions: filteredQueries(store.internalTransaction.getInternalTransactions),
+  contracts: filteredQueries(store.contract.getContracts),
+  address2Transactions: filteredQueries(store.contract.getContracts, withEqual('address')),
 }
 
 export async function* EntityIterator(
@@ -57,13 +87,13 @@ export async function* EntityIterator(
 ) {
   let index = initialIndex
 
-  const cb = entityQueries[entity]
+  const f = entityQueries[entity]
 
   while (true) {
-    const {nextIndex, value} = await cb({index, batchSize})
+    const {nextIndex, value} = await f({index, batchSize})
     index = nextIndex
 
-    if (batchSize > value.length) {
+    if (batchSize > value.length || nextIndex === -1) {
       return value
     }
 

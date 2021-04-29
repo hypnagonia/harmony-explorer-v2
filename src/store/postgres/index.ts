@@ -13,7 +13,7 @@ import {PostgresStorageInternalTransaction} from 'src/store/postgres/InternalTra
 import {PostgresStorageAddress} from 'src/store/postgres/Address'
 import {PostgresStorageContract} from 'src/store/postgres/Contract'
 import LoggerModule from 'zerg/dist/LoggerModule'
-import {ShardID, CountableEntities, EntityIteratorEntities} from 'src/types'
+import {ShardID, CountableEntities} from 'src/types'
 import {fromSnakeToCamelResponse, mapNamingReverse} from 'src/store/postgres/queryMapper'
 
 const defaultRetries = 3

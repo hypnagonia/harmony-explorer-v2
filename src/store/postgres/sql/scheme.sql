@@ -236,9 +236,8 @@ create index if not exists idx_erc721_asset_token_address on erc721_asset using 
 
 create table if not exists indexer_state
 (
-    chain_id                        int,
-    logs_last_synced_block_number   bigint   default (0),
-    blocks_last_synced_block_number bigint   default (0),
-    id                              smallint default (0),
-    unique (id)
+    chain_id            int,
+    last_synced_block_number bigint   default (0),
+    indexer_name                varchar,
+    unique (indexer_name)
 );

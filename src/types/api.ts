@@ -5,7 +5,6 @@ export type FilterProperty = 'number' | 'block_number' | 'address'
 export type TransactionQueryField = 'block_number' | 'block_hash' | 'hash' | 'hash_harmony'
 export type StakingTransactionQueryField = 'block_number' | 'block_hash' | 'hash'
 export type InternalTransactionQueryField = 'block_number' | 'transaction_hash' | 'block_hash'
-export type EntityIteratorEntities = 'contracts' | 'internalTransactions' | 'logs'
 
 export type CountableEntities =
   | 'transactions'

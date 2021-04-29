@@ -11,6 +11,7 @@ import {
   StakingTransaction,
   Address2Transaction,
   InternalTransaction,
+  Contract,
 } from 'src/types/blockchain'
 import {
   Filter,
@@ -18,8 +19,9 @@ import {
   TransactionQueryValue,
   StakingTransactionQueryField,
   InternalTransactionQueryField,
-  EntityIteratorEntities,
 } from 'src/types'
+import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
+import {buildSQLQuery} from 'src/store/postgres/filters'
 
 export interface IStorageBlock {
   addBlock: (block: Block) => Promise<any>
@@ -34,6 +36,7 @@ export interface IStorageLog {
   getLogsByTransactionHash: (transactionHash: TransactionHash) => Promise<Log[] | null>
   getLogsByBlockNumber: (num: BlockNumber) => Promise<Log[] | null>
   getLogsByBlockHash: (hash: BlockHash) => Promise<Log[] | null>
+  getLogs: (f: Filter) => Promise<Log[]>
 }
 
 export interface IStorageIndexer {
@@ -54,7 +57,10 @@ export interface IStorageTransaction {
   getTransactions: (filter: Filter) => Promise<Transaction[]>
 }
 
-export interface IStorageContract {}
+export interface IStorageContract {
+  addContract: (contract: Contract) => any
+  getContracts: (filter: Filter) => Promise<Contract[]>
+}
 
 export interface IStorageStakingTransaction {
   addStakingTransaction: (block: RPCStakingTransactionHarmony) => Promise<any>
@@ -71,10 +77,12 @@ export interface IStorageInternalTransaction {
     field: InternalTransactionQueryField,
     value: TransactionQueryValue
   ) => Promise<InternalTransaction[]>
+  getInternalTransactions: (f: Filter) => Promise<InternalTransaction[]>
 }
 
 export interface IStorageAddress {
   addAddress2Transaction: (entry: Address2Transaction) => Promise<any>
+  getRelatedTransactions: (filter: Filter) => Promise<Address2Transaction[]>
 }
 
 export interface IStorage {

@@ -1,7 +1,10 @@
 import {IStorageLog} from 'src/store/interface'
-import {BlockHash, BlockNumber, Log, ShardID} from 'src/types/blockchain'
+import {BlockHash, BlockNumber, InternalTransaction, Log, ShardID} from 'src/types/blockchain'
 
 import {Query} from 'src/store/postgres/types'
+import {Filter} from 'src/types'
+import {buildSQLQuery} from 'src/store/postgres/filters'
+import {fromSnakeToCamelResponse} from 'src/store/postgres/queryMapper'
 
 export class PostgresStorageLog implements IStorageLog {
   query: Query
@@ -53,5 +56,12 @@ export class PostgresStorageLog implements IStorageLog {
     const res = await this.query(`select * from logs where block_hash=$1;`, [hash])
 
     return res as Log[]
+  }
+
+  getLogs = async (filter: Filter): Promise<Log[]> => {
+    const q = buildSQLQuery(filter)
+    const res = await this.query(`select * from logs ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
   }
 }

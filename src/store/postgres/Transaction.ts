@@ -1,16 +1,12 @@
-import {logger} from 'src/logger'
 import {IStorageTransaction} from 'src/store/interface'
 import {
-  Block,
-  BlockHash,
   TransactionQueryField,
   TransactionQueryValue,
   RPCTransactionHarmony,
-  ShardID,
   Transaction,
   Filter,
 } from 'src/types'
-import {normalizeAddress} from 'src/utils/normalizeAddress'
+
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -50,7 +46,7 @@ export class PostgresStorageTransaction implements IStorageTransaction {
     value: TransactionQueryValue
   ): Promise<Transaction[]> => {
     const res = await this.query(`select * from transactions where ${field}=$1;`, [value])
-    return res.map(fromSnakeToCamelResponse) as Transaction[]
+    return res.map(fromSnakeToCamelResponse)
   }
 
   getTransactions = async (filter: Filter): Promise<Transaction[]> => {
