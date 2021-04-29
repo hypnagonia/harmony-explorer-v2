@@ -9,14 +9,6 @@ export type EntityIteratorEntities =
 
 // only shard #0
 const store = stores[0]
-/*
- const c = EntityIterator('contracts', 0, 1)
-
-  for await (let value of c) {
-    console.log('chunk')
-    console.log(value.map(({blockNumber, address}) => ({blockNumber, address})))
-  }
-*/
 
 // todo add generics
 type EntityQueryReturn = {
@@ -26,12 +18,12 @@ type EntityQueryReturn = {
 
 type EntityQueryCallback = (o: EntityQueryCallbackParams) => Promise<EntityQueryReturn>
 export type EntityQueryCallbackParams = {
-  index: number
-  batchSize: number
+  index?: number
+  batchSize?: number
   address?: string
 }
 
-const filteredQueries = (
+const listByBlockNumber = (
   f: (f: Filter) => Promise<any[]>,
   extraFilters?: (params: EntityQueryCallbackParams) => FilterEntry[]
 ) => async (params: EntityQueryCallbackParams) => {
@@ -45,11 +37,12 @@ const filteredQueries = (
       {
         type: 'gt',
         property: 'block_number',
-        value: params.index,
+        value: params.index || 0,
       },
       ...filters,
     ],
   }
+  console.log(JSON.stringify(filter.filters))
   const value = await f(filter)
   const nextIndex = value.length ? +value[value.length - 1].blockNumber : -1
   return {
@@ -75,28 +68,44 @@ const withEqual = (property: EqualFields) => (params: EntityQueryCallbackParams)
 }
 
 const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
-  logs: filteredQueries(store.log.getLogs, withEqual('address')),
-  internalTransactions: filteredQueries(store.internalTransaction.getInternalTransactions),
-  contracts: filteredQueries(store.contract.getContracts),
-  address2Transactions: filteredQueries(store.contract.getContracts, withEqual('address')),
+  logs: listByBlockNumber(store.log.getLogs, withEqual('address')),
+  internalTransactions: listByBlockNumber(store.internalTransaction.getInternalTransactions),
+  contracts: listByBlockNumber(store.contract.getContracts),
+  address2Transactions: listByBlockNumber(
+    store.address.getRelatedTransactions,
+    withEqual('address')
+  ),
 }
+
+/*
+ example
+ const c = EntityIterator('address2Transactions',
+    {
+      batchSize: 1,
+      address: '0x4b7d24e31d16733d3b56fd27f6237ff27e872e39'
+    })
+
+  for await (const value of c) {
+    console.log('chunk')
+    console.log(value.map(({blockNumber, address}) => ({blockNumber, address})))
+  }
+*/
 
 export async function* EntityIterator(
   entity: EntityIteratorEntities,
-  {index: initialIndex, batchSize}: EntityQueryCallbackParams
+  {index: initialIndex = 0, batchSize = 100, ...rest}: EntityQueryCallbackParams
 ) {
   let index = initialIndex
 
   const f = entityQueries[entity]
 
   while (true) {
-    const {nextIndex, value} = await f({index, batchSize})
+    const {nextIndex, value} = await f({index, batchSize, ...rest})
     index = nextIndex
+    yield value
 
     if (batchSize > value.length || nextIndex === -1) {
-      return value
+      return
     }
-
-    yield value
   }
 }

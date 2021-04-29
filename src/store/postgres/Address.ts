@@ -1,7 +1,5 @@
-import {logger} from 'src/logger'
 import {IStorageAddress} from 'src/store/interface'
 import {Address2Transaction, Block, Filter, Address} from 'src/types'
-import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
