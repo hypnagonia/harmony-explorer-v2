@@ -1,5 +1,5 @@
 import {IStorageERC20} from 'src/store/interface'
-import {Address, Contract, Filter, IERC20} from 'src/types'
+import {Address, Contract, Filter, IERC20, IERC20Balance} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -40,7 +40,7 @@ export class PostgresStorageERC20 implements IStorageERC20 {
     return res[0] || null
   }
 
-  setNeedUpdate = async (owner: Address, token: Address) => {
+  setNeedUpdateBalance = async (owner: Address, token: Address) => {
     return this.query(
       `
             insert into erc20_balance(owner_address, token_address, need_update) values($1, $2, true)
@@ -49,5 +49,22 @@ export class PostgresStorageERC20 implements IStorageERC20 {
           `,
       [owner, token]
     )
+  }
+
+  updateBalance = async (owner: Address, token: Address, balance: string) => {
+    return this.query(
+      `
+          update erc20_balance set balance=$1, need_update=false where owner_address=$2 and token_address=$3;
+          `,
+      [balance, owner, token]
+    )
+  }
+
+  getBalances = async (filter: Filter): Promise<IERC20Balance[]> => {
+    const q = buildSQLQuery(filter)
+
+    const res = await this.query(`select * from erc20_balance ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
   }
 }

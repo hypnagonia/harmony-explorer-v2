@@ -1,4 +1,5 @@
 import {FilterType, Filter} from 'src/types'
+import {mapNamingReverse} from '../queryMapper'
 
 const mapFilterTypeToSQL: Record<FilterType, string> = {
   gt: '>',
@@ -7,6 +8,10 @@ const mapFilterTypeToSQL: Record<FilterType, string> = {
   lte: '<=',
   eq: '=',
   startsFrom: 'startsFrom',
+}
+
+const propertyToString = (property: string) => {
+  return mapNamingReverse[property] || property
 }
 
 export const buildSQLQuery = (query: Filter) => {
@@ -18,10 +23,10 @@ export const buildSQLQuery = (query: Filter) => {
   const whereQuery = query.filters
     .map((f) => {
       if (f.type === 'startsFrom') {
-        return `${f.property} like '${safeSQL(f.value)}%'`
+        return `${propertyToString(f.property)} like '${safeSQL(f.value)}%'`
       }
 
-      return `${f.property} ${mapFilterTypeToSQL[f.type]} ${safeSQL(f.value)}`
+      return `${propertyToString(f.property)} ${mapFilterTypeToSQL[f.type]} ${safeSQL(f.value)}`
     })
     .join(' and ')
 

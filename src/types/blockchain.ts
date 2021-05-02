@@ -256,3 +256,10 @@ export type IERC20 = {
   transactionCount?: number
   lastUpdateBlockNumber?: number
 }
+
+export type IERC20Balance = {
+  ownerAddress: Address
+  tokenAddress: Address
+  balance: number
+  needUpdate: boolean
+}

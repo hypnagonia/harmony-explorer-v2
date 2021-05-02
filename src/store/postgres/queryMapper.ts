@@ -26,6 +26,7 @@ export const mapNaming: Record<string, string> = {
   total_supply: 'totalSupply',
   owner_address: 'ownerAddress',
   token_address: 'tokenAddress',
+  need_update: 'needUpdate',
   transaction_count: 'transactionCount',
   token_id: 'tokenId',
   '"from"': 'from',

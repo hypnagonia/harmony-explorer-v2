@@ -1,6 +1,7 @@
 import {
   Block,
   IERC20,
+  IERC20Balance,
   Log,
   Filter,
   FilterEntry,
@@ -16,6 +17,7 @@ export type EntityIteratorEntities =
   | 'internalTransactions'
   | 'logs'
   | 'address2Transactions'
+  | 'erc20BalancesNeedUpdate'
   | ContractIndexerTaskEntities
 
 // only shard #0
@@ -33,6 +35,7 @@ export type EntityQueryCallbackParams = {
   batchSize?: number
   address?: string
   topic?: string
+  needUpdate?: string
 }
 
 const listByBlockNumber = <T>(
@@ -71,7 +74,7 @@ const listByOffset = <T>(
   const filter: Filter = {
     limit: params.batchSize,
     offset: params.index,
-    filters: [],
+    filters,
   }
   const value = await f(filter)
   // @ts-ignore
@@ -82,7 +85,7 @@ const listByOffset = <T>(
   }
 }
 
-type EqualFields = 'address'
+type EqualFields = 'address' | 'needUpdate'
 const withEqual = (property: EqualFields) => (params: EntityQueryCallbackParams) => {
   const value = params[property]
   if (!value) {
@@ -97,7 +100,6 @@ const withEqual = (property: EqualFields) => (params: EntityQueryCallbackParams)
 }
 
 const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
-  // logs by address
   logs: listByBlockNumber<Log>(store.log.getLogs, [withEqual('address')]),
   internalTransactions: listByBlockNumber<InternalTransaction>(
     store.internalTransaction.getInternalTransactions
@@ -108,6 +110,9 @@ const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
     [withEqual('address')]
   ),
   erc20: listByOffset<IERC20>(store.erc20.getERC20),
+  erc20BalancesNeedUpdate: listByOffset<IERC20Balance>(store.erc20.getBalances, [
+    withEqual('needUpdate'),
+  ]),
 }
 
 export async function* EntityIterator(

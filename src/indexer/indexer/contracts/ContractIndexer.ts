@@ -105,12 +105,10 @@ export class ContractIndexer {
       }
     }
 
-    /*
     await this.store.indexer.setLastIndexedBlockNumberByName(
       `${task.name}_entries`,
       latestSyncedBlockIndexerBlock
     )
-    */
   }
 
   loop = async () => {
@@ -127,10 +125,11 @@ export class ContractIndexer {
         if (typeof task.trackEvents === 'function') {
           await this.trackEvents(task)
         }
-        console.log('end')
+        console.log('on end')
         if (typeof task.onTaskEnd === 'function') {
           await task.onTaskEnd(this.store)
         }
+        console.log('end')
       } catch (err) {
         console.log(err)
         l.warn('Batch failed', err.message || err)

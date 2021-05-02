@@ -27,6 +27,7 @@ export const ABIManager = (abi: IABI) => {
         signature,
         signatureWithout0x: signature.slice(2),
         outputs: e.outputs ? e.outputs.map((e) => e.type) : [],
+        inputs: e.inputs,
       }
     })
 
@@ -49,6 +50,22 @@ export const ABIManager = (abi: IABI) => {
     }
 
     return web3.eth.abi.decodeLog(event.inputs, data, topics)
+  }
+
+  const call = async (methodName: string, params: any[], address: Address) => {
+    const entry = getEntryByName(methodName)
+
+    if (!entry || entry.type !== 'function') {
+      throw new Error(`${methodName} not found`)
+    }
+    const inputs = web3.eth.abi.encodeParameters(entry.inputs, params)
+
+    const response = await RPCClient.call(0, {
+      to: address,
+      data: entry.signature + inputs.slice(2),
+    })
+
+    return web3.eth.abi.decodeParameters(entry.outputs, response)['0']
   }
 
   const callAll = (address: Address, methodsNames: string[]) => {
@@ -74,6 +91,7 @@ export const ABIManager = (abi: IABI) => {
     abi: entries,
     getEntryByName,
     hasAllSignatures,
+    call,
     callAll,
     decodeLog,
   }

@@ -46,7 +46,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
   const setUpdateNeeded = [...addressesForUpdate.values()]
     .filter((a) => ![zeroAddress].includes(a))
     .map((a) => normalizeAddress(a))
-    .map((a) => store.erc20.setNeedUpdate(a!, tokenAddress))
+    .map((a) => store.erc20.setNeedUpdateBalance(a!, tokenAddress))
 
   await Promise.all(setUpdateNeeded)
 }
