@@ -5,7 +5,7 @@ import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from './ABI'
 
 const {hasAllSignatures, callAll} = ABI
-const l = logger(module)
+const l = logger(module, 'erc20')
 
 // https://eips.ethereum.org/EIPS/eip-20
 const expectedMethodsAndEvents = [
@@ -48,6 +48,7 @@ export const addContract = async (store: PostgresStorage, contract: Contract) =>
     name: params.name,
     symbol: params.symbol,
   }
+  l.info(`Found new contract "${erc20.name}"`)
 
   await store.erc20.addERC20(erc20)
 }

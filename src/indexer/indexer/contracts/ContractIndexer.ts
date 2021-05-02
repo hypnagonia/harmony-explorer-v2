@@ -37,7 +37,7 @@ export class ContractIndexer {
     const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
 
     const {contractBatchSize} = task.config
-    this.l.info(`${task.name} contracts from block ${startBlock}`)
+    this.ls[task.name].info(`Syncing contracts from block ${startBlock}`)
     const contractsIterator = EntityIterator('contracts', {
       batchSize: contractBatchSize,
       index: startBlock,
@@ -63,23 +63,21 @@ export class ContractIndexer {
 
   // track logs for specific address
   trackEvents = async (task: ContractTracker<any>) => {
-    const latestSyncedBlockIndexerBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
-      'blocks'
-    )
-
     const latestSyncedBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
       `${task.name}_entries`
     )
     const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
 
-    this.l.info(`${task.name} entries from block ${startBlock}`)
+    this.ls[task.name].info(`Syncing logs from block ${startBlock}`)
 
     const tokensIterator = EntityIterator(task.name, {
       batchSize: 1,
-      index: startBlock,
+      index: 0,
     })
 
     const {eventBatchSize} = task.config
+
+    let latestSyncedBlockIndexerBlock = 0
 
     for await (const tokens of tokensIterator) {
       if (!tokens.length) {
@@ -87,35 +85,48 @@ export class ContractIndexer {
       }
 
       const token = tokens[0]
-
       const logsIterator = EntityIterator('logs', {
         batchSize: eventBatchSize,
         index: startBlock,
         address: token.address,
       })
 
-      // todo try catch a contract to let others continue
-
       for await (const logs of logsIterator) {
         if (!logs.length) {
           continue
         }
 
-        await task.trackEvents(this.store, logs, {token})
+        try {
+          await task.trackEvents(this.store, logs, {token})
+          latestSyncedBlockIndexerBlock = Math.max(
+            latestSyncedBlockIndexerBlock,
+            logs.reduce((acc, o) => (acc > o.blockNumber ? acc : o.blockNumber), 0)
+          )
+        } catch (err) {
+          this.ls[task.name].warn(`Syncing logs for ${token.address} failed`, {
+            token,
+            err: err.message || err,
+          })
+        }
       }
     }
 
-    await this.store.indexer.setLastIndexedBlockNumberByName(
-      `${task.name}_entries`,
-      latestSyncedBlockIndexerBlock
-    )
+    console.log(latestSyncedBlockIndexerBlock)
+    if (latestSyncedBlockIndexerBlock > 0) {
+      await this.store.indexer.setLastIndexedBlockNumberByName(
+        `${task.name}_entries`,
+        latestSyncedBlockIndexerBlock
+      )
+    }
   }
 
   loop = async () => {
+    // todo only when blocks synced
+
     for (const task of tasks) {
       const l = this.ls[task.name]
       try {
-        l.info('hi from there')
+        l.info('Starting...')
 
         console.log('contracts')
         if (typeof task.addContract === 'function') {
