@@ -71,7 +71,7 @@ export const ABIManager = (abi: IABI) => {
   }
 
   return {
-    entries,
+    abi: entries,
     getEntryByName,
     hasAllSignatures,
     callAll,

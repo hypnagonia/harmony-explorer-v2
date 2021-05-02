@@ -45,6 +45,7 @@ create table if not exists logs
     unique (transaction_hash, log_index)
 );
 
+create index if not exists idx_logs_address on logs using hash (address);
 create index if not exists idx_logs_transaction_hash on logs using hash (transaction_hash);
 create index if not exists idx_logs_block_hash on logs using hash (block_hash);
 create index if not exists idx_logs_block_number on logs (block_number);
@@ -203,8 +204,9 @@ create table if not exists erc20_balance
     owner_address            char(42)                            not null,
     token_address            char(42) references erc20 (address) not null,
     balance                  numeric,
+    need_update              boolean,
     last_update_block_number bigint,
-    unique(owner_address, token_address)
+    unique (owner_address, token_address)
 );
 create index if not exists idx_erc20_balance_address on erc20_balance using hash (owner_address);
 create index if not exists idx_erc20_balance_token_address on erc20_balance using hash (token_address);
@@ -230,7 +232,7 @@ create table if not exists erc721_asset
     token_id                 text,
     meta                     jsonb,
     last_update_block_number bigint,
-    unique(owner_address, token_address, token_id)
+    unique (owner_address, token_address, token_id)
 );
 
 create index if not exists idx_erc721_asset_owner_address on erc721_asset using hash (owner_address);
@@ -238,8 +240,8 @@ create index if not exists idx_erc721_asset_token_address on erc721_asset using 
 
 create table if not exists indexer_state
 (
-    chain_id            int,
-    last_synced_block_number bigint   default (0),
-    indexer_name                varchar,
+    chain_id                 int,
+    last_synced_block_number bigint default (0),
+    indexer_name             varchar,
     unique (indexer_name)
 );

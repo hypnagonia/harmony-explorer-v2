@@ -17,9 +17,9 @@ import {ShardID, CountableEntities} from 'src/types'
 import {fromSnakeToCamelResponse, mapNamingReverse} from 'src/store/postgres/queryMapper'
 import {PostgresStorageERC20} from 'src/store/postgres/ERC20'
 
-const defaultRetries = 3
+const defaultRetries = 5
 
-const sleep = () => new Promise((r) => setTimeout(r, 1000))
+const sleep = (time = 1000) => new Promise((r) => setTimeout(r, time))
 
 export class PostgresStorage implements IStorage {
   db: Pool
@@ -89,11 +89,11 @@ export class PostgresStorage implements IStorage {
     }
 
     try {
-      return this.queryWithoutRetry(sql, params)
+      return await this.queryWithoutRetry(sql, params)
     } catch (e) {
       const retriesLeft = retries - 1
       if (retriesLeft > 0) {
-        await new Promise((r) => setTimeout(r, 1000))
+        await sleep(200)
         return this.query(sql, params, retriesLeft)
       }
       this.l.warn(`Query failed in ${defaultRetries} attempts`, {sql, params})

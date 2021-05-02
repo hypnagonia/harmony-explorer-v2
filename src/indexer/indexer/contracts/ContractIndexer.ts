@@ -5,12 +5,8 @@ import {EntityIterator} from 'src/indexer/utils/EntityIterator'
 import {tasks} from './tasks'
 import {ContractTracker} from 'src/indexer/indexer/contracts/types'
 import {PostgresStorage} from 'src/store/postgres'
-import {trackEvents} from 'src/indexer/indexer/contracts/erc20/trackEvents'
-import {IERC20} from 'src/types'
 
 const syncingIntervalMs = 1000 * 60 * 5
-const contractBatchSize = 10
-const eventBatchSize = 10
 
 export class ContractIndexer {
   readonly l: LoggerModule
@@ -30,7 +26,7 @@ export class ContractIndexer {
   }
 
   // iterate all contract entries stored in db and add records for tracked contracts erc20, erc721, etc
-  private addContracts = async (task: ContractTracker) => {
+  private addContracts = async (task: ContractTracker<any>) => {
     const latestSyncedBlockIndexerBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
       'blocks'
     )
@@ -40,6 +36,7 @@ export class ContractIndexer {
     )
     const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
 
+    const {contractBatchSize} = task.config
     this.l.info(`${task.name} contracts from block ${startBlock}`)
     const contractsIterator = EntityIterator('contracts', {
       batchSize: contractBatchSize,
@@ -64,7 +61,8 @@ export class ContractIndexer {
     )
   }
 
-  trackEvents = async (task: ContractTracker) => {
+  // track logs for specific address
+  trackEvents = async (task: ContractTracker<any>) => {
     const latestSyncedBlockIndexerBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
       'blocks'
     )
@@ -76,17 +74,19 @@ export class ContractIndexer {
 
     this.l.info(`${task.name} entries from block ${startBlock}`)
 
-    const tokensIterator = EntityIterator('erc20', {
+    const tokensIterator = EntityIterator(task.name, {
       batchSize: 1,
       index: startBlock,
     })
+
+    const {eventBatchSize} = task.config
 
     for await (const tokens of tokensIterator) {
       if (!tokens.length) {
         break
       }
 
-      const token: IERC20 = tokens[0]
+      const token = tokens[0]
 
       const logsIterator = EntityIterator('logs', {
         batchSize: eventBatchSize,
@@ -119,9 +119,20 @@ export class ContractIndexer {
       try {
         l.info('hi from there')
 
-        await this.addContracts(task)
-        await this.trackEvents(task)
+        console.log('contracts')
+        if (typeof task.addContract === 'function') {
+          await this.addContracts(task)
+        }
+        console.log('events')
+        if (typeof task.trackEvents === 'function') {
+          await this.trackEvents(task)
+        }
+        console.log('end')
+        if (typeof task.onTaskEnd === 'function') {
+          await task.onTaskEnd(this.store)
+        }
       } catch (err) {
+        console.log(err)
         l.warn('Batch failed', err.message || err)
       }
     }

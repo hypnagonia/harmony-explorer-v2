@@ -12,6 +12,7 @@ import {
   Address2Transaction,
   InternalTransaction,
   Contract,
+  IERC20,
 } from 'src/types/blockchain'
 import {
   Filter,
@@ -85,7 +86,10 @@ export interface IStorageAddress {
   getRelatedTransactions: (filter: Filter) => Promise<Address2Transaction[]>
 }
 
-export interface IStorageERC20 {}
+export interface IStorageERC20 {
+  updateERC20: (erc20: IERC20) => Promise<any>
+  addERC20: (erc20: IERC20) => Promise<any>
+}
 
 export interface IStorage {
   block: IStorageBlock

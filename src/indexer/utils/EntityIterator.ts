@@ -1,12 +1,22 @@
-import {Filter, FilterEntry} from 'src/types'
+import {
+  Block,
+  IERC20,
+  Log,
+  Filter,
+  FilterEntry,
+  InternalTransaction,
+  Contract,
+  Address2Transaction,
+} from 'src/types'
 import {stores} from 'src/store'
 
+export type ContractIndexerTaskEntities = 'erc20'
 export type EntityIteratorEntities =
   | 'contracts'
   | 'internalTransactions'
   | 'logs'
   | 'address2Transactions'
-  | 'erc20'
+  | ContractIndexerTaskEntities
 
 // only shard #0
 const store = stores[0]
@@ -25,8 +35,8 @@ export type EntityQueryCallbackParams = {
   topic?: string
 }
 
-const listByBlockNumber = (
-  f: (f: Filter) => Promise<any[]>,
+const listByBlockNumber = <T>(
+  f: (f: Filter) => Promise<T[]>,
   extraFilters?: ((params: EntityQueryCallbackParams) => FilterEntry)[]
 ) => async (params: EntityQueryCallbackParams) => {
   const filters = extraFilters ? extraFilters.map((f) => f(params)) : []
@@ -45,6 +55,7 @@ const listByBlockNumber = (
     ],
   }
   const value = await f(filter)
+  // @ts-ignore
   const nextIndex = value.length ? +value[value.length - 1].blockNumber : -1
   return {
     value,
@@ -52,8 +63,8 @@ const listByBlockNumber = (
   }
 }
 
-const listByOffset = (
-  f: (f: Filter) => Promise<any[]>,
+const listByOffset = <T>(
+  f: (f: Filter) => Promise<T[]>,
   extraFilters?: ((params: EntityQueryCallbackParams) => FilterEntry)[]
 ) => async (params: EntityQueryCallbackParams) => {
   const filters = extraFilters ? extraFilters.map((f) => f(params)) : []
@@ -87,13 +98,16 @@ const withEqual = (property: EqualFields) => (params: EntityQueryCallbackParams)
 
 const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> = {
   // logs by address
-  logs: listByBlockNumber(store.log.getLogs, [withEqual('address')]),
-  internalTransactions: listByBlockNumber(store.internalTransaction.getInternalTransactions),
-  contracts: listByBlockNumber(store.contract.getContracts),
-  address2Transactions: listByBlockNumber(store.address.getRelatedTransactions, [
-    withEqual('address'),
-  ]),
-  erc20: listByOffset(store.erc20.getERC20),
+  logs: listByBlockNumber<Log>(store.log.getLogs, [withEqual('address')]),
+  internalTransactions: listByBlockNumber<InternalTransaction>(
+    store.internalTransaction.getInternalTransactions
+  ),
+  contracts: listByBlockNumber<Contract>(store.contract.getContracts),
+  address2Transactions: listByBlockNumber<Address2Transaction>(
+    store.address.getRelatedTransactions,
+    [withEqual('address')]
+  ),
+  erc20: listByOffset<IERC20>(store.erc20.getERC20),
 }
 
 export async function* EntityIterator(

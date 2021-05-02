@@ -86,9 +86,10 @@ export class LogIndexer {
       )
 
       this.l.info(
-        `Processed [${startBlock},${syncedToBlock}] ${
-          syncedToBlock - startBlock
-        } blocks. ${logsLength} log entries. Done in ${batchTime()}.`
+        `Processed [${startBlock},${syncedToBlock}] ${Math.max(
+          syncedToBlock - startBlock,
+          0
+        )} blocks. ${logsLength} log entries. Done in ${batchTime()}.`
       )
 
       await store.indexer.setLastIndexedLogsBlockNumber(syncedToBlock)
