@@ -73,8 +73,6 @@ export class ContractIndexer {
 
     const {batchSize, process} = task.trackEvents
 
-    let latestSyncedBlockIndexerBlock = 0
-
     // todo save sync height for each token separately
     for await (const tokens of tokensIterator) {
       if (!tokens.length) {
@@ -85,6 +83,7 @@ export class ContractIndexer {
 
       const latestSyncedBlock = await task.trackEvents.getLastSyncedBlock(this.store, token)
       const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
+      let latestSyncedBlockIndexerBlock = latestSyncedBlock
 
       const logsIterator = EntityIterator('logs', {
         batchSize,
