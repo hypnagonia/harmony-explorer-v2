@@ -66,6 +66,10 @@ export class ContractIndexer {
   trackEvents = async (task: ContractTracker<any>) => {
     const l = this.ls[task.name] // .info(`Syncing logs from block ${startBlock}`)
 
+    const latestSyncedBlockIndexerBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
+      'blocks'
+    )
+
     const tokensIterator = EntityIterator(task.name as EntityIteratorEntities, {
       batchSize: 1,
       index: 0,
@@ -83,7 +87,7 @@ export class ContractIndexer {
 
       const latestSyncedBlock = await task.trackEvents.getLastSyncedBlock(this.store, token)
       const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
-      let latestSyncedBlockIndexerBlock = latestSyncedBlock
+      let latestSyncedTokenBlock = latestSyncedBlock
 
       const logsIterator = EntityIterator('logs', {
         batchSize,
@@ -101,16 +105,13 @@ export class ContractIndexer {
         l.info(`Processing ${logs.length} logs`)
         try {
           await process(this.store, logs, {token})
-          latestSyncedBlockIndexerBlock = Math.max(
-            latestSyncedBlockIndexerBlock,
+
+          latestSyncedTokenBlock = Math.max(
+            latestSyncedTokenBlock,
             logs.reduce((acc, o) => (acc > o.blockNumber ? acc : o.blockNumber), 0)
           )
-          if (latestSyncedBlockIndexerBlock > 0) {
-            await task.trackEvents.setLastSyncedBlock(
-              this.store,
-              token,
-              latestSyncedBlockIndexerBlock
-            )
+          if (latestSyncedTokenBlock > 0) {
+            await task.trackEvents.setLastSyncedBlock(this.store, token, latestSyncedTokenBlock)
           }
         } catch (err) {
           this.ls[task.name].warn(`Syncing logs for ${token.address} failed`, {
@@ -119,6 +120,8 @@ export class ContractIndexer {
           })
         }
       }
+
+      await task.trackEvents.setLastSyncedBlock(this.store, token, latestSyncedBlockIndexerBlock)
     }
   }
 
