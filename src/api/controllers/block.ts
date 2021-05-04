@@ -14,6 +14,8 @@ import {
 } from 'src/utils/validators'
 import {Filter} from 'src/types/api'
 
+// todo last blocks with memory cache
+
 export async function getBlockByNumber(shardID: ShardID, blockNumber: number) {
   validator({
     shardID: isShard(shardID),

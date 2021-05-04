@@ -9,6 +9,7 @@ import {transactionRouter} from 'src/api/rest/routes/transaction'
 import {stakingTransactionRouter} from 'src/api/rest/routes/stakingTransaction'
 import {addressRouter} from 'src/api/rest/routes/address'
 import {internalTransactionRouter} from 'src/api/rest/routes/internalTransaction'
+import {logsRouter} from 'src/api/rest/routes/logs'
 import {transport} from 'src/api/rest/transport'
 const l = logger(module)
 
@@ -29,6 +30,7 @@ export const RESTServer = async () => {
   mainRouter0.use('/stakingTransaction', stakingTransactionRouter)
   mainRouter0.use('/address', addressRouter)
   mainRouter0.use('/internalTransaction', internalTransactionRouter)
+  mainRouter0.use('/logs', logsRouter)
 
   const routerWithShards0 = Router({mergeParams: true})
   routerWithShards0.use('/shard/:shardID', mainRouter0, transport)

@@ -20,6 +20,8 @@ import {
   StakingTransactionQueryField,
 } from 'src/types/api'
 
+// todo last txs with memory cache
+
 export async function getStakingTransactionsByField(
   shardID: ShardID,
   field: StakingTransactionQueryField,

@@ -14,6 +14,8 @@ import {
 } from 'src/utils/validators'
 import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types/api'
 
+// todo last txs with memory cache
+
 export async function getTransactionByField(
   shardID: ShardID,
   field: TransactionQueryField,
