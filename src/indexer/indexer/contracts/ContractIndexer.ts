@@ -82,7 +82,6 @@ export class ContractIndexer {
       }
 
       const token = tokens[0]
-      l.info(`Getting logs for "${token.name}"`)
 
       const latestSyncedBlock = await task.trackEvents.getLastSyncedBlock(this.store, token)
       const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
@@ -92,6 +91,8 @@ export class ContractIndexer {
         index: startBlock,
         address: token.address,
       })
+
+      l.info(`Getting ${batchSize} logs for "${token.name}" from block ${startBlock}`)
 
       for await (const logs of logsIterator) {
         if (!logs.length) {

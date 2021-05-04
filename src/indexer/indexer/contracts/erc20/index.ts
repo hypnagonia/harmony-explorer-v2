@@ -17,7 +17,7 @@ export const ERC20Indexer: ContractTracker<IERC20> = {
       store.erc20.getERC20LastSyncedBlock(token.address),
     setLastSyncedBlock: (store: PostgresStorage, token, blockNumber: BlockNumber) =>
       store.erc20.setERC20LastSyncedBlock(token.address, blockNumber),
-    batchSize: 100000,
+    batchSize: 10000,
   },
   onFinish,
 }
