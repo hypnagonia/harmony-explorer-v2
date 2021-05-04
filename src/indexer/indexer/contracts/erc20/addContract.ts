@@ -47,6 +47,7 @@ export const addContract = async (store: PostgresStorage, contract: Contract) =>
     decimals: +params.decimals,
     name: params.name,
     symbol: params.symbol,
+    lastUpdateBlockNumber: contract.blockNumber,
   }
   l.info(`Found new contract "${erc20.name}"`)
 

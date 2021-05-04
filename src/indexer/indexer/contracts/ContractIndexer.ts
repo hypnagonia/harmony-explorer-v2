@@ -92,7 +92,7 @@ export class ContractIndexer {
         address: token.address,
       })
 
-      l.info(`Getting ${batchSize} logs for "${token.name}" from block ${startBlock}`)
+      l.info(`Getting logs for "${token.name}" ${token.address} from block ${startBlock}`)
 
       for await (const logs of logsIterator) {
         if (!logs.length) {
