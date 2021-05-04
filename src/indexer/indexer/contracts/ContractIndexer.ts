@@ -67,7 +67,7 @@ export class ContractIndexer {
     const l = this.ls[task.name] // .info(`Syncing logs from block ${startBlock}`)
 
     const latestSyncedBlockIndexerBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
-      'blocks'
+      'logs'
     )
 
     const tokensIterator = EntityIterator(task.name as EntityIteratorEntities, {
