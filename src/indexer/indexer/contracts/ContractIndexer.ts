@@ -69,7 +69,6 @@ export class ContractIndexer {
     const latestSyncedBlockIndexerBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
       'logs'
     )
-    console.log('logs last synced height', latestSyncedBlockIndexerBlock)
 
     const tokensIterator = EntityIterator(task.name as EntityIteratorEntities, {
       batchSize: 1,
@@ -121,8 +120,6 @@ export class ContractIndexer {
         }
       }
 
-      // todo fix bug!!!!
-      console.log('save height', token.address, latestSyncedBlockIndexerBlock)
       await task.trackEvents.setLastSyncedBlock(this.store, token, latestSyncedBlockIndexerBlock)
     }
   }
