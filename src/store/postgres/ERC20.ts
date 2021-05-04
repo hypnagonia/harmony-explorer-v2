@@ -19,6 +19,7 @@ export class PostgresStorageERC20 implements IStorageERC20 {
 
   getERC20 = async (filter: Filter): Promise<IERC20[]> => {
     const q = buildSQLQuery(filter)
+    console.log('getERC20', q)
     const res = await this.query(`select * from erc20 ${q}`, [])
 
     return res.map(fromSnakeToCamelResponse)
