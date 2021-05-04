@@ -64,7 +64,7 @@ export class ContractIndexer {
 
   // track logs for specific address
   trackEvents = async (task: ContractTracker<any>) => {
-    // this.ls[task.name].info(`Syncing logs from block ${startBlock}`)
+    const l = this.ls[task.name] // .info(`Syncing logs from block ${startBlock}`)
 
     const tokensIterator = EntityIterator(task.name as EntityIteratorEntities, {
       batchSize: 1,
@@ -82,6 +82,7 @@ export class ContractIndexer {
       }
 
       const token = tokens[0]
+      l.info(`Getting logs for "${token.name}"`)
 
       const latestSyncedBlock = await task.trackEvents.getLastSyncedBlock(this.store, token)
       const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
@@ -97,6 +98,7 @@ export class ContractIndexer {
           continue
         }
 
+        l.info(`Processing ${logs.length} logs`)
         try {
           await process(this.store, logs, {token})
           latestSyncedBlockIndexerBlock = Math.max(

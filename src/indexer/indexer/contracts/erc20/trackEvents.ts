@@ -50,6 +50,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
     .map((a) => normalizeAddress(a))
     .map((a) => store.erc20.setNeedUpdateBalance(a!, tokenAddress))
 
+  l.info(`Marking ${setUpdateNeeded.length} address for balance update`)
   await Promise.all(setUpdateNeeded)
 
   l.info(
