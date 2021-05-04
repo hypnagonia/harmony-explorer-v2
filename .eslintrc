@@ -37,6 +37,7 @@
     "max-len": "off",
     "operator-linebreak": "off",
     "new-cap": "off",
-    "quote-props": "off"
+    "quote-props": "off",
+    "no-constant-condition": "off"
   }
 }
