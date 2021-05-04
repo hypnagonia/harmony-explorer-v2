@@ -27,14 +27,5 @@ export const scheme = `
       values ('${name}_contracts',0, ${chainID}) on conflict(indexer_name) do nothing;
     `
       )
-      .join('')}
-    
-    ${tasks
-      .map(
-        (name) => `
-    insert into indexer_state (indexer_name, last_synced_block_number, chain_id) 
-      values ('${name}_entries',0, ${chainID}) on conflict(indexer_name) do nothing;
-    `
-      )
-      .join('')}             
+      .join('')}          
 `

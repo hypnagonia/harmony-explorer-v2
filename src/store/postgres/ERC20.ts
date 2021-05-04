@@ -1,5 +1,5 @@
 import {IStorageERC20} from 'src/store/interface'
-import {Address, Contract, Filter, IERC20, IERC20Balance} from 'src/types'
+import {Address, BlockNumber, Contract, Filter, IERC20, IERC20Balance} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -29,6 +29,22 @@ export class PostgresStorageERC20 implements IStorageERC20 {
       `update erc20 set total_supply=$1, holders=$2, transaction_count=$3 where address=$4;`,
       [erc20.totalSupply, erc20.holders, erc20.transactionCount, erc20.address]
     )
+  }
+
+  getERC20LastSyncedBlock = async (address: Address): Promise<number> => {
+    const res = await this.query(`select last_update_block_number from erc20 where address=$1;`, [
+      address,
+    ])
+
+    const lastIndexedBlock = +res[0][`last_update_block_number`]
+    return lastIndexedBlock || 0
+  }
+
+  setERC20LastSyncedBlock = async (address: Address, blockNumber: BlockNumber) => {
+    return this.query(`update erc20 set last_update_block_number=$1 where address=$2;`, [
+      blockNumber,
+      address,
+    ])
   }
 
   getERC20Balance = async (owner: Address, token: Address): Promise<string | null> => {

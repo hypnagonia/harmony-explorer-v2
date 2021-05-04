@@ -1,17 +1,20 @@
 import {EntityIterator} from 'src/indexer/utils/EntityIterator'
 import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from 'src/indexer/indexer/contracts/erc20/ABI'
+import {logger} from 'src/logger'
 
+const l = logger(module, 'erc20:balance')
 const {call} = ABI
 
 // update balances
-export const onTaskEnd = async (store: PostgresStorage) => {
+export const onFinish = async (store: PostgresStorage) => {
   const balancesNeedUpdate = EntityIterator('erc20BalancesNeedUpdate', {
     index: 0,
     batchSize: 100,
     needUpdate: 'true',
   })
 
+  let count = 0
   for await (const b of balancesNeedUpdate) {
     if (!b.length) {
       return
@@ -23,5 +26,9 @@ export const onTaskEnd = async (store: PostgresStorage) => {
       )
     )
     await Promise.all(promises)
+    count += b.length
   }
+  l.info(`Updated balance for ${count} addresses`)
+
+  // todo update holders and total supply
 }

@@ -5,6 +5,7 @@ import {EntityIterator} from 'src/indexer/utils/EntityIterator'
 import {tasks} from './tasks'
 import {ContractTracker} from 'src/indexer/indexer/contracts/types'
 import {PostgresStorage} from 'src/store/postgres'
+import {EntityIteratorEntities} from 'src/indexer/utils/EntityIterator/entities'
 
 const syncingIntervalMs = 1000 * 60 * 5
 
@@ -36,15 +37,15 @@ export class ContractIndexer {
     )
     const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
 
-    const {contractBatchSize} = task.config
+    const {batchSize, process} = task.addContract
     this.ls[task.name].info(`Syncing contracts from block ${startBlock}`)
     const contractsIterator = EntityIterator('contracts', {
-      batchSize: contractBatchSize,
+      batchSize,
       index: startBlock,
     })
 
     for await (const contracts of contractsIterator) {
-      await Promise.all(contracts.map((c) => task.addContract(this.store, c)))
+      await Promise.all(contracts.map((c) => process(this.store, c)))
 
       if (contracts.length) {
         const syncedToBlock = +contracts[contracts.length - 1].blockNumber
@@ -63,30 +64,30 @@ export class ContractIndexer {
 
   // track logs for specific address
   trackEvents = async (task: ContractTracker<any>) => {
-    const latestSyncedBlock = await this.store.indexer.getLastIndexedBlockNumberByName(
-      `${task.name}_entries`
-    )
-    const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
+    // this.ls[task.name].info(`Syncing logs from block ${startBlock}`)
 
-    this.ls[task.name].info(`Syncing logs from block ${startBlock}`)
-
-    const tokensIterator = EntityIterator(task.name, {
+    const tokensIterator = EntityIterator(task.name as EntityIteratorEntities, {
       batchSize: 1,
       index: 0,
     })
 
-    const {eventBatchSize} = task.config
+    const {batchSize, process} = task.trackEvents
 
     let latestSyncedBlockIndexerBlock = 0
 
+    // todo save sync height for each token separately
     for await (const tokens of tokensIterator) {
       if (!tokens.length) {
         break
       }
 
       const token = tokens[0]
+
+      const latestSyncedBlock = await task.trackEvents.getLastSyncedBlock(this.store, token)
+      const startBlock = latestSyncedBlock && latestSyncedBlock > 0 ? latestSyncedBlock + 1 : 0
+
       const logsIterator = EntityIterator('logs', {
-        batchSize: eventBatchSize,
+        batchSize,
         index: startBlock,
         address: token.address,
       })
@@ -97,11 +98,18 @@ export class ContractIndexer {
         }
 
         try {
-          await task.trackEvents(this.store, logs, {token})
+          await process(this.store, logs, {token})
           latestSyncedBlockIndexerBlock = Math.max(
             latestSyncedBlockIndexerBlock,
             logs.reduce((acc, o) => (acc > o.blockNumber ? acc : o.blockNumber), 0)
           )
+          if (latestSyncedBlockIndexerBlock > 0) {
+            await task.trackEvents.setLastSyncedBlock(
+              this.store,
+              token,
+              latestSyncedBlockIndexerBlock
+            )
+          }
         } catch (err) {
           this.ls[task.name].warn(`Syncing logs for ${token.address} failed`, {
             token,
@@ -109,14 +117,6 @@ export class ContractIndexer {
           })
         }
       }
-    }
-
-    console.log(latestSyncedBlockIndexerBlock)
-    if (latestSyncedBlockIndexerBlock > 0) {
-      await this.store.indexer.setLastIndexedBlockNumberByName(
-        `${task.name}_entries`,
-        latestSyncedBlockIndexerBlock
-      )
     }
   }
 
@@ -128,19 +128,17 @@ export class ContractIndexer {
       try {
         l.info('Starting...')
 
-        console.log('contracts')
-        if (typeof task.addContract === 'function') {
+        if (typeof task.addContract.process === 'function') {
           await this.addContracts(task)
         }
-        console.log('events')
-        if (typeof task.trackEvents === 'function') {
+
+        if (typeof task.trackEvents.process === 'function') {
           await this.trackEvents(task)
         }
-        console.log('on end')
-        if (typeof task.onTaskEnd === 'function') {
-          await task.onTaskEnd(this.store)
+
+        if (typeof task.onFinish === 'function') {
+          await task.onFinish(this.store)
         }
-        console.log('end')
       } catch (err) {
         console.log(err)
         l.warn('Batch failed', err.message || err)

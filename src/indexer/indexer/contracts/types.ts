@@ -1,17 +1,20 @@
-import {Contract, Log} from 'src/types'
+import {BlockNumber, Contract, Log} from 'src/types'
 import {PostgresStorage} from 'src/store/postgres'
-import {ContractIndexerTaskEntities} from 'src/indexer/utils/EntityIterator'
 
 export interface ContractTracker<T> {
-  name: ContractIndexerTaskEntities
-  config: {
-    contractBatchSize: number
-    eventBatchSize: number
+  name: string
+  trackEvents: {
+    process: (store: PostgresStorage, logs: Log[], params: {token: T}) => Promise<any>
+    getLastSyncedBlock: (store: PostgresStorage, token: T) => Promise<number>
+    setLastSyncedBlock: (store: PostgresStorage, token: T, blockNumber: BlockNumber) => Promise<any>
+    batchSize: number
   }
-  trackEvents: (store: PostgresStorage, logs: Log[], params: {token: T}) => Promise<any>
-  addContract: (store: PostgresStorage, contract: Contract) => Promise<any>
-  // onTaskStart
-  onTaskEnd: (store: PostgresStorage) => Promise<any>
+  addContract: {
+    process: (store: PostgresStorage, contract: Contract) => Promise<any>
+    batchSize: number
+  }
+  // onStart
+  onFinish: (store: PostgresStorage) => Promise<any>
 }
 
 export type ABIEventSignature = string
