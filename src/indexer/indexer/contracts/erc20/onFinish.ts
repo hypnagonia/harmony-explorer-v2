@@ -14,6 +14,7 @@ export const onFinish = async (store: PostgresStorage) => {
     needUpdate: 'true',
   })
 
+  l.info(`Updating balances`)
   let count = 0
   for await (const b of balancesNeedUpdate) {
     if (!b.length) {
@@ -28,7 +29,7 @@ export const onFinish = async (store: PostgresStorage) => {
     await Promise.all(promises)
     count += b.length
   }
-  l.info(`Updated balance for ${count} addresses`)
+  l.info(`Updated ${count} balances`)
 
   // todo update holders and total supply
 }
