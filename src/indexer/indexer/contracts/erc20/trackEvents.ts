@@ -20,7 +20,7 @@ type IParams = {
 // add property update_needed
 // set of addresses from Transfer event update needed
 //
-
+// todo filter other topics
 export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: IParams) => {
   const filteredLogs = logs.filter(({topics}) => topics.includes(transferEvent))
   if (!filteredLogs.length) {
