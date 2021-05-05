@@ -33,7 +33,10 @@ export async function getTransactionByField(
     })
   }
 
-  const txs = await stores[shardID].transaction.getTransactionsByField(field, value)
+  const txs = await withCache(['getTransactionByField', arguments], () =>
+    stores[shardID].transaction.getTransactionsByField(field, value)
+  )
+
   if (!txs!.length) {
     if (field === 'hash') {
       // if tx not found by hash, give it another shot with harmony hash

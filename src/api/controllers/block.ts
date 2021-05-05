@@ -20,7 +20,10 @@ export async function getBlockByNumber(shardID: ShardID, blockNumber: number) {
     shardID: isShard(shardID),
     blockNumber: isBlockNumber(blockNumber),
   })
-  return await stores[shardID].block.getBlockByNumber(blockNumber)
+
+  return await withCache(['getBlockByNumber', arguments], () =>
+    stores[shardID].block.getBlockByNumber(blockNumber)
+  )
 }
 
 export async function getBlockByHash(shardID: ShardID, blockHash: string) {
@@ -28,7 +31,10 @@ export async function getBlockByHash(shardID: ShardID, blockHash: string) {
     shardID: isShard(shardID),
     blockHash: is64CharHexHash(blockHash),
   })
-  return await stores[shardID].block.getBlockByHash(blockHash)
+
+  return await withCache(['getBlockByHash', arguments], () =>
+    stores[shardID].block.getBlockByHash(blockHash)
+  )
 }
 
 export async function getBlocks(shardID: ShardID, filter?: Filter) {

@@ -9,7 +9,7 @@ const pruneCheckIntervalMs = 2000
 
 export const cache = new LRU(options)
 
-export const withCache = async (keys: any[], f: Function, maxAge: number) => {
+export const withCache = async (keys: any[], f: Function, maxAge?: number) => {
   const key = JSON.stringify(keys)
   const cachedRes = cache.get(key)
   if (cachedRes) {
