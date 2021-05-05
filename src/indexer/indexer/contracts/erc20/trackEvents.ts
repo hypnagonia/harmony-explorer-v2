@@ -44,7 +44,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
   }
   const tokenAddress = filteredLogs[0].address
 
-  const addressesForUpdate = new Set<setEntry>()
+  const addressesForUpdate = new Map<Address, setEntry>()
 
   // todo ?
   const totalSupply = BigInt(token.totalSupply)
@@ -55,12 +55,12 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
     const [topic0, ...topics] = log.topics
     const {from, to, value} = decodeLog('Transfer', log.data, topics)
 
-    addressesForUpdate.add({
+    addressesForUpdate.set(from, {
       address: from,
       blockNumber: +log.blockNumber,
       transactionHash: log.transactionHash,
     })
-    addressesForUpdate.add({
+    addressesForUpdate.set(to, {
       address: to,
       blockNumber: +log.blockNumber,
       transactionHash: log.transactionHash,
@@ -87,13 +87,11 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
     )
     .map((o) => store.address.addAddress2Transaction(o))
 
-  await Promise.all(setAddress2Transactions)
-
   const setUpdateNeeded = arrFromSet
     .map((o) => o.address)
     .map((a) => store.erc20.setNeedUpdateBalance(a!, tokenAddress))
 
-  await Promise.all(setUpdateNeeded)
+  await Promise.all(setUpdateNeeded.concat(setAddress2Transactions))
 
   l.info(
     `${setUpdateNeeded.length} addresses marked need update balances for "${token.name}" ${token.address}`
