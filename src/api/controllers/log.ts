@@ -19,6 +19,7 @@ import {
   TransactionQueryField,
   TransactionQueryValue,
 } from 'src/types/api'
+import {withCache} from 'src/api/controllers/cache'
 
 export async function getLogsByField(
   shardID: ShardID,
@@ -38,5 +39,7 @@ export async function getLogsByField(
     })
   }
 
-  return await stores[shardID].log.getLogsByField(field, value)
+  return await withCache(['getLogsByField', arguments], () =>
+    stores[shardID].log.getLogsByField(field, value)
+  )
 }

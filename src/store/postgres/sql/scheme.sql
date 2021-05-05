@@ -239,6 +239,14 @@ create table if not exists erc721_asset
 create index if not exists idx_erc721_asset_owner_address on erc721_asset using hash (owner_address);
 create index if not exists idx_erc721_asset_token_address on erc721_asset using hash (token_address);
 
+create table if not exists signatures
+(
+    hash      varchar not null,
+    signature text not null,
+    unique (hash, signature)
+);
+create index if not exists idx_event_signatures_hash on signatures using hash (hash);
+
 create table if not exists indexer_state
 (
     chain_id                 int,

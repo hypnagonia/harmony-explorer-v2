@@ -1,5 +1,4 @@
 import LRU from 'lru-cache'
-import {stores} from 'src/store'
 
 const options = {
   max: 1 * 1000 * 100,

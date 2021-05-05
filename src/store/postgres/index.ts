@@ -16,6 +16,7 @@ import LoggerModule from 'zerg/dist/LoggerModule'
 import {ShardID, CountableEntities} from 'src/types'
 import {fromSnakeToCamelResponse, mapNamingReverse} from 'src/store/postgres/queryMapper'
 import {PostgresStorageERC20} from 'src/store/postgres/ERC20'
+import {PostgresStorageSignature} from 'src/store/postgres/Signatures'
 
 const defaultRetries = 5
 
@@ -32,6 +33,7 @@ export class PostgresStorage implements IStorage {
   address: PostgresStorageAddress
   contract: PostgresStorageContract
   erc20: PostgresStorageERC20
+  signature: PostgresStorageSignature
   isStarted = false
   isStarting = false
   l: LoggerModule
@@ -49,6 +51,7 @@ export class PostgresStorage implements IStorage {
     this.address = new PostgresStorageAddress(this.query)
     this.contract = new PostgresStorageContract(this.query)
     this.erc20 = new PostgresStorageERC20(this.query)
+    this.signature = new PostgresStorageSignature(this.query)
 
     this.l = logger(module, `shard${options.shardID}`)
     this.options = options
@@ -97,7 +100,11 @@ export class PostgresStorage implements IStorage {
         await sleep(200)
         return this.query(sql, params, retriesLeft)
       }
-      this.l.warn(`Query failed in ${defaultRetries} attempts`, {sql, params})
+      this.l.warn(`Query failed in ${defaultRetries} attempts`, {
+        sql,
+        params,
+        error: e.message || e,
+      })
       throw new Error(e)
     }
   }

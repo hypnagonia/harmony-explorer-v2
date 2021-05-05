@@ -16,6 +16,7 @@ export type RPCHarmonyMethod =
 
 export type ShardID = 0 | 1 | 2 | 3
 
+export type BytecodeSignatureHash = string
 export type BlockHexNumber = string
 export type BlockHash = string
 export type BlockNumber = number
@@ -262,4 +263,9 @@ export type IERC20Balance = {
   tokenAddress: Address
   balance: number
   needUpdate: boolean
+}
+
+export type BytecodeSignature = {
+  hash: BytecodeSignatureHash
+  signatures: string
 }

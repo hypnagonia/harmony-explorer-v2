@@ -19,6 +19,7 @@ import {
   TransactionQueryField,
   TransactionQueryValue,
 } from 'src/types/api'
+import {withCache} from 'src/api/controllers/cache'
 
 export async function getInternalTransactionsByField(
   shardID: ShardID,
@@ -38,5 +39,7 @@ export async function getInternalTransactionsByField(
     })
   }
 
-  return await stores[shardID].internalTransaction.getInternalTransactionsByField(field, value)
+  return await withCache(['getInternalTransactionsByField', arguments], () =>
+    stores[shardID].internalTransaction.getInternalTransactionsByField(field, value)
+  )
 }

@@ -91,6 +91,8 @@ export interface IStorageERC20 {
   addERC20: (erc20: IERC20) => Promise<any>
 }
 
+export interface IStorageSignature {}
+
 export interface IStorage {
   block: IStorageBlock
   log: IStorageLog
