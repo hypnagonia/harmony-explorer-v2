@@ -13,7 +13,7 @@ import {
   isFilters,
 } from 'src/utils/validators'
 import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types/api'
-import {cache} from './cache'
+import {cache, withCache} from './cache'
 
 export async function getTransactionByField(
   shardID: ShardID,
@@ -73,14 +73,9 @@ export async function getTransactions(shardID: ShardID, filter?: Filter) {
     }
   }
 
-  const key = JSON.stringify(['getTransactions', arguments])
-  const cachedRes = cache.get(key)
-  if (cachedRes) {
-    return cachedRes
-  }
-
-  const res = await stores[shardID].transaction.getTransactions(filter)
-  cache.set(key, res, 2000)
-
-  return res
+  return await withCache(
+    ['getTransactions', arguments],
+    () => stores[shardID].transaction.getTransactions(filter!),
+    2000
+  )
 }
