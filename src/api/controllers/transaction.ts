@@ -13,8 +13,7 @@ import {
   isFilters,
 } from 'src/utils/validators'
 import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types/api'
-
-// todo last txs with memory cache
+import {cache} from './cache'
 
 export async function getTransactionByField(
   shardID: ShardID,
@@ -73,5 +72,15 @@ export async function getTransactions(shardID: ShardID, filter?: Filter) {
       filters: [],
     }
   }
-  return await stores[shardID].transaction.getTransactions(filter)
+
+  const key = JSON.stringify(['getTransactions', arguments])
+  const cachedRes = cache.get(key)
+  if (cachedRes) {
+    return cachedRes
+  }
+
+  const res = await stores[shardID].transaction.getTransactions(filter)
+  cache.set(key, res, 2000)
+
+  return res
 }

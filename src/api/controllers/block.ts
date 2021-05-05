@@ -13,8 +13,7 @@ import {
   isFilters,
 } from 'src/utils/validators'
 import {Filter} from 'src/types/api'
-
-// todo last blocks with memory cache
+import {cache} from './cache'
 
 export async function getBlockByNumber(shardID: ShardID, blockNumber: number) {
   validator({
@@ -54,5 +53,15 @@ export async function getBlocks(shardID: ShardID, filter?: Filter) {
       filters: [],
     }
   }
-  return await stores[shardID].block.getBlocks(filter)
+
+  const key = JSON.stringify(['getBlocks', arguments])
+  const cachedRes = cache.get(key)
+  if (cachedRes) {
+    return cachedRes
+  }
+
+  const res = await stores[shardID].block.getBlocks(filter)
+  cache.set(key, res, 2000)
+
+  return res
 }
