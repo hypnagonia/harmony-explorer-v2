@@ -1,4 +1,13 @@
-import {Log, Address, IERC20} from 'src/types'
+import {
+  Log,
+  Address,
+  IERC20,
+  Address2Transaction,
+  BlockNumber,
+  TransactionHash,
+  TransactionHarmonyHash,
+  AddressTransactionType,
+} from 'src/types'
 import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from './ABI'
 import {logger} from 'src/logger'
@@ -20,7 +29,14 @@ type IParams = {
 // add property update_needed
 // set of addresses from Transfer event update needed
 //
-// todo filter other topics
+// todo filter out other topics
+
+type setEntry = {
+  address: Address
+  blockNumber: BlockNumber
+  transactionHash: TransactionHash
+}
+
 export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: IParams) => {
   const filteredLogs = logs.filter(({topics}) => topics.includes(transferEvent))
   if (!filteredLogs.length) {
@@ -28,7 +44,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
   }
   const tokenAddress = filteredLogs[0].address
 
-  const addressesForUpdate = new Set<Address>()
+  const addressesForUpdate = new Set<setEntry>()
 
   // todo ?
   const totalSupply = BigInt(token.totalSupply)
@@ -39,15 +55,42 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
     const [topic0, ...topics] = log.topics
     const {from, to, value} = decodeLog('Transfer', log.data, topics)
 
-    addressesForUpdate.add(from)
-    addressesForUpdate.add(to)
+    addressesForUpdate.add({
+      address: from,
+      blockNumber: +log.blockNumber,
+      transactionHash: log.transactionHash,
+    })
+    addressesForUpdate.add({
+      address: to,
+      blockNumber: +log.blockNumber,
+      transactionHash: log.transactionHash,
+    })
   }
 
-  // todo add address2transactions records according to transfer events
+  const arrFromSet = [...addressesForUpdate.values()].filter(
+    (o) => ![zeroAddress].includes(o.address)
+  )
+  arrFromSet.forEach((o) => {
+    o.address = normalizeAddress(o.address)!
+  })
 
-  const setUpdateNeeded = [...addressesForUpdate.values()]
-    .filter((a) => ![zeroAddress].includes(a))
-    .map((a) => normalizeAddress(a))
+  // add related txs
+  const setAddress2Transactions = arrFromSet
+    .map(
+      (o) =>
+        ({
+          blockNumber: o.blockNumber,
+          transactionHash: o.transactionHash,
+          address: o.address,
+          transactionType: 'internal_transaction',
+        } as Address2Transaction)
+    )
+    .map((o) => store.address.addAddress2Transaction(o))
+
+  await Promise.all(setAddress2Transactions)
+
+  const setUpdateNeeded = arrFromSet
+    .map((o) => o.address)
     .map((a) => store.erc20.setNeedUpdateBalance(a!, tokenAddress))
 
   await Promise.all(setUpdateNeeded)

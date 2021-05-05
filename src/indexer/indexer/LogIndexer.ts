@@ -88,7 +88,7 @@ export class LogIndexer {
       this.l.info(
         `Processed [${startBlock},${syncedToBlock}] ${Math.max(
           syncedToBlock - startBlock,
-          0
+          1
         )} blocks. ${logsLength} log entries. Done in ${batchTime()}.`
       )
 
