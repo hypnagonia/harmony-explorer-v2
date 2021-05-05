@@ -11,7 +11,7 @@ export class PostgresStorageSignature implements IStorageSignature {
     this.query = query
   }
 
-  addEventSignatures = async (signature: BytecodeSignature): Promise<any> => {
+  addSignatures = async (signature: BytecodeSignature): Promise<any> => {
     const {query, params} = generateQuery(signature)
     return await this.query(
       `insert into signatures ${query} on conflict (hash, signature) do nothing;`,
@@ -19,7 +19,7 @@ export class PostgresStorageSignature implements IStorageSignature {
     )
   }
 
-  getEventSignaturesByHash = async (
+  getSignaturesByHash = async (
     hash: BytecodeSignatureHash
   ): Promise<BytecodeSignature[] | null> => {
     const res = await this.query(`select * from signatures where hash=$1;`, [hash])

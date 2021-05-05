@@ -20,6 +20,11 @@ export const is64CharHexHash: CurryParamValidator = (value: string) => () => [
   isLength(value, {min: 66, max: 66}),
 ]
 
+export const is64CharHexSignature: CurryParamValidator = (value: string) => () => [
+  isHexString(value),
+  isLength(value, {min: 10, max: 66}),
+]
+
 export const isTransactionHash: CurryParamValidator = (value: string) => () => [
   isHexString(value),
   isLength(value, {min: 66, max: 66}),
