@@ -54,7 +54,7 @@ const toStoreMappers: Record<string, (val: any) => any> = {
   size: fromHexToNumber,
   logIndex: fromHexToNumber,
   transactionIndex: fromHexToNumber,
-  timestamp: (t) => new Date(parseInt(t, 16)), // todo proper
+  timestamp: (t) => new Date(parseInt(t, 16) * 1000),
 }
 
 export const fromSnakeToCamelResponse = (o: Record<any, any>) => {
