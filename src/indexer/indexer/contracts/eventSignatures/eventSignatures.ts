@@ -28,7 +28,7 @@ const getSignatures = async (url: string) => {
           signature: e.text_signature,
         }
       })
-      .map((e: BytecodeSignature) => store.signature.addEventSignatures(e))
+      .map((e: BytecodeSignature) => store.signature.addSignatures(e))
 
     await Promise.all(promises)
 
