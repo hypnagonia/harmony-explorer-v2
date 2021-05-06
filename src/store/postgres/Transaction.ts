@@ -36,9 +36,9 @@ export class PostgresStorageTransaction implements IStorageTransaction {
 
     const {query, params} = generateQuery(newTx)
     return await this.query(
-      `insert into transactions ${query} on conflict (hash) do update set timestamp=${new Date(
+      `insert into transactions ${query} on conflict (hash) do update set timestamp='${new Date(
         parseInt(tx.timestamp, 16) * 1000
-      ).toISOString()};`,
+      ).toISOString()}';`,
       params
     )
   }
