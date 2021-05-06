@@ -45,6 +45,7 @@ export const config = {
   api: {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s) as ShardID[],
     isEnabled: toBool(process.env.API_IS_ENABLED || '0'),
+    isCacheEnabled: toBool(process.env.API_IS_CACHE_ENABLED || '0'),
     ws: {
       isEnabled: toBool(process.env.API_WS_IS_ENABLED || '0'),
       port: 3001,

@@ -11,6 +11,7 @@ import {addressRouter} from 'src/api/rest/routes/address'
 import {internalTransactionRouter} from 'src/api/rest/routes/internalTransaction'
 import {signatureRouter} from 'src/api/rest/routes/signature'
 import {logsRouter} from 'src/api/rest/routes/logs'
+import {priceRouter} from 'src/api/rest/routes/price'
 import {transport} from 'src/api/rest/transport'
 const l = logger(module)
 
@@ -36,6 +37,8 @@ export const RESTServer = async () => {
   const routerWithShards0 = Router({mergeParams: true})
   routerWithShards0.use('/shard/:shardID', mainRouter0, transport)
   routerWithShards0.use('/signature', signatureRouter, transport)
+  routerWithShards0.use('/price', priceRouter, transport)
+
   api.use('/v0', routerWithShards0)
 
   let server: Server

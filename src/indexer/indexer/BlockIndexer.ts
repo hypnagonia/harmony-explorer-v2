@@ -153,7 +153,7 @@ export class BlockIndexer {
             .then(addBlocks)
             .then(addTransactions)
             .then(addStakingTransactions)
-          // todo .then(addTraceBlocks)
+            .then(addTraceBlocks)
         })
       ).then((res) => res.flatMap((b) => b).filter((b) => b))
 

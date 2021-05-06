@@ -58,3 +58,7 @@ const checkChainID = async (shardID: ShardID) => {
 
   await Promise.all(u.map(validate))
 }
+
+process.on('unhandledRejection', (reason, p) => {
+  l.error(`Unhandled Rejection at: Promise', ${p}, 'reason:', ${reason}`)
+})

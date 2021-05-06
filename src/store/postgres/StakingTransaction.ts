@@ -29,9 +29,7 @@ export class PostgresStorageStakingTransaction implements IStorageStakingTransac
 
     const {query, params} = generateQuery(newTx)
     return await this.query(
-      `insert into staking_transactions ${query} on conflict (hash) do update set timestamp='${new Date(
-        parseInt(tx.timestamp, 16) * 1000
-      ).toISOString()}';`,
+      `insert into staking_transactions ${query} on conflict (hash) do nothing;`,
       params
     )
   }

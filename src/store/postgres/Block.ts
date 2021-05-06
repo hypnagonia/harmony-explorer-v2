@@ -26,12 +26,7 @@ export class PostgresStorageBlock implements IStorageBlock {
     }
     const {query, params} = generateQuery(newBlock)
 
-    return await this.query(
-      `insert into blocks ${query} on conflict (number) do update set timestamp='${new Date(
-        parseInt(block.timestamp, 16) * 1000
-      ).toISOString()}';`,
-      params
-    )
+    return await this.query(`insert into blocks ${query} on conflict (number) do nothing;`, params)
   }
 
   getBlockByNumber = async (num: BlockNumber): Promise<Block | null> => {
