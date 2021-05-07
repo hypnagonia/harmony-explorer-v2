@@ -17,6 +17,7 @@ import {ShardID, CountableEntities} from 'src/types'
 import {fromSnakeToCamelResponse, mapNamingReverse} from 'src/store/postgres/queryMapper'
 import {PostgresStorageERC20} from 'src/store/postgres/ERC20'
 import {PostgresStorageSignature} from 'src/store/postgres/Signatures'
+import {PostgresStorageMetrics} from 'src/store/postgres/Metrics'
 
 const defaultRetries = 5
 
@@ -34,6 +35,8 @@ export class PostgresStorage implements IStorage {
   contract: PostgresStorageContract
   erc20: PostgresStorageERC20
   signature: PostgresStorageSignature
+  metrics: PostgresStorageMetrics
+
   isStarted = false
   isStarting = false
   l: LoggerModule
@@ -52,6 +55,7 @@ export class PostgresStorage implements IStorage {
     this.contract = new PostgresStorageContract(this.query)
     this.erc20 = new PostgresStorageERC20(this.query)
     this.signature = new PostgresStorageSignature(this.query)
+    this.metrics = new PostgresStorageMetrics(this.query)
 
     this.l = logger(module, `shard${options.shardID}`)
     this.options = options
@@ -125,6 +129,7 @@ export class PostgresStorage implements IStorage {
 
       return rows
     } catch (e) {
+      console.log('timeout')
       this.l.debug(e.message || e, {sql, params})
       throw new Error(e)
     }

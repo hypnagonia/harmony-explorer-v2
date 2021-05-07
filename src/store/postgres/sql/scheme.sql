@@ -29,7 +29,7 @@ create table if not exists blocks
 
 create index if not exists idx_blocks_number on blocks (number);
 create index if not exists idx_blocks_hash on blocks using hash (hash);
-create index if not exists idx_blocks_timestamp on blocks using hash (timestamp);
+create index if not exists idx_blocks_timestamp on blocks (timestamp);
 
 create table if not exists logs
 (
@@ -77,7 +77,7 @@ create index if not exists idx_transactions_hash on transactions using hash (has
 create index if not exists idx_transactions_hash_harmony on transactions using hash (hash_harmony);
 create index if not exists idx_transactions_block_hash on transactions using hash (block_hash);
 create index if not exists idx_transactions_block_number on transactions (block_number);
-
+create index if not exists idx_transactions_timestamp on transactions (timestamp);
 do
 $$
     begin

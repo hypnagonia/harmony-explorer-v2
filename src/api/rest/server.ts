@@ -12,6 +12,9 @@ import {internalTransactionRouter} from 'src/api/rest/routes/internalTransaction
 import {signatureRouter} from 'src/api/rest/routes/signature'
 import {logsRouter} from 'src/api/rest/routes/logs'
 import {priceRouter} from 'src/api/rest/routes/price'
+import {metricsRouter} from 'src/api/rest/routes/metrics'
+import {warmUpCache} from 'src/api/controllers/cache/warmUpCache'
+
 import {transport} from 'src/api/rest/transport'
 const l = logger(module)
 
@@ -38,6 +41,7 @@ export const RESTServer = async () => {
   routerWithShards0.use('/shard/:shardID', mainRouter0, transport)
   routerWithShards0.use('/signature', signatureRouter, transport)
   routerWithShards0.use('/price', priceRouter, transport)
+  routerWithShards0.use('/metrics', metricsRouter, transport)
 
   api.use('/v0', routerWithShards0)
 
@@ -48,6 +52,7 @@ export const RESTServer = async () => {
   l.info('REST API starting...')
   try {
     server = http.createServer(api).listen(config.api.rest.port, () => {
+      warmUpCache()
       l.info(`REST API listening at http://localhost:${config.api.rest.port}`)
     })
   } catch (error) {

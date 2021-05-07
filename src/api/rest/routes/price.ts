@@ -4,10 +4,11 @@ import {catchAsync} from 'src/api/rest/utils'
 
 export const priceRouter = Router({mergeParams: true})
 
-priceRouter.get('/actual', catchAsync(getBinanceONEUSDPrice))
+priceRouter.get('/actual/:pair', catchAsync(getBinancePairPrice))
 
-export async function getBinanceONEUSDPrice(req: Request, res: Response, next: NextFunction) {
-  const data = await controllers.getBinanceONEUSDPrice()
+export async function getBinancePairPrice(req: Request, res: Response, next: NextFunction) {
+  const {pair} = req.params
+  const data = await controllers.getBinancePairPrice(pair)
   next(data)
 }
 
