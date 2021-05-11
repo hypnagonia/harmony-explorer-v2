@@ -142,7 +142,7 @@ create table if not exists address2transaction
 );
 
 create index if not exists idx_address2transaction_address on address2transaction using hash (address);
-create index if not exists idx_address2transaction_block_number on transactions (block_number);
+create index if not exists idx_address2transaction_block_number on address2transaction (block_number);
 /* todo partial index by type */
 
 /*
