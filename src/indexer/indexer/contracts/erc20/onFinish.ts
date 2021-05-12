@@ -1,7 +1,7 @@
 import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from 'src/indexer/indexer/contracts/erc20/ABI'
 import {logger} from 'src/logger'
-import {Filter} from 'src/types'
+import {Address, Filter, IERC20} from 'src/types'
 
 const l = logger(module, 'erc20:balance')
 const {call} = ABI
@@ -21,6 +21,7 @@ const filter: Filter = {
 export const onFinish = async (store: PostgresStorage) => {
   l.info(`Updating balances`)
   let count = 0
+  const tokensForUpdate = new Set<Address>()
 
   // since we update entries, iterator doesnt work
   while (true) {
@@ -29,14 +30,35 @@ export const onFinish = async (store: PostgresStorage) => {
       break
     }
 
-    const promises = balancesNeedUpdate.map(({ownerAddress, tokenAddress}) =>
-      call('balanceOf', [ownerAddress], tokenAddress).then((balance) =>
+    const promises = balancesNeedUpdate.map(({ownerAddress, tokenAddress}) => {
+      tokensForUpdate.add(tokenAddress)
+
+      return call('balanceOf', [ownerAddress], tokenAddress).then((balance) =>
         store.erc20.updateBalance(ownerAddress, tokenAddress, balance)
       )
-    )
+    })
     await Promise.all(promises)
     count += balancesNeedUpdate.length
   }
+
+  const promises = [...tokensForUpdate.values()].map(async (token) => {
+    const holders = await store.erc20.getHoldersCount(token)
+    const totalSupply = call('totalSupply', [], token)
+
+    console.log({holders, totalSupply})
+    const erc20 = {
+      holders: +holders || 0,
+      totalSupply: totalSupply,
+      transactionCount: 0,
+      address: token,
+    }
+
+    // @ts-ignore
+    return store.erc20.updateERC20(erc20)
+  })
+
+  await Promise.all(promises)
+
   l.info(`Updated ${count} balances`)
   // todo update holders and total supply
 }
