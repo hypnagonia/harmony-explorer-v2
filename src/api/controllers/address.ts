@@ -68,7 +68,13 @@ export async function getContractsByField(
     value: isAddress(value),
   })
 
-  return await withCache(['getContractByField', arguments], () =>
+  const res = await withCache(['getContractByField', arguments], () =>
     stores[shardID].contract.getContractByField(field, value)
   )
+
+  if (field === 'address') {
+    return res[0]
+  }
+
+  return res
 }
