@@ -54,7 +54,6 @@ export const RESTServer = async () => {
   l.info('REST API starting...')
   try {
     server = http.createServer(api).listen(config.api.rest.port, () => {
-      warmUpCache()
       l.info(`REST API listening at http://localhost:${config.api.rest.port}`)
     })
   } catch (error) {
