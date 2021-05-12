@@ -43,7 +43,7 @@ export const onFinish = async (store: PostgresStorage) => {
 
   const promises = [...tokensForUpdate.values()].map(async (token) => {
     const holders = await store.erc20.getHoldersCount(token)
-    const totalSupply = call('totalSupply', [], token)
+    const totalSupply = await call('totalSupply', [], token)
 
     console.log({holders, totalSupply})
     const erc20 = {
