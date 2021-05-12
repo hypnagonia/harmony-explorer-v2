@@ -4,6 +4,7 @@ import * as controllers from 'src/api/controllers'
 import {ShardID} from 'src/types/blockchain'
 import {catchAsync} from 'src/api/rest/utils'
 import {FilterEntry, Filter, FilterType, FilterOrderDirection, FilterOrderBy} from 'src/types'
+import {transactionRouter} from 'src/api/rest/routes/transaction'
 
 export const addressRouter = Router({mergeParams: true})
 
@@ -30,4 +31,13 @@ export async function getRelatedTransactions(req: Request, res: Response, next: 
   const s = +shardID as ShardID
   const block = await controllers.getRelatedTransactions(s, address, filter)
   next(block)
+}
+
+addressRouter.get('/:address/contract', catchAsync(getContractByAddress))
+
+export async function getContractByAddress(req: Request, res: Response, next: NextFunction) {
+  const {address, shardID} = req.params
+  const s = +shardID as ShardID
+  const txs = await controllers.getContractsByField(s, 'address', address)
+  next(txs)
 }

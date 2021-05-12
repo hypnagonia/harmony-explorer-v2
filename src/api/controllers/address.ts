@@ -1,15 +1,27 @@
-import {Filter, ShardID, Address} from 'src/types'
+import {
+  Filter,
+  ShardID,
+  Address,
+  ContractQueryField,
+  ContractQueryValue,
+  TransactionQueryValue,
+  InternalTransaction,
+} from 'src/types'
 import {validator} from 'src/utils/validators/validators'
 import {
+  is64CharHexHash,
   isAddress,
+  isBlockNumber,
   isFilters,
   isLimit,
   isOffset,
+  isOneOf,
   isOrderBy,
   isOrderDirection,
   isShard,
 } from 'src/utils/validators'
 import {stores} from 'src/store'
+import {withCache} from 'src/api/controllers/cache'
 
 export async function getRelatedTransactions(shardID: ShardID, address: Address, filter?: Filter) {
   validator({
@@ -42,4 +54,21 @@ export async function getRelatedTransactions(shardID: ShardID, address: Address,
   })
 
   return await stores[shardID].address.getRelatedTransactions(filter)
+}
+
+export async function getContractsByField(
+  shardID: ShardID,
+  field: ContractQueryField,
+  value: ContractQueryValue
+): Promise<InternalTransaction[] | null> {
+  validator({
+    field: isOneOf(field, ['address', 'creator_address']),
+  })
+  validator({
+    value: isAddress(value),
+  })
+
+  return await withCache(['getContractByField', arguments], () =>
+    stores[shardID].contract.getContractByField(field, value)
+  )
 }

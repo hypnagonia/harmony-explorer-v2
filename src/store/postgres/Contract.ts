@@ -1,6 +1,6 @@
 import {logger} from 'src/logger'
 import {IStorageContract} from 'src/store/interface'
-import {Contract, Filter, Transaction} from 'src/types'
+import {Contract, Filter, Transaction, ContractQueryField, ContractQueryValue} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -24,6 +24,14 @@ export class PostgresStorageContract implements IStorageContract {
     const q = buildSQLQuery(filter)
     const res = await this.query(`select * from contracts ${q}`, [])
 
+    return res.map(fromSnakeToCamelResponse)
+  }
+
+  getContractByField = async (
+    field: ContractQueryField,
+    value: ContractQueryValue
+  ): Promise<Transaction[]> => {
+    const res = await this.query(`select * from contracts where ${field}=$1;`, [value])
     return res.map(fromSnakeToCamelResponse)
   }
 }

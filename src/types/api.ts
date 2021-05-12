@@ -6,6 +6,9 @@ export type TransactionQueryField = 'block_number' | 'block_hash' | 'hash' | 'ha
 export type StakingTransactionQueryField = 'block_number' | 'block_hash' | 'hash'
 export type InternalTransactionQueryField = 'block_number' | 'transaction_hash' | 'block_hash'
 
+export type ContractQueryField = 'solidity_version' | 'ipfs_hash' | 'address' | 'creator_address'
+export type ContractQueryValue = string
+
 export type CountableEntities =
   | 'transactions'
   | 'blocks'

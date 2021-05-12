@@ -42,6 +42,7 @@ export class PostgresStorageAddress implements IStorageAddress {
     ${q}`,
       []
     )
+    console.log(q)
 
     return res.map(fromSnakeToCamelResponse)
   }
