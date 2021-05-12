@@ -32,7 +32,8 @@ export class PostgresStorageAddress implements IStorageAddress {
     // todo hack
     const q = buildSQLQuery(filter)
       .replace('address', 'address2transaction.address')
-      .replace('block_number', ' address2transaction.block_number')
+      .split('block_number')
+      .join(' address2transaction.block_number')
 
     const res = await this.query(
       `
