@@ -96,6 +96,6 @@ export class PostgresStorageERC20 implements IStorageERC20 {
       [token]
     )
 
-    return res.map(fromSnakeToCamelResponse)
+    return res[0].count
   }
 }
