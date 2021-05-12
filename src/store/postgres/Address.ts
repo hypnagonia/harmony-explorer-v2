@@ -31,8 +31,8 @@ export class PostgresStorageAddress implements IStorageAddress {
   getRelatedTransactions = async (filter: Filter): Promise<Address2Transaction[]> => {
     // todo hack
     const q = buildSQLQuery(filter)
-      .replace('block_number', 'address2transaction.block_number')
       .replace('address', 'address2transaction.address')
+      .replace('block_number', ' address2transaction.block_number')
 
     const res = await this.query(
       `
@@ -42,7 +42,6 @@ export class PostgresStorageAddress implements IStorageAddress {
     ${q}`,
       []
     )
-    console.log(q)
 
     return res.map(fromSnakeToCamelResponse)
   }
