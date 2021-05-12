@@ -13,6 +13,7 @@ import {signatureRouter} from 'src/api/rest/routes/signature'
 import {logsRouter} from 'src/api/rest/routes/logs'
 import {priceRouter} from 'src/api/rest/routes/price'
 import {metricsRouter} from 'src/api/rest/routes/metrics'
+import {erc20Router} from 'src/api/rest/routes/ERC20'
 import {warmUpCache} from 'src/api/controllers/cache/warmUpCache'
 
 import {transport} from 'src/api/rest/transport'
@@ -42,6 +43,7 @@ export const RESTServer = async () => {
   routerWithShards0.use('/signature', signatureRouter, transport)
   routerWithShards0.use('/price', priceRouter, transport)
   routerWithShards0.use('/metrics', metricsRouter, transport)
+  routerWithShards0.use('/erc20', erc20Router, transport)
 
   api.use('/v0', routerWithShards0)
 

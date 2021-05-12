@@ -24,6 +24,12 @@ export class PostgresStorageERC20 implements IStorageERC20 {
     return res.map(fromSnakeToCamelResponse)
   }
 
+  getAllERC20 = async (): Promise<IERC20[]> => {
+    const res = await this.query(`select * from erc20`, [])
+
+    return res.map(fromSnakeToCamelResponse)
+  }
+
   updateERC20 = async (erc20: IERC20) => {
     return this.query(
       `update erc20 set total_supply=$1, holders=$2, transaction_count=$3 where address=$4;`,
