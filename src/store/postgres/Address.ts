@@ -38,8 +38,8 @@ export class PostgresStorageAddress implements IStorageAddress {
     const res = await this.query(
       `
     select * from address2transaction 
-    left join transactions on address2transaction.transaction_hash = transactions.hash and address2transaction.transaction_type<>'staking_transaction' 
-    left join staking_transactions on address2transaction.transaction_hash = staking_transactions.hash and address2transaction.transaction_type='staking_transaction'   
+    inner join transactions on address2transaction.transaction_hash = transactions.hash and address2transaction.transaction_type<>'staking_transaction' 
+    inner join staking_transactions on address2transaction.transaction_hash = staking_transactions.hash and address2transaction.transaction_type='staking_transaction'   
     ${q}`,
       []
     )
