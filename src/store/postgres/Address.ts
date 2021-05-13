@@ -35,7 +35,7 @@ export class PostgresStorageAddress implements IStorageAddress {
       .split('block_number')
       .join(' address2transaction.block_number')
 
-    // todo staking txs are not returned
+    // todo staking txs are not returned!!!
     const res = await this.query(
       `
     select * from (select * from address2transaction ${q}) as a 

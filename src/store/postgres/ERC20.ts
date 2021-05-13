@@ -90,6 +90,12 @@ export class PostgresStorageERC20 implements IStorageERC20 {
     return res.map(fromSnakeToCamelResponse)
   }
 
+  getUserBalances = async (address: Address): Promise<IERC20Balance[]> => {
+    const res = await this.query(`select * from erc20_balance where owner_address=$1`, [address])
+
+    return res.map(fromSnakeToCamelResponse)
+  }
+
   getHoldersCount = async (token: Address): Promise<string> => {
     const res = await this.query(
       `select count(*) from erc20_balance where token_address=$1 and balance > 0`,

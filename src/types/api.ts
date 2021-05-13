@@ -1,6 +1,13 @@
 import * as blockchain from './blockchain'
 export type FilterType = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'startsFrom'
-export type FilterProperty = 'number' | 'block_number' | 'address' | 'data' | 'needUpdate'
+export type FilterProperty =
+  | 'number'
+  | 'block_number'
+  | 'address'
+  | 'data'
+  | 'needUpdate'
+  | 'owner_address'
+  | 'token_address'
 
 export type TransactionQueryField = 'block_number' | 'block_hash' | 'hash' | 'hash_harmony'
 export type StakingTransactionQueryField = 'block_number' | 'block_hash' | 'hash'

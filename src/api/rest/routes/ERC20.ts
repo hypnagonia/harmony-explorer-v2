@@ -14,3 +14,11 @@ export async function getAllERC20(req: Request, res: Response, next: NextFunctio
   const data = await controllers.getAllERC20()
   next(data)
 }
+
+erc20Router.get('/address/:address/balances', catchAsync(getUserERC20Balances))
+
+export async function getUserERC20Balances(req: Request, res: Response, next: NextFunction) {
+  const {address} = req.params
+  const data = await controllers.getUserERC20Balances(address)
+  next(data)
+}
