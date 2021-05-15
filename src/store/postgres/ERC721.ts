@@ -1,44 +1,44 @@
-import {IStorageERC20} from 'src/store/interface'
-import {Address, BlockNumber, Contract, Filter, IERC20, IERC20Balance} from 'src/types'
+import {IStorageERC721} from 'src/store/interface'
+import {Address, BlockNumber, Contract, Filter, IERC721} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
 
-export class PostgresStorageERC20 implements IStorageERC20 {
+export class PostgresStorageERC721 implements IStorageERC721 {
   query: Query
 
   constructor(query: Query) {
     this.query = query
   }
 
-  addERC20 = async (erc20: IERC20) => {
-    const {query, params} = generateQuery(erc20)
+  addERC721 = async (erc721: IERC721) => {
+    const {query, params} = generateQuery(erc721)
 
-    return await this.query(`insert into erc20 ${query} on conflict (address) do nothing;`, params)
+    return await this.query(`insert into erc721 ${query} on conflict (address) do nothing;`, params)
   }
 
-  getERC20 = async (filter: Filter): Promise<IERC20[]> => {
+  getERC721 = async (filter: Filter): Promise<IERC721[]> => {
     const q = buildSQLQuery(filter)
-    const res = await this.query(`select * from erc20 ${q}`, [])
+    const res = await this.query(`select * from erc721 ${q}`, [])
 
     return res.map(fromSnakeToCamelResponse)
   }
 
-  getAllERC20 = async (): Promise<IERC20[]> => {
-    const res = await this.query(`select * from erc20`, [])
+  getAllERC721 = async (): Promise<IERC721[]> => {
+    const res = await this.query(`select * from erc721`, [])
 
     return res.map(fromSnakeToCamelResponse)
   }
 
-  updateERC20 = async (erc20: IERC20) => {
+  updateERC721 = async (erc721: IERC721) => {
     return this.query(
-      `update erc20 set total_supply=$1, holders=$2, transaction_count=$3 where address=$4;`,
-      [erc20.totalSupply, erc20.holders, erc20.transactionCount, erc20.address]
+      `update erc721 set total_supply=$1, holders=$2, transaction_count=$3 where address=$4;`,
+      [erc721.totalSupply, erc721.holders, erc721.transactionCount, erc721.address]
     )
   }
 
-  getERC20LastSyncedBlock = async (address: Address): Promise<number> => {
-    const res = await this.query(`select last_update_block_number from erc20 where address=$1;`, [
+  getERC721LastSyncedBlock = async (address: Address): Promise<number> => {
+    const res = await this.query(`select last_update_block_number from erc721 where address=$1;`, [
       address,
     ])
 
@@ -46,14 +46,14 @@ export class PostgresStorageERC20 implements IStorageERC20 {
     return lastIndexedBlock || 0
   }
 
-  setERC20LastSyncedBlock = async (address: Address, blockNumber: BlockNumber) => {
-    return this.query(`update erc20 set last_update_block_number=$1 where address=$2;`, [
+  setERC721LastSyncedBlock = async (address: Address, blockNumber: BlockNumber) => {
+    return this.query(`update erc721 set last_update_block_number=$1 where address=$2;`, [
       blockNumber,
       address,
     ])
   }
 
-  getERC20Balance = async (owner: Address, token: Address): Promise<string | null> => {
+  /* getERC20Balance = async (owner: Address, token: Address): Promise<string | null> => {
     const res = await this.query(
       `select balance from erc20_balance where owner_address=$1 and token_address=$2`,
       [owner, token]
@@ -91,10 +91,7 @@ export class PostgresStorageERC20 implements IStorageERC20 {
   }
 
   getUserBalances = async (address: Address): Promise<IERC20Balance[]> => {
-    const res = await this.query(
-      `select * from erc20_balance where owner_address=$1 and balance > 0`,
-      [address]
-    )
+    const res = await this.query(`select * from erc20_balance where owner_address=$1 and balance > 0`, [address])
 
     return res.map(fromSnakeToCamelResponse)
   }
@@ -106,5 +103,5 @@ export class PostgresStorageERC20 implements IStorageERC20 {
     )
 
     return res[0].count
-  }
+  }*/
 }

@@ -1,10 +1,6 @@
 import {Response, Request, Router, NextFunction} from 'express'
-import {stores} from 'src/store'
 import * as controllers from 'src/api/controllers'
-import {ShardID} from 'src/types/blockchain'
 import {catchAsync} from 'src/api/rest/utils'
-import {FilterEntry, Filter, FilterType, FilterOrderDirection, FilterOrderBy} from 'src/types'
-import {transactionRouter} from 'src/api/rest/routes/transaction'
 
 export const erc20Router = Router({mergeParams: true})
 

@@ -265,6 +265,16 @@ export type IERC20Balance = {
   needUpdate: boolean
 }
 
+export type IERC721 = {
+  address: Address
+  symbol: string
+  name: string
+  totalSupply?: string
+  holders?: number
+  transactionCount?: number
+  lastUpdateBlockNumber?: number
+}
+
 export type BytecodeSignature = {
   hash: BytecodeSignatureHash
   signatures: string

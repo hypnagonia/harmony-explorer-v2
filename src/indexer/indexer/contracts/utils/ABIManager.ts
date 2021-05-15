@@ -17,7 +17,7 @@ export const ABIManager = (abi: IABI) => {
         signature = web3.eth.abi.encodeEventSignature(e)
       }
 
-      if (e.type === 'function' && (!e.outputs || !e.outputs.length)) {
+      if (e.type === 'function' && !e.outputs) {
         throw new Error(`ABI outputs definition expected for function "${e.name}"`)
       }
 

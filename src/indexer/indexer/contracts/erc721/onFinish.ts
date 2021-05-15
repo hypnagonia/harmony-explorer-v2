@@ -1,9 +1,9 @@
 import {PostgresStorage} from 'src/store/postgres'
-import {ABI} from 'src/indexer/indexer/contracts/erc20/ABI'
+import {ABI} from 'src/indexer/indexer/contracts/erc721/ABI'
 import {logger} from 'src/logger'
-import {Address, Filter, IERC20} from 'src/types'
+import {Address, Filter} from 'src/types'
 
-const l = logger(module, 'erc20:balance')
+const l = logger(module, 'erc721:balance')
 const {call} = ABI
 
 const filter: Filter = {
@@ -19,7 +19,9 @@ const filter: Filter = {
 }
 // update balances
 export const onFinish = async (store: PostgresStorage) => {
-  l.info(`Updating balances`)
+  // todo
+  /*
+l.info(`Updating balances`)
   let count = 0
   const tokensForUpdate = new Set<Address>()
 
@@ -60,4 +62,5 @@ export const onFinish = async (store: PostgresStorage) => {
   await Promise.all(promises)
 
   l.info(`Updated ${count} balances`)
+  */
 }

@@ -39,6 +39,7 @@
     "new-cap": "off",
     "quote-props": "off",
     "no-constant-condition": "off",
-    "prefer-rest-params": "off"
+    "prefer-rest-params": "off",
+    "no-unreachable": "off"
   }
 }
