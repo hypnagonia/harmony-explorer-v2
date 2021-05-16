@@ -13,7 +13,7 @@ import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from './ABI'
 import {logger} from 'src/logger'
 
-const {getEntryByName, decodeLog} = ABI
+const {getEntryByName, decodeLog, call} = ABI
 import {zeroAddress} from 'src/indexer/indexer/contracts/utils/zeroAddress'
 import {normalizeAddress} from 'src/utils/normalizeAddress'
 import {logTime} from 'src/utils/logTime'
@@ -94,6 +94,6 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
   await Promise.all(setUpdateNeeded.concat(setAddress2Transactions))
 
   l.info(
-    `${setUpdateNeeded.length} addresses marked need update balances for "${token.name}" ${token.address}`
+    `${setUpdateNeeded.length} tokens marked need update balances for "${token.name}" ${token.address}`
   )
 }

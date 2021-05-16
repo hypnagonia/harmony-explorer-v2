@@ -212,7 +212,6 @@ create table if not exists erc20_balance
 create index if not exists idx_erc20_balance_address on erc20_balance using hash (owner_address);
 create index if not exists idx_erc20_balance_token_address on erc20_balance using hash (token_address);
 
-
 create table if not exists erc721
 (
     address                  char(42) unique references contracts (address) not null,
@@ -231,6 +230,7 @@ create table if not exists erc721_asset
     owner_address            char(42)                             not null,
     token_address            char(42) references erc721 (address) not null,
     token_id                 text,
+    token_uri                text,
     meta                     jsonb,
     need_update              boolean,
     last_update_block_number bigint,
@@ -243,7 +243,7 @@ create index if not exists idx_erc721_asset_token_address on erc721_asset using 
 create table if not exists signatures
 (
     hash      varchar not null,
-    signature text not null,
+    signature text    not null,
     unique (hash, signature)
 );
 create index if not exists idx_event_signatures_hash on signatures using hash (hash);

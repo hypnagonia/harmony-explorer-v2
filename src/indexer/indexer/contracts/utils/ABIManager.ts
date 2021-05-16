@@ -58,7 +58,7 @@ export const ABIManager = (abi: IABI) => {
     if (!entry || entry.type !== 'function') {
       throw new Error(`${methodName} not found`)
     }
-    const inputs = web3.eth.abi.encodeParameters(entry.inputs, params)
+    const inputs = web3.eth.abi.encodeParameters(entry.inputs || [], params)
 
     const response = await RPCClient.call(0, {
       to: address,

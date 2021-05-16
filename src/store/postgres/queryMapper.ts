@@ -28,12 +28,13 @@ export const mapNaming: Record<string, string> = {
   token_address: 'tokenAddress',
   need_update: 'needUpdate',
   transaction_count: 'transactionCount',
-  token_id: 'tokenId',
+  token_id: 'tokenID',
   '"from"': 'from',
   '"to"': 'to',
   internal_transactions: 'internalTransactions',
   ipfs_hash: 'IPFSHash',
   last_update_block_number: 'lastUpdateBlockNumber',
+  token_uri: 'tokenURI',
 }
 
 export const mapNamingReverse: Record<string, string> = Object.keys(mapNaming).reduce((a, k) => {

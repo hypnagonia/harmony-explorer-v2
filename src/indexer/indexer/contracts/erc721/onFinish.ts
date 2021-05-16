@@ -1,9 +1,10 @@
 import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from 'src/indexer/indexer/contracts/erc721/ABI'
 import {logger} from 'src/logger'
-import {Address, Filter} from 'src/types'
+import {Address, Filter, IERC20, IERC721TokenID} from 'src/types'
+import nodeFetch from 'node-fetch'
 
-const l = logger(module, 'erc721:balance')
+const l = logger(module, 'erc721:assets')
 const {call} = ABI
 
 const filter: Filter = {
@@ -21,32 +22,42 @@ const filter: Filter = {
 export const onFinish = async (store: PostgresStorage) => {
   console.log('erc721 onFinish')
   // todo
-  /*
-l.info(`Updating balances`)
+
+  l.info(`Updating assets`)
   let count = 0
   const tokensForUpdate = new Set<Address>()
 
   // since we update entries, iterator doesnt work
   while (true) {
-    const balancesNeedUpdate = await store.erc20.getBalances(filter)
-    if (!balancesNeedUpdate.length) {
+    const assetsNeedUpdate = await store.erc721.getAssets(filter)
+    if (!assetsNeedUpdate.length) {
       break
     }
+    console.log('assetsNeedUpdate', assetsNeedUpdate.length)
 
-    const promises = balancesNeedUpdate.map(({ownerAddress, tokenAddress}) => {
+    const promises = assetsNeedUpdate.map(async ({tokenAddress, tokenID}) => {
       tokensForUpdate.add(tokenAddress)
 
-      return call('balanceOf', [ownerAddress], tokenAddress).then((balance) =>
-        store.erc20.updateBalance(ownerAddress, tokenAddress, balance)
-      )
+      const uri = await call('tokenURI', [tokenID], tokenAddress)
+
+      const owner = await call('ownerOf', [tokenID], tokenAddress)
+      let meta = {} as any
+
+      try {
+        meta = await nodeFetch(uri).then((r) => r.json())
+      } catch (e) {
+        // l.warn(`Failed to fetch meta from ${uri} for token ${tokenAddress} ${tokenID}`)
+      }
+
+      return store.erc721.updateAsset(owner, tokenAddress, uri, meta, tokenID as IERC721TokenID)
     })
     await Promise.all(promises)
-    count += balancesNeedUpdate.length
+    count += assetsNeedUpdate.length
   }
 
   const promises = [...tokensForUpdate.values()].map(async (token) => {
-    const holders = await store.erc20.getHoldersCount(token)
-    const totalSupply = await call('totalSupply', [], token)
+    const holders = await store.erc721.getHoldersCount(token)
+    const totalSupply = await call('tokenURI', [], token)
     // todo tx count ?
 
     const erc20 = {
@@ -63,5 +74,4 @@ l.info(`Updating balances`)
   await Promise.all(promises)
 
   l.info(`Updated ${count} balances`)
-  */
 }

@@ -275,6 +275,16 @@ export type IERC721 = {
   lastUpdateBlockNumber?: number
 }
 
+export type IERC721Asset = {
+  ownerAddress: Address
+  tokenAddress: Address
+  tokenID?: string
+  tokenURI?: string
+  meta?: string
+  needUpdate?: boolean
+  lastUpdateBlockNumber?: number
+}
+
 export type IERC721TokenID = string
 
 export type BytecodeSignature = {
