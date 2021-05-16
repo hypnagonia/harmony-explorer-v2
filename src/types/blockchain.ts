@@ -275,6 +275,8 @@ export type IERC721 = {
   lastUpdateBlockNumber?: number
 }
 
+export type IERC721TokenID = string
+
 export type BytecodeSignature = {
   hash: BytecodeSignatureHash
   signatures: string

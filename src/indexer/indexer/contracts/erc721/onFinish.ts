@@ -19,6 +19,7 @@ const filter: Filter = {
 }
 // update balances
 export const onFinish = async (store: PostgresStorage) => {
+  console.log('erc721 onFinish')
   // todo
   /*
 l.info(`Updating balances`)

@@ -7,6 +7,7 @@ import {
   TransactionHash,
   TransactionHarmonyHash,
   AddressTransactionType,
+  IERC721TokenID,
 } from 'src/types'
 import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from './ABI'
@@ -35,12 +36,10 @@ type setEntry = {
   address: Address
   blockNumber: BlockNumber
   transactionHash: TransactionHash
+  tokenId: IERC721TokenID
 }
 
 export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: IParams) => {
-  // todo
-  return
-
   const filteredLogs = logs.filter(({topics}) => topics.includes(transferEvent))
   if (!filteredLogs.length) {
     return
@@ -49,27 +48,25 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
 
   const addressesForUpdate = new Map<Address, setEntry>()
 
-  // todo ?
-  const totalSupply = BigInt(token.totalSupply)
-  const holders = BigInt(token.holders)
-  const transactionCount = token.transactionCount || 0
-
   for (const log of filteredLogs) {
     const [topic0, ...topics] = log.topics
-    const {from, to, value} = decodeLog('Transfer', log.data, topics)
+    const {from, to, tokenId} = decodeLog('Transfer', log.data, topics)
 
     addressesForUpdate.set(from, {
       address: from,
       blockNumber: +log.blockNumber,
       transactionHash: log.transactionHash,
+      tokenId,
     })
     addressesForUpdate.set(to, {
       address: to,
       blockNumber: +log.blockNumber,
       transactionHash: log.transactionHash,
+      tokenId,
     })
   }
 
+  // todo burn token?
   const arrFromSet = [...addressesForUpdate.values()].filter(
     (o) => ![zeroAddress].includes(o.address)
   )
@@ -90,9 +87,9 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
     )
     .map((o) => store.address.addAddress2Transaction(o))
 
-  const setUpdateNeeded = arrFromSet
-    .map((o) => o.address)
-    .map((a) => store.erc20.setNeedUpdateBalance(a!, tokenAddress))
+  const setUpdateNeeded = arrFromSet.map((a) =>
+    store.erc721.setNeedUpdateAsset(a.address!, tokenAddress, a.tokenId!)
+  )
 
   await Promise.all(setUpdateNeeded.concat(setAddress2Transactions))
 

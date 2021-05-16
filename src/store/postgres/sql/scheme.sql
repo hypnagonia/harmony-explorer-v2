@@ -232,6 +232,7 @@ create table if not exists erc721_asset
     token_address            char(42) references erc721 (address) not null,
     token_id                 text,
     meta                     jsonb,
+    need_update              boolean,
     last_update_block_number bigint,
     unique (owner_address, token_address, token_id)
 );

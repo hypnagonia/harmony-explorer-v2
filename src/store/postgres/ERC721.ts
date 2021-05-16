@@ -1,5 +1,5 @@
 import {IStorageERC721} from 'src/store/interface'
-import {Address, BlockNumber, Contract, Filter, IERC721} from 'src/types'
+import {Address, BlockNumber, Contract, Filter, IERC721, IERC721TokenID} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -60,19 +60,19 @@ export class PostgresStorageERC721 implements IStorageERC721 {
     )
 
     return res[0] || null
-  }
+  }*/
 
-  setNeedUpdateBalance = async (owner: Address, token: Address) => {
+  setNeedUpdateAsset = async (owner: Address, token: Address, tokenID: IERC721TokenID) => {
     return this.query(
       `
-            insert into erc20_balance(owner_address, token_address, need_update) values($1, $2, true)
-                on conflict(owner_address, token_address)
+            insert into erc721_asset(owner_address, token_address, token_id, need_update) values($1, $2, $3, true)
+                on conflict(owner_address, token_address, token_id)
                 do update set need_update = true;
           `,
-      [owner, token]
+      [owner, token, tokenID]
     )
   }
-
+  /*
   updateBalance = async (owner: Address, token: Address, balance: string) => {
     return this.query(
       `
@@ -80,16 +80,17 @@ export class PostgresStorageERC721 implements IStorageERC721 {
           `,
       [balance, owner, token]
     )
-  }
+  }*/
 
-  getBalances = async (filter: Filter): Promise<IERC20Balance[]> => {
+  /* getBalances = async (filter: Filter): Promise<IERC20Balance[]> => {
     const q = buildSQLQuery(filter)
 
     const res = await this.query(`select * from erc20_balance ${q}`, [])
 
     return res.map(fromSnakeToCamelResponse)
-  }
+  }*/
 
+  /*
   getUserBalances = async (address: Address): Promise<IERC20Balance[]> => {
     const res = await this.query(`select * from erc20_balance where owner_address=$1 and balance > 0`, [address])
 
