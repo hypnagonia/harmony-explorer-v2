@@ -59,13 +59,12 @@ export const onFinish = async (store: PostgresStorage) => {
     count += assetsNeedUpdate.length
   }
 
-  /*
   const promises = [...tokensForUpdate.values()].map(async (token) => {
     const holders = await store.erc721.getHoldersCount(token)
-    const totalSupply = await call('tokenURI', [], token)
+    const totalSupply = await call('totalSupply', [], token)
     // todo tx count ?
 
-    const erc20 = {
+    const erc721 = {
       holders: +holders || 0,
       totalSupply: totalSupply,
       transactionCount: 0,
@@ -73,11 +72,10 @@ export const onFinish = async (store: PostgresStorage) => {
     }
 
     // @ts-ignore
-    return store.erc20.updateERC20(erc20)
+    return store.erc721.updateERC721(erc721)
   })
 
   await Promise.all(promises)
-  */
 
   l.info(`Updated ${count} assets`)
 }

@@ -148,15 +148,11 @@ grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockB
 - [x] Index Transactions Trace Calls
 - [x] Index Internal Transactions
 - [x] Detect Contracts
-- [ ] Track HRC20
-- [ ] Track HRC721
+- [x] Track HRC20
+- [x] Track HRC721
 - [ ] Track Balances
 - [ ] Contract Verification
-- [ ] Methods/Events signature db
-
-### API
-
-- [ ] Composite filters
+- [x] Methods/Events signature db
 
 #### REST
 
@@ -165,9 +161,9 @@ grpc_cli --protofiles=src/api/grpc/proto/api.proto call 127.0.0.1:5051 GetBlockB
 - [x] Staking Transactions
 - [x] Internal Transactions
 - [x] Addresses
-- [ ] Metrics
-- [ ] ERC20 tokens
-- [ ] ERC721 tokens
+- [x] Metrics
+- [x] ERC20 tokens
+- [x] ERC721 tokens
 - [ ] Documentation
 
 ### Misc
