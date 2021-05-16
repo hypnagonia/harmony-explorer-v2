@@ -137,7 +137,7 @@ export class ContractIndexer {
         }
 
         if (typeof task.trackEvents.process === 'function') {
-          // await this.trackEvents(task)
+          await this.trackEvents(task)
         }
 
         if (typeof task.onFinish === 'function') {

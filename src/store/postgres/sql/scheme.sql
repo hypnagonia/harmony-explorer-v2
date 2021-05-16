@@ -234,7 +234,7 @@ create table if not exists erc721_asset
     meta                     jsonb,
     need_update              boolean,
     last_update_block_number bigint,
-    unique (owner_address, token_address, token_id)
+    unique (token_address, token_id)
 );
 
 create index if not exists idx_erc721_asset_owner_address on erc721_asset using hash (owner_address);

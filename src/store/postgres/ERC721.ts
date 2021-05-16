@@ -67,7 +67,7 @@ export class PostgresStorageERC721 implements IStorageERC721 {
       `
             insert into erc721_asset(owner_address, token_address, token_id, need_update) 
                 values($1, $2, $3, true)
-                on conflict(owner_address, token_address, token_id)
+                on conflict(token_address, token_id)
                 do update set need_update = true;
           `,
       [owner, token, tokenID]
@@ -83,7 +83,7 @@ export class PostgresStorageERC721 implements IStorageERC721 {
   ) => {
     return this.query(
       `
-          update erc721_asset set token_uri=$1, meta=$2, owner=$3, need_update=false 
+          update erc721_asset set token_uri=$1, meta=$2, owner_address=$3, need_update=false 
           where token_address=$4 and token_id=$5;
           `,
       [tokenURI, meta, owner, tokenAddress, tokenID]

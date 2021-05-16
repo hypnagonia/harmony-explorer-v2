@@ -8,7 +8,7 @@ const l = logger(module, 'erc721:assets')
 const {call} = ABI
 
 const filter: Filter = {
-  limit: 100,
+  limit: 10,
   offset: 0,
   filters: [
     {
@@ -49,12 +49,14 @@ export const onFinish = async (store: PostgresStorage) => {
         // l.warn(`Failed to fetch meta from ${uri} for token ${tokenAddress} ${tokenID}`)
       }
 
+      console.log('saving')
       return store.erc721.updateAsset(owner, tokenAddress, uri, meta, tokenID as IERC721TokenID)
     })
     await Promise.all(promises)
     count += assetsNeedUpdate.length
   }
 
+  /*
   const promises = [...tokensForUpdate.values()].map(async (token) => {
     const holders = await store.erc721.getHoldersCount(token)
     const totalSupply = await call('tokenURI', [], token)
@@ -72,6 +74,7 @@ export const onFinish = async (store: PostgresStorage) => {
   })
 
   await Promise.all(promises)
+  */
 
-  l.info(`Updated ${count} balances`)
+  l.info(`Updated ${count} assets`)
 }
