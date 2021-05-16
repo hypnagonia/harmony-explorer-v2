@@ -53,14 +53,14 @@ export class PostgresStorageERC721 implements IStorageERC721 {
     ])
   }
 
-  /* getERC20Balance = async (owner: Address, token: Address): Promise<string | null> => {
+  getERC721Assets = async (owner: Address, token: Address): Promise<IERC721Asset[]> => {
     const res = await this.query(
-      `select balance from erc20_balance where owner_address=$1 and token_address=$2`,
+      `select * from erc721_asset where owner_address=$1 and token_address=$2`,
       [owner, token]
     )
 
-    return res[0] || null
-  }*/
+    return res.map(fromSnakeToCamelResponse)
+  }
 
   setNeedUpdateAsset = async (owner: Address, token: Address, tokenID: IERC721TokenID) => {
     return this.query(
@@ -98,17 +98,15 @@ export class PostgresStorageERC721 implements IStorageERC721 {
     return res.map(fromSnakeToCamelResponse)
   }
 
-  /*
-  getUserBalances = async (address: Address): Promise<IERC20Balance[]> => {
-    const res = await this.query(`select * from erc20_balance where owner_address=$1 and balance > 0`, [address])
+  getUserAssets = async (address: Address): Promise<IERC721Asset[]> => {
+    const res = await this.query(`select * from erc721_asset where owner_address=$1`, [address])
 
     return res.map(fromSnakeToCamelResponse)
   }
-*/
 
   getHoldersCount = async (token: Address): Promise<string> => {
     const res = await this.query(
-      `select count(distinct(owner_address)) from erc721_asset where token_address=$1 and balance > 0`,
+      `select count(distinct(owner_address)) from erc721_asset where token_address=$1`,
       [token]
     )
 

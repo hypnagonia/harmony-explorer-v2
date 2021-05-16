@@ -3,6 +3,7 @@ import {ABI} from 'src/indexer/indexer/contracts/erc721/ABI'
 import {logger} from 'src/logger'
 import {Address, Filter, IERC20, IERC721TokenID} from 'src/types'
 import nodeFetch from 'node-fetch'
+import {normalizeAddress} from 'src/utils/normalizeAddress'
 
 const l = logger(module, 'erc721:assets')
 const {call} = ABI
@@ -38,19 +39,21 @@ export const onFinish = async (store: PostgresStorage) => {
     const promises = assetsNeedUpdate.map(async ({tokenAddress, tokenID}) => {
       tokensForUpdate.add(tokenAddress)
 
+      // todo dont fetch meta if already there
       const uri = await call('tokenURI', [tokenID], tokenAddress)
 
-      const owner = await call('ownerOf', [tokenID], tokenAddress)
+      const owner = await call('ownerOf', [tokenID], tokenAddress).then(normalizeAddress)
       let meta = {} as any
 
       try {
+        // todo validate size
         meta = await nodeFetch(uri).then((r) => r.json())
       } catch (e) {
         // l.warn(`Failed to fetch meta from ${uri} for token ${tokenAddress} ${tokenID}`)
       }
 
       console.log('saving')
-      return store.erc721.updateAsset(owner, tokenAddress, uri, meta, tokenID as IERC721TokenID)
+      return store.erc721.updateAsset(owner!, tokenAddress, uri, meta, tokenID as IERC721TokenID)
     })
     await Promise.all(promises)
     count += assetsNeedUpdate.length
