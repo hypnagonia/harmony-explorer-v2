@@ -22,7 +22,13 @@ yarn start
 
 ## Production mode
 
-todo
+### Docker
+
+```
+docker build .
+# map ports
+docker run -p 8000:8000 -p 3002:3002 -p 3001:3001
+```
 
 # Indexer
 
