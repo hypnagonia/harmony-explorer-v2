@@ -18,3 +18,11 @@ export async function getUserERC721Assets(req: Request, res: Response, next: Nex
   const data = await controllers.getUserERC721Assets(address)
   next(data)
 }
+
+erc721Router.get('/token/:address/balances', catchAsync(getTokenERC721Assets))
+
+export async function getTokenERC721Assets(req: Request, res: Response, next: NextFunction) {
+  const {address} = req.params
+  const data = await controllers.getTokenERC721Assets(address)
+  next(data)
+}
