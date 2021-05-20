@@ -24,7 +24,10 @@ export const withCache = async (keys: any[], f: Function, maxAge?: number) => {
   }
 
   const res = await f()
-  cache.set(key, res, maxAge)
+
+  if (res || (Array.isArray(res) && res.length)) {
+    cache.set(key, res, maxAge)
+  }
 
   return res
 }

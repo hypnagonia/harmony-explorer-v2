@@ -107,6 +107,8 @@ export class BlockIndexer {
         return Promise.all(
           blocks.map(async (block) => {
             block.transactions.forEach((tx) => {
+              // todo handle empty create to addresses
+              // 0x262492c68baaf4a3123cf30d229b5d3907204ba723a521b3d48b6d84ef344640
               addressIndexer.add(block, tx.ethHash, 'transaction', tx.from, tx.to)
             })
 
