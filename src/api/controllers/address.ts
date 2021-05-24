@@ -5,6 +5,7 @@ import {
   ContractQueryField,
   ContractQueryValue,
   TransactionQueryValue,
+  AddressTransactionType,
   InternalTransaction,
 } from 'src/types'
 import {validator} from 'src/utils/validators/validators'
@@ -54,6 +55,51 @@ export async function getRelatedTransactions(shardID: ShardID, address: Address,
   })
 
   return await stores[shardID].address.getRelatedTransactions(filter)
+}
+
+export async function getRelatedTransactionsByType(
+  shardID: ShardID,
+  address: Address,
+  type: AddressTransactionType,
+  filter?: Filter
+) {
+  validator({
+    shardID: isShard(shardID),
+    address: isAddress(address),
+    type: isOneOf(type, [
+      'transaction',
+      'staking_transaction',
+      'internal_transaction',
+      'erc20',
+      'erc721',
+    ]),
+  })
+
+  if (filter) {
+    validator({
+      offset: isOffset(filter.offset),
+      limit: isLimit(filter.limit),
+      orderBy: isOrderBy(filter.orderBy, ['block_number']),
+      orderDirection: isOrderDirection(filter.orderDirection),
+      filter: isFilters(filter.filters, ['block_number']),
+    })
+  } else {
+    filter = {
+      offset: 0,
+      limit: 10,
+      orderBy: 'block_number',
+      orderDirection: 'desc',
+      filters: [],
+    }
+  }
+
+  filter.filters.push({
+    value: `'${address}'`,
+    type: 'eq',
+    property: 'address',
+  })
+
+  return await stores[shardID].address.getRelatedTransactionsByType(filter, type)
 }
 
 export async function getContractsByField(

@@ -1,5 +1,5 @@
 import {IStorageAddress} from 'src/store/interface'
-import {Address2Transaction, Block, Filter, Address} from 'src/types'
+import {Address2Transaction, Block, Filter, AddressTransactionType} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -14,20 +14,12 @@ export class PostgresStorageAddress implements IStorageAddress {
   addAddress2Transaction = async (entry: Address2Transaction) => {
     const {query, params} = generateQuery(entry)
     return await this.query(
-      `insert into address2transaction ${query} on conflict (address, transaction_hash) do nothing;`,
+      `insert into address2transaction ${query} on conflict (address, transaction_hash, transaction_type) do nothing;`,
       params
     )
   }
 
-  /*
-  getRelatedTransactions = async (filter: Filter): Promise<Address2Transaction[]> => {
-    const q = buildSQLQuery(filter)
-    const res = await this.query(`select * from address2transaction ${q}`, [])
-
-    return res.map(fromSnakeToCamelResponse)
-  }
-  */
-
+  // todo warning depricated
   getRelatedTransactions = async (filter: Filter): Promise<Address2Transaction[]> => {
     // todo hack
     const q = buildSQLQuery(filter)
@@ -42,6 +34,40 @@ export class PostgresStorageAddress implements IStorageAddress {
     left join staking_transactions on 
     (a.transaction_hash = staking_transactions.hash and a.transaction_type='staking_transaction')
     left join transactions on (a.transaction_hash = transactions.hash and a.transaction_type<>'staking_transaction')
+        `,
+      []
+    )
+
+    return res.map(fromSnakeToCamelResponse)
+  }
+
+  getRelatedTransactionsByType = async (
+    filter: Filter,
+    type: AddressTransactionType
+  ): Promise<Address2Transaction[]> => {
+    filter.filters.push({
+      value: `'${type}'`,
+      type: 'eq',
+      property: 'transaction_type',
+    })
+
+    const q = buildSQLQuery(filter)
+
+    if (type === 'staking_transaction') {
+      const res = await this.query(
+        `
+    select * from (select * from address2transaction ${q}) as a 
+    left join staking_transactions on a.transaction_hash = staking_transactions.hash
+        `,
+        []
+      )
+      return res.map(fromSnakeToCamelResponse)
+    }
+
+    const res = await this.query(
+      `
+    select * from (select * from address2transaction ${q}) as a 
+    left join transactions on a.transaction_hash = transactions.hash
         `,
       []
     )

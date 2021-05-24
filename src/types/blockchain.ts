@@ -189,6 +189,18 @@ export type RPCInternalTransactionFromBlockTrace = {
     output: ByteCode
   }
   action: {
+    // rpc is not stable
+    /*
+    curl --location --request POST 'http://52.88.35.21:9500' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+"jsonrpc": "2.0",
+  "method": "trace_block",
+  "id": 1,
+  "params": ["0x34adb5"]
+}'
+     */
+    address?: Address
     callType: TraceCallTypes
     from: Address
     gas: string
@@ -227,7 +239,13 @@ export type Transaction = {
   eth: RPCTransaction
 }
 
-export type AddressTransactionType = 'transaction' | 'staking_transaction' | 'internal_transaction'
+export type AddressTransactionType =
+  | 'transaction'
+  | 'staking_transaction'
+  | 'internal_transaction'
+  | 'erc20'
+  | 'erc721'
+
 export type Address2Transaction = {
   blockNumber: BlockNumber
   transactionHash: TransactionHash | TransactionHarmonyHash

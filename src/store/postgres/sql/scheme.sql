@@ -125,7 +125,11 @@ $$
         create type transaction_type as enum (
             'transaction',
             'staking_transaction',
-            'internal_transaction');
+            'internal_transaction',
+            /*  transfers for erc tokens */
+            'erc20',
+            'erc721'
+            );
     exception
         when duplicate_object then null;
     end
@@ -138,12 +142,32 @@ create table if not exists address2transaction
     block_number     bigint           not null,
     transaction_hash char(66)         not null,
     transaction_type transaction_type not null,
-    unique (address, transaction_hash)
+    unique (address, transaction_hash, transaction_type)
 );
 
 create index if not exists idx_address2transaction_address on address2transaction using hash (address);
 create index if not exists idx_address2transaction_block_number on address2transaction (block_number);
-/* todo partial index by type */
+
+create index if not exists idx_address2transaction_address_transaction on address2transaction using hash (address)
+    where transaction_type='transaction';
+create index if not exists idx_address2transaction_block_number_transaction on address2transaction (block_number)
+    where transaction_type='transaction';
+create index if not exists idx_address2transaction_address_staking_transaction on address2transaction using hash (address)
+    where transaction_type='staking_transaction';
+create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction (block_number)
+    where transaction_type='staking_transaction';
+create index if not exists idx_address2transaction_address_internal_transaction on address2transaction using hash (address)
+    where transaction_type='internal_transaction';
+create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction (block_number)
+    where transaction_type='internal_transaction';
+create index if not exists idx_address2transaction_address_erc20 on address2transaction using hash (address)
+    where transaction_type='erc20';
+create index if not exists idx_address2transaction_block_number_erc20 on address2transaction (block_number)
+    where transaction_type='erc20';
+create index if not exists idx_address2transaction_address_erc721 on address2transaction using hash (address)
+    where transaction_type='erc721';
+create index if not exists idx_address2transaction_block_number_erc721 on address2transaction (block_number)
+    where transaction_type='erc721';
 
 /*
 types call staticcall create delegatecall

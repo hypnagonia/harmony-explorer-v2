@@ -82,7 +82,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
           blockNumber: o.blockNumber,
           transactionHash: o.transactionHash,
           address: o.address,
-          transactionType: 'internal_transaction',
+          transactionType: 'erc721',
         } as Address2Transaction)
     )
     .map((o) => store.address.addAddress2Transaction(o))

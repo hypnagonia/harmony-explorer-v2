@@ -8,6 +8,7 @@ export type FilterProperty =
   | 'needUpdate'
   | 'owner_address'
   | 'token_address'
+  | 'transaction_type'
 
 export type TransactionQueryField = 'block_number' | 'block_hash' | 'hash' | 'hash_harmony'
 export type StakingTransactionQueryField = 'block_number' | 'block_hash' | 'hash'

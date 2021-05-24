@@ -46,11 +46,6 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
 
   const addressesForUpdate = new Map<Address, setEntry>()
 
-  // todo ?
-  const totalSupply = BigInt(token.totalSupply)
-  const holders = BigInt(token.holders)
-  const transactionCount = token.transactionCount || 0
-
   for (const log of filteredLogs) {
     const [topic0, ...topics] = log.topics
     const {from, to, value} = decodeLog('Transfer', log.data, topics)
@@ -82,7 +77,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
           blockNumber: o.blockNumber,
           transactionHash: o.transactionHash,
           address: o.address,
-          transactionType: 'internal_transaction',
+          transactionType: 'erc20',
         } as Address2Transaction)
     )
     .map((o) => store.address.addAddress2Transaction(o))

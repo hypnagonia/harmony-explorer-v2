@@ -65,7 +65,7 @@ export const mapInternalTransactionFromBlockTrace = (blockNumber: BlockNumber) =
     blockNumber: tx.blockNumber || blockNumber,
     transactionHash: tx.transactionHash,
     from: tx.action.from,
-    to: tx.action.to || (tx.result ? tx.result.address : null),
+    to: tx.action.to || tx.action.address || (tx.result ? tx.result.address : null),
     gas: tx.action.gas || '0x0', // can be undefined
     gasUsed: tx.result ? tx.result.gasUsed : '0x0',
     input: tx.action.input,
