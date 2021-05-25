@@ -71,7 +71,9 @@ create table if not exists transactions
     s                 text,
     to_shard_id       smallint,
     transaction_index smallint,
-    v                 text
+    v                 text,
+    success            boolean,
+    error              text
 );
 create index if not exists idx_transactions_hash on transactions using hash (hash);
 create index if not exists idx_transactions_hash_harmony on transactions using hash (hash_harmony);
@@ -152,10 +154,12 @@ create index if not exists idx_address2transaction_address_transaction on addres
     where transaction_type='transaction';
 create index if not exists idx_address2transaction_block_number_transaction on address2transaction (block_number)
     where transaction_type='transaction';
+
 create index if not exists idx_address2transaction_address_staking_transaction on address2transaction using hash (address)
     where transaction_type='staking_transaction';
 create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction (block_number)
     where transaction_type='staking_transaction';
+
 create index if not exists idx_address2transaction_address_internal_transaction on address2transaction using hash (address)
     where transaction_type='internal_transaction';
 create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction (block_number)

@@ -99,7 +99,11 @@ export async function getRelatedTransactionsByType(
     property: 'address',
   })
 
-  return await stores[shardID].address.getRelatedTransactionsByType(filter, type)
+  return await withCache(
+    ['getRelatedTransactionsByType', arguments],
+    () => stores[shardID].address.getRelatedTransactionsByType(filter!, type),
+    2000
+  )
 }
 
 export async function getContractsByField(
