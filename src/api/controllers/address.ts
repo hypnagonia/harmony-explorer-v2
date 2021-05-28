@@ -96,8 +96,8 @@ export async function getRelatedTransactionsByType(
   */
 
   filter = {
-    offset: 0,
-    limit: 10,
+    offset: filter ? filter.offset : 0,
+    limit: filter ? filter.limit : 10,
     orderBy: 'block_number',
     orderDirection: 'desc',
     filters: [],
