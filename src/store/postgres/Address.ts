@@ -66,7 +66,7 @@ export class PostgresStorageAddress implements IStorageAddress {
         []
       )
       if (isRes.length < filter ? filter.limit : 10) {
-        return isRes
+        return isRes.map(fromSnakeToCamelResponse)
       }
 
       const res = await this.query(
@@ -88,7 +88,7 @@ export class PostgresStorageAddress implements IStorageAddress {
       []
     )
     if (isRes.length < filter ? filter.limit : 10) {
-      return isRes
+      return isRes.map(fromSnakeToCamelResponse)
     }
 
     const res = await this.query(
