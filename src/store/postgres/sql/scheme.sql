@@ -148,32 +148,31 @@ create table if not exists address2transaction
 );
 
 create index if not exists idx_address2transaction_address_btree on address2transaction using btree (address);
-create index if not exists idx_address2transaction_block_number on address2transaction (block_number  desc);
+create index if not exists idx_address2transaction_block_number on address2transaction using btree (block_number  desc, address);
 
 create index if not exists idx_address2transaction_address_transaction_btree on address2transaction using btree (address)
     where transaction_type='transaction';
-create index if not exists idx_address2transaction_block_number_transaction on address2transaction (block_number desc)
+create index if not exists idx_address2transaction_block_number_transaction on address2transaction using btree (block_number  desc, address)
     where transaction_type='transaction';
 
 create index if not exists idx_address2transaction_address_staking_transaction_btree on address2transaction using btree (address)
     where transaction_type='staking_transaction';
-create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction (block_number desc)
+create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction using btree (block_number  desc, address)
     where transaction_type='staking_transaction';
 
 create index if not exists idx_address2transaction_address_internal_transaction_btree on address2transaction using btree (address)
     where transaction_type='internal_transaction';
-create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction (block_number desc)
+create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction using btree (block_number  desc, address)
     where transaction_type='internal_transaction';
 
 create index if not exists idx_address2transaction_address_erc20_btree on address2transaction using btree (address)
     where transaction_type='erc20';
-create index if not exists idx_address2transaction_block_number_erc20 on address2transaction (block_number desc)
+create index if not exists idx_address2transaction_block_number_erc20 on address2transaction using btree (block_number  desc, address)
     where transaction_type='erc20';
 
 create index if not exists idx_address2transaction_address_erc721_btree on address2transaction using btree (address)
     where transaction_type='erc721';
-
-create index if not exists idx_address2transaction_block_number_erc721 on address2transaction (block_number desc)
+create index if not exists idx_address2transaction_block_number_erc721 on address2transaction using btree (block_number  desc, address)
     where transaction_type='erc721';
 
 /*

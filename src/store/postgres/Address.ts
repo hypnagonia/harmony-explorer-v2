@@ -27,7 +27,6 @@ export class PostgresStorageAddress implements IStorageAddress {
       .split('block_number')
       .join(' address2transaction.block_number')
 
-    // todo staking txs are not returned!!!
     const res = await this.query(
       `
     select * from (select * from address2transaction ${q}) as a 
@@ -66,15 +65,13 @@ export class PostgresStorageAddress implements IStorageAddress {
         `,
         []
       )
-      if (!isRes.length) {
-        return []
+      if (isRes.length < filter ? filter.limit : 10) {
+        return isRes
       }
-
-      const q3 = q.replace('limit 10', `limit ${isRes.length}`)
 
       const res = await this.query(
         `
-    select * from (select * from address2transaction ${q3}) as a 
+    select * from (select * from address2transaction ${q}) as a 
     left join staking_transactions on a.transaction_hash = staking_transactions.hash
         `,
         []
@@ -90,15 +87,13 @@ export class PostgresStorageAddress implements IStorageAddress {
         `,
       []
     )
-    if (!isRes.length) {
-      return []
+    if (isRes.length < filter ? filter.limit : 10) {
+      return isRes
     }
-
-    const q3 = q.replace('limit 10', `limit ${isRes.length}`)
 
     const res = await this.query(
       `
-    select * from (select * from address2transaction ${q3}) as a 
+    select * from (select * from address2transaction ${q}) as a 
     left join transactions on a.transaction_hash = transactions.hash
         `,
       []
