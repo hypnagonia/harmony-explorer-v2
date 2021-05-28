@@ -27,7 +27,7 @@ create table if not exists blocks
     primary key (number)
 );
 
-create index if not exists idx_blocks_number on blocks (number);
+create index if not exists idx_blocks_number on blocks (number desc);
 create index if not exists idx_blocks_hash on blocks using hash (hash);
 create index if not exists idx_blocks_timestamp on blocks (timestamp);
 
@@ -48,8 +48,8 @@ create table if not exists logs
 create index if not exists idx_logs_address on logs using hash (address);
 create index if not exists idx_logs_transaction_hash on logs using hash (transaction_hash);
 create index if not exists idx_logs_block_hash on logs using hash (block_hash);
-create index if not exists idx_logs_block_number on logs (block_number);
-create index if not exists idx_logs_block_number_address on logs (block_number, address);
+create index if not exists idx_logs_block_number on logs (block_number desc);
+create index if not exists idx_logs_block_number_address on logs (block_number desc, address);
 
 /*todo status*/
 create table if not exists transactions
@@ -78,7 +78,7 @@ create table if not exists transactions
 create index if not exists idx_transactions_hash on transactions using hash (hash);
 create index if not exists idx_transactions_hash_harmony on transactions using hash (hash_harmony);
 create index if not exists idx_transactions_block_hash on transactions using hash (block_hash);
-create index if not exists idx_transactions_block_number on transactions (block_number);
+create index if not exists idx_transactions_block_number on transactions (block_number desc);
 create index if not exists idx_transactions_timestamp on transactions (timestamp);
 do
 $$
@@ -119,7 +119,7 @@ create table if not exists staking_transactions
 
 create index if not exists idx_staking_transactions_hash on staking_transactions using hash (hash);
 create index if not exists idx_staking_transactions_block_hash on staking_transactions using hash (block_hash);
-create index if not exists idx_staking_transactions_block_number on staking_transactions (block_number);
+create index if not exists idx_staking_transactions_block_number on staking_transactions (block_number desc);
 
 do
 $$
@@ -148,29 +148,32 @@ create table if not exists address2transaction
 );
 
 create index if not exists idx_address2transaction_address_btree on address2transaction using btree (address);
-create index if not exists idx_address2transaction_block_number on address2transaction (block_number);
+create index if not exists idx_address2transaction_block_number on address2transaction (block_number  desc);
 
 create index if not exists idx_address2transaction_address_transaction_btree on address2transaction using btree (address)
     where transaction_type='transaction';
-create index if not exists idx_address2transaction_block_number_transaction on address2transaction (block_number)
+create index if not exists idx_address2transaction_block_number_transaction on address2transaction (block_number desc)
     where transaction_type='transaction';
 
 create index if not exists idx_address2transaction_address_staking_transaction_btree on address2transaction using btree (address)
     where transaction_type='staking_transaction';
-create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction (block_number)
+create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction (block_number desc)
     where transaction_type='staking_transaction';
 
 create index if not exists idx_address2transaction_address_internal_transaction_btree on address2transaction using btree (address)
     where transaction_type='internal_transaction';
-create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction (block_number)
+create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction (block_number desc)
     where transaction_type='internal_transaction';
+
 create index if not exists idx_address2transaction_address_erc20_btree on address2transaction using btree (address)
     where transaction_type='erc20';
-create index if not exists idx_address2transaction_block_number_erc20 on address2transaction (block_number)
+create index if not exists idx_address2transaction_block_number_erc20 on address2transaction (block_number desc)
     where transaction_type='erc20';
+
 create index if not exists idx_address2transaction_address_erc721_btree on address2transaction using btree (address)
     where transaction_type='erc721';
-create index if not exists idx_address2transaction_block_number_erc721 on address2transaction (block_number)
+
+create index if not exists idx_address2transaction_block_number_erc721 on address2transaction (block_number desc)
     where transaction_type='erc721';
 
 /*
@@ -196,7 +199,7 @@ create table if not exists internal_transactions
 );
 
 create index if not exists idx_internal_transactions_transaction_hash on internal_transactions using hash (transaction_hash);
-create index if not exists idx_internal_transactions_block_number on internal_transactions (block_number);
+create index if not exists idx_internal_transactions_block_number on internal_transactions (block_number desc);
 
 /*tracking create/create2 */
 create table if not exists contracts
@@ -212,7 +215,7 @@ create table if not exists contracts
     bytecode         text            not null
 );
 create index if not exists idx_contracts_address on contracts using hash (address);
-create index if not exists idx_contracts_block_number on contracts (block_number);
+create index if not exists idx_contracts_block_number on contracts (block_number desc);
 
 create table if not exists erc20
 (

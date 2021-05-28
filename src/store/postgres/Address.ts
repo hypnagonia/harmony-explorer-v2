@@ -52,10 +52,25 @@ export class PostgresStorageAddress implements IStorageAddress {
     })
 
     const q = buildSQLQuery(filter)
+
     // hack fresh transactions recorded last, not need sort
-    // .replace('order by block_number desc', '')
+    const q2 = q
+      .replace('order by block_number desc', '')
+      // todo all limits
+      .replace('limit 10', 'limit 1')
 
     if (type === 'staking_transaction') {
+      const isRes = await this.query(
+        `
+    select * from (select * from address2transaction ${q2}) as a 
+    left join transactions on a.transaction_hash = transactions.hash
+        `,
+        []
+      )
+      if (!isRes.length) {
+        return []
+      }
+
       const res = await this.query(
         `
     select * from (select * from address2transaction ${q}) as a 
@@ -65,6 +80,17 @@ export class PostgresStorageAddress implements IStorageAddress {
       )
 
       return res.map(fromSnakeToCamelResponse)
+    }
+
+    const isRes = await this.query(
+      `
+    select * from (select * from address2transaction ${q2}) as a 
+    left join transactions on a.transaction_hash = transactions.hash
+        `,
+      []
+    )
+    if (!isRes.length) {
+      return []
     }
 
     const res = await this.query(
