@@ -11,6 +11,7 @@ import {
   isLimit,
   isOneOf,
   isFilters,
+  isAddress,
 } from 'src/utils/validators'
 import {Filter, TransactionQueryField, TransactionQueryValue} from 'src/types/api'
 import {cache, withCache} from './cache'

@@ -75,7 +75,7 @@ export async function getRelatedTransactionsByType(
     ]),
   })
 
-  if (filter) {
+  /* if (filter) {
     validator({
       offset: isOffset(filter.offset),
       limit: isLimit(filter.limit),
@@ -91,6 +91,15 @@ export async function getRelatedTransactionsByType(
       orderDirection: 'desc',
       filters: [],
     }
+  }*/
+
+  // we ignore the filter using limit / offset only instead of block_number
+  filter = {
+    offset: 0,
+    limit: 10,
+    orderBy: 'block_number',
+    orderDirection: 'desc',
+    filters: [],
   }
 
   filter.filters.push({

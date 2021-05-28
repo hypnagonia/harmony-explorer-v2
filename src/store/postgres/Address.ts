@@ -52,29 +52,10 @@ export class PostgresStorageAddress implements IStorageAddress {
     })
 
     const q = buildSQLQuery(filter)
+    // hack fresh transactions recorded last, not need sort
+    // .replace('order by block_number desc', '')
 
     if (type === 'staking_transaction') {
-      // without sorting by block faster
-      const res3 = await this.query(
-        `
-          select * from (
-              select * from address2transaction where address = '0xf7908ce7b17a478f52a2b104298f45c10cb8f7de' 
-                                        and transaction_type = 'staking_transaction')  as a
-                            left join staking_transactions on a.transaction_hash = staking_transactions.hash
-    limit 10
-`,
-        []
-      )
-
-      // original
-      /*
-
-    select * from (select * from address2transaction where block_number >= 0 and address = '0xf7908ce7b17a478f52a2b104298f45c10cb8f7de' and transaction_type = 'staking_transaction' order by block_number desc  limit 10) as a
-    left join staking_transactions on a.transaction_hash = staking_transactions.hash
-
-
-       */
-
       const res = await this.query(
         `
     select * from (select * from address2transaction ${q}) as a 
