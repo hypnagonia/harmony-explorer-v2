@@ -52,16 +52,16 @@ export class PostgresStorageAddress implements IStorageAddress {
 
     const q = buildSQLQuery(filter)
 
+    // todo order broken
+    // todo remove offset
     // hack fresh transactions recorded last, not need sort
-    const q2 = q.replace('order by block_number desc', '')
-    // todo all limits
-    // .replace('limit 10', 'limit 1')
+    const q2 = q.replace('order by block_number desc', '').replace(`offset ${filter.offset}`, '')
 
     if (type === 'staking_transaction') {
       const isRes = await this.query(
         `
     select * from (select * from address2transaction ${q2}) as a 
-    left join transactions on a.transaction_hash = transactions.hash
+    left join staking_transactions on a.transaction_hash = staking_transactions.hash
         `,
         []
       )
@@ -80,25 +80,37 @@ export class PostgresStorageAddress implements IStorageAddress {
       return res.map(fromSnakeToCamelResponse)
     }
 
-    const isRes = await this.query(
+    let response
+
+    const fastRes = await this.query(
       `
     select * from (select * from address2transaction ${q2}) as a 
     left join transactions on a.transaction_hash = transactions.hash
         `,
       []
     )
-    if (isRes.length < filter ? filter.limit : 10) {
-      return isRes.map(fromSnakeToCamelResponse)
-    }
-
-    const res = await this.query(
-      `
+    if (fastRes.length < filter ? filter.limit : 10) {
+      response = fastRes
+    } else {
+      response = await this.query(
+        `
     select * from (select * from address2transaction ${q}) as a 
     left join transactions on a.transaction_hash = transactions.hash
         `,
-      []
-    )
+        []
+      )
+    }
 
-    return res.map(fromSnakeToCamelResponse)
+    if (type === 'transaction' || type === 'internal_transaction') {
+      return response.map(fromSnakeToCamelResponse)
+    }
+
+    // for erc20 and erc721 we add logs to payload
+    return await Promise.all(
+      response.map(fromSnakeToCamelResponse).map(async (tx: any) => {
+        tx.logs = await this.query('select * from logs where transaction_hash=$1', [tx.hash])
+        return tx
+      })
+    )
   }
 }
