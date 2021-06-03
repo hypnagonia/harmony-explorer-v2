@@ -63,7 +63,7 @@ create table if not exists transactions
     "from"            char(42)                          not null,
     "to"              char(42),
     gas               bigint,
-    gas_price         bigint,
+    gas_price         numeric,
     input             text,
     nonce             int,
     r                 text,
