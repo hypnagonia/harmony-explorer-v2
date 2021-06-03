@@ -14,7 +14,7 @@ export class PostgresStorageIndexer implements IStorageIndexer {
       `select chain_id from indexer_state where indexer_name='blocks';`,
       []
     )
-    const lastIndexedBlock = +res[0][`chain_id`]
+    const lastIndexedBlock = res && res[0] && +res[0][`chain_id`]
     return lastIndexedBlock || 0
   }
 

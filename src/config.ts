@@ -124,12 +124,7 @@ export const config = {
   },
   logger: {
     levels: {
-      console: [
-        'error',
-        'info',
-        'warn',
-        // 'debug'
-      ] as TLogLevel[],
+      console: ['error', 'info', 'warn', 'debug'] as TLogLevel[],
       sentry: ['error', 'warn'] as TLogLevel[],
     },
   },

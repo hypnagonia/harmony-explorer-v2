@@ -89,6 +89,10 @@ export const traceBlock = (
   if (config.indexer.chainID === mainnetChainID && blockNumber === 4864036) {
     return Promise.resolve([])
   }
+  // this block always fails
+  if (config.indexer.chainID === mainnetChainID && blockNumber === 8027779) {
+    return Promise.resolve([])
+  }
 
   const hex = '0x' + blockNumber.toString(16)
   return transport(shardID, 'trace_block', [hex]).then((txs) =>
