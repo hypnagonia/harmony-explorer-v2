@@ -29,8 +29,8 @@ export class PostgresStorageAddress implements IStorageAddress {
 
     const res = await this.query(
       `
-    select * from (select * from address2transaction ${q}) as a 
-    left join staking_transactions on 
+    select * from (select * from address2transaction ${q}) as a
+    left join staking_transactions on
     (a.transaction_hash = staking_transactions.hash and a.transaction_type='staking_transaction')
     left join transactions on (a.transaction_hash = transactions.hash and a.transaction_type<>'staking_transaction')
         `,
@@ -60,18 +60,18 @@ export class PostgresStorageAddress implements IStorageAddress {
     if (type === 'staking_transaction') {
       const isRes = await this.query(
         `
-    select * from (select * from address2transaction ${q2}) as a 
+    select * from (select * from address2transaction ${q2}) as a
     left join staking_transactions on a.transaction_hash = staking_transactions.hash
         `,
         []
       )
-      if (isRes.length < filter ? filter.limit : 10) {
+      if (isRes.length < (filter.limit ? filter.limit : 10)) {
         return isRes.map(fromSnakeToCamelResponse)
       }
 
       const res = await this.query(
         `
-    select * from (select * from address2transaction ${q}) as a 
+    select * from (select * from address2transaction ${q}) as a
     left join staking_transactions on a.transaction_hash = staking_transactions.hash
         `,
         []
@@ -84,17 +84,17 @@ export class PostgresStorageAddress implements IStorageAddress {
 
     const fastRes = await this.query(
       `
-    select * from (select * from address2transaction ${q2}) as a 
+    select * from (select * from address2transaction ${q2}) as a
     left join transactions on a.transaction_hash = transactions.hash
         `,
       []
     )
-    if (fastRes.length < filter ? filter.limit : 10) {
+    if (fastRes.length < (filter.limit ? filter.limit : 10)) {
       response = fastRes
     } else {
       response = await this.query(
         `
-    select * from (select * from address2transaction ${q}) as a 
+    select * from (select * from address2transaction ${q}) as a
     left join transactions on a.transaction_hash = transactions.hash
         `,
         []

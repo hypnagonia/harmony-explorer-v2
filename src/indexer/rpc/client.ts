@@ -44,6 +44,7 @@ export const getBlockByNumber = (
   num: BlockNumber | 'latest',
   isFullInfo = true
 ): Promise<Block> => {
+  console.log
   return transport(shardID, 'eth_getBlockByNumber', [num, isFullInfo]).then(mapBlockFromResponse)
 }
 
