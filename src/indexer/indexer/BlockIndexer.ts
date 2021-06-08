@@ -192,7 +192,7 @@ export class BlockIndexer {
       })
 
       if (blocks.length >= syncedToBlock - startBlock + 1 && blocks.length >= blockRange) {
-        if (failedCount > 0 || batchTime().value < 60000) {
+        if (failedCount > 0 || batchTime().val < 60000) {
           this.decreaseBatchCount()
         } else {
           this.increaseBatchCount()
