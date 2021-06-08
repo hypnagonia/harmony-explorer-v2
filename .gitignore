@@ -104,3 +104,4 @@ dist
 *.iml
 *.env
 .env
+*.env.prod

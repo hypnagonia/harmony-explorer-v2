@@ -1,4 +1,4 @@
-import {stores} from 'src/store'
+import {storesAPI as stores} from 'src/store'
 import {InternalTransaction, ShardID, IERC20, IERC20Balance, Address} from 'src/types/blockchain'
 import {withCache} from 'src/api/controllers/cache'
 import {validator} from 'src/utils/validators/validators'

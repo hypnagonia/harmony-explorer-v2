@@ -1,5 +1,5 @@
 import {withCache} from 'src/api/controllers/cache'
-import {stores} from 'src/store'
+import {storesAPI as stores} from 'src/store'
 
 export async function getTransactionCountLast14Days(): Promise<any | null> {
   return await withCache(

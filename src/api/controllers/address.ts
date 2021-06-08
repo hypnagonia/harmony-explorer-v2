@@ -21,7 +21,7 @@ import {
   isOrderDirection,
   isShard,
 } from 'src/utils/validators'
-import {stores} from 'src/store'
+import {storesAPI as stores} from 'src/store'
 import {withCache} from 'src/api/controllers/cache'
 
 export async function getRelatedTransactions(shardID: ShardID, address: Address, filter?: Filter) {

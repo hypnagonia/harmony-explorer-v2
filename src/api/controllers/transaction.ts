@@ -1,4 +1,4 @@
-import {stores} from 'src/store'
+import {storesAPI as stores} from 'src/store'
 import {ShardID, Transaction} from 'src/types/blockchain'
 import {validator} from 'src/utils/validators/validators'
 import {

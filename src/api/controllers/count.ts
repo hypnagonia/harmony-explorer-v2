@@ -1,4 +1,4 @@
-import {stores} from 'src/store'
+import {storesAPI as stores} from 'src/store'
 import {ShardID, CountableEntities} from 'src/types'
 import {validator} from 'src/utils/validators//validators'
 import {isOneOf} from 'src/utils/validators'

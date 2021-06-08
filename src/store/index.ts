@@ -10,3 +10,10 @@ export const stores = shards.map((shardID) => {
   const p = config.store.postgres[shardID]
   return new PostgresStorage({...p, shardID} as PostgresStorageOptions)
 })
+
+const stores2 = shards.map((shardID) => {
+  const p = config.store.postgres[shardID]
+  return new PostgresStorage({...p, shardID} as PostgresStorageOptions)
+})
+
+export const storesAPI = config.api.isEnabled ? stores2 : stores
