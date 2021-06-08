@@ -11,7 +11,7 @@ import {AddressIndexer} from './addressIndexer'
 import {contractAddressIndexer} from './сontractAddressIndexer'
 
 const approximateBlockMintingTime = 2000
-const maxBatchCount = 1000
+const maxBatchCount = 1
 
 const blockRange = 10
 

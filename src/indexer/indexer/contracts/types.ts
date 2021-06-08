@@ -3,6 +3,7 @@ import {PostgresStorage} from 'src/store/postgres'
 
 export interface ContractTracker<T> {
   name: string
+  tableName?: string
   trackEvents: {
     process: (store: PostgresStorage, logs: Log[], params: {token: T}) => Promise<any>
     getLastSyncedBlock: (store: PostgresStorage, token: T) => Promise<number>

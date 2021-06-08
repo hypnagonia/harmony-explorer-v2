@@ -70,10 +70,13 @@ export class ContractIndexer {
       'logs'
     )
 
-    const tokensIterator = EntityIterator(task.name as EntityIteratorEntities, {
-      batchSize: 1,
-      index: 0,
-    })
+    const tokensIterator = EntityIterator(
+      (task.tableName as EntityIteratorEntities) || (task.name as EntityIteratorEntities),
+      {
+        batchSize: 1,
+        index: 0,
+      }
+    )
 
     const {batchSize, process} = task.trackEvents
 
