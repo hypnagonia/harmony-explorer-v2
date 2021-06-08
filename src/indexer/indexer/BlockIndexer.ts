@@ -11,7 +11,7 @@ import {AddressIndexer} from './addressIndexer'
 import {contractAddressIndexer} from './сontractAddressIndexer'
 
 const approximateBlockMintingTime = 2000
-const maxBatchCount = 1
+const maxBatchCount = 100
 
 const blockRange = 10
 
@@ -192,7 +192,7 @@ export class BlockIndexer {
       })
 
       if (blocks.length >= syncedToBlock - startBlock + 1 && blocks.length >= blockRange) {
-        if (failedCount > 0) {
+        if (failedCount > 0 || batchTime().value < 60000) {
           this.decreaseBatchCount()
         } else {
           this.increaseBatchCount()
