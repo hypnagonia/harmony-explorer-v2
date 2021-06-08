@@ -13,7 +13,7 @@ import {contractAddressIndexer} from './сontractAddressIndexer'
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 1
 
-const blockRange = 10
+const blockRange = 1
 
 const range = (num: number) => Array(num).fill(0)
 
