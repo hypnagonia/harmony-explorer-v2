@@ -28,8 +28,9 @@ export class PostgresStorageAddress implements IStorageAddress {
     filter: Filter
   ): Promise<Address2Transaction[]> => {
     const {offset = 0, limit = 10} = filter
+    // Only latest 100 entries currently supported
     if (offset + limit > 100) {
-      throw new Error('Only latest 100 entries currently supported')
+      return []
     }
 
     const res = await this.query(
