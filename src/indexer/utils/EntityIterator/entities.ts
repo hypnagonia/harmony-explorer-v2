@@ -16,7 +16,6 @@ export type EntityIteratorEntities =
   | 'internalTransactions'
   | 'logs'
   | 'logsAll'
-  | 'address2Transactions'
   | 'erc20BalancesNeedUpdate'
   | ContractIndexerTaskEntities
 
@@ -30,10 +29,6 @@ export const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> 
     store.internalTransaction.getInternalTransactions
   ),
   contracts: listByBlockNumber<Contract>(store.contract.getContracts),
-  address2Transactions: listByBlockNumber<Address2Transaction>(
-    store.address.getRelatedTransactions,
-    [withEqual('address')]
-  ),
   erc20: listByOffset<IERC20>(store.erc20.getERC20),
   erc721: listByOffset<IERC721>(store.erc721.getERC721),
   erc20BalancesNeedUpdate: listByOffset<IERC20Balance>(store.erc20.getBalances, [
