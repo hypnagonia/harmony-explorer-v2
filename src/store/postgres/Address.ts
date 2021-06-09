@@ -46,7 +46,7 @@ export class PostgresStorageAddress implements IStorageAddress {
     const hashes = allHashes.slice(offset, limit)
 
     if (type === 'staking_transaction') {
-      const txs = await this.query(`select * from staking_transactions where hash in ($1)`, [
+      const txs = await this.query(`select * from staking_transactions where hash = any ($1)`, [
         hashes,
       ])
 
