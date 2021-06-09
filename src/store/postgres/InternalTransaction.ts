@@ -25,7 +25,6 @@ export class PostgresStorageInternalTransaction implements IStorageInternalTrans
       value: BigInt(tx.value).toString(),
       gas: BigInt(tx.gas).toString(),
       gasUsed: BigInt(tx.gasUsed).toString(),
-      error: tx.error,
     }
 
     const {query, params} = generateQuery(newTx)

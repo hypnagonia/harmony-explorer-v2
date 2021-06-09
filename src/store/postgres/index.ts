@@ -70,6 +70,7 @@ export class PostgresStorage implements IStorage {
       password: options.password,
       port: options.port,
       max: options.poolSize,
+      idleTimeoutMillis: 0,
     })
   }
 
