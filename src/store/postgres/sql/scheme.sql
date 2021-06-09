@@ -137,6 +137,7 @@ $$
 $$;
 
 /*addresses mentioned in transaction*/
+/*not used in the moment using address2transaction_fifo table to store latest 1000 records*/
 create table if not exists address2transaction
 (
     address          char(42)         not null,

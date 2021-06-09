@@ -62,6 +62,7 @@ export async function getRelatedTransactionsByType(
   }
   */
 
+  // todo validation
   filter = {
     offset: filter ? filter.offset : 0,
     limit: filter ? filter.limit : 10,

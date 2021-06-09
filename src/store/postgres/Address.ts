@@ -28,8 +28,8 @@ export class PostgresStorageAddress implements IStorageAddress {
     filter: Filter
   ): Promise<Address2Transaction[]> => {
     const {offset = 0, limit = 10} = filter
-    if (offset + limit > 1000) {
-      throw new Error('Only latest 1000 entries currently supported')
+    if (offset + limit > 100) {
+      throw new Error('Only latest 100 entries currently supported')
     }
 
     const res = await this.query(
@@ -47,7 +47,7 @@ export class PostgresStorageAddress implements IStorageAddress {
       return []
     }
 
-    const hashes = allHashes.slice(offset, limit)
+    const hashes = allHashes.slice(offset, offset + limit)
 
     if (type === 'staking_transaction') {
       const txs = await this.query(`select * from staking_transactions where hash = any ($1)`, [
