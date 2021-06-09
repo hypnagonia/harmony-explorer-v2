@@ -84,7 +84,7 @@ export interface IStorageInternalTransaction {
 
 export interface IStorageAddress {
   addAddress2Transaction: (entry: Address2Transaction) => Promise<any>
-  getRelatedTransactions: (filter: Filter) => Promise<Address2Transaction[]>
+  // getRelatedTransactions: (filter: Filter) => Promise<Address2Transaction[]>
 }
 
 export interface IStorageERC20 {
