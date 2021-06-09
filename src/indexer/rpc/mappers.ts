@@ -72,7 +72,7 @@ export const mapInternalTransactionFromBlockTrace = (blockNumber: BlockNumber) =
     output: tx.result ? tx.result.output : null,
     type: tx.action.callType || tx.type,
     error: tx.error,
-    index,
+    index: tx.index || tx.transactionPosition,
     value: tx.action.value || '0x0', // can be undefined
     deployedBytecode: tx.result && tx.result.code ? tx.result.code : undefined,
   } as InternalTransaction
