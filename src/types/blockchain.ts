@@ -182,7 +182,8 @@ export type TraceCallErrorToRevert = string
 
 export type RPCInternalTransactionFromBlockTrace = {
   error?: TraceCallErrorToRevert
-  transactionPosition?: number
+  transactionPosition?: number // index in new rpc versions
+  index?: number // index in old rpc versions
   result?: {
     address?: Address
     code?: ByteCode // deployed bytecode
