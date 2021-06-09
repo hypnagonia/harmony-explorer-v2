@@ -9,6 +9,7 @@ import {logTime} from 'src/utils/logTime'
 import {PostgresStorage} from 'src/store/postgres'
 import {AddressIndexer} from './addressIndexer'
 import {contractAddressIndexer} from './сontractAddressIndexer'
+import {internalTransactionsIgnoreListFilter} from './ignoreList/internalTransactionIgnoreList'
 
 const approximateBlockMintingTime = 2000
 const maxBatchCount = 100
@@ -62,6 +63,13 @@ export class BlockIndexer {
 
       const getBlocks = (from: BlockNumber, to: BlockNumber) => {
         return RPCClient.getBlocks(shardID, from, to)
+      }
+
+      const filterBlocks = (blocks: Block[]) => {
+        return blocks.map((b) => ({
+          ...b,
+          transactions: b.transactions.filter(internalTransactionsIgnoreListFilter),
+        }))
       }
 
       const addBlocks = (blocks: Block[]) => {
@@ -152,6 +160,7 @@ export class BlockIndexer {
           }
 
           return await getBlocks(from, to)
+            .then(filterBlocks)
             .then(addBlocks)
             .then(addTransactions)
             .then(addStakingTransactions)
