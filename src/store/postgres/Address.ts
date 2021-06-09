@@ -37,6 +37,10 @@ export class PostgresStorageAddress implements IStorageAddress {
       [address, type]
     )
 
+    if (!res || !res[0]) {
+      return []
+    }
+
     const allHashes = res[0].transaction_hashes
 
     if (!allHashes || !allHashes.length) {
