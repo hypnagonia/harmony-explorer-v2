@@ -111,7 +111,7 @@ export async function getRelatedTransactionsByType(
 
   return await withCache(
     ['getRelatedTransactionsByType', arguments],
-    () => stores[shardID].address.getRelatedTransactionsByType(filter!, type),
+    () => stores[shardID].address.getRelatedTransactionsByType(address, type, filter!),
     2000
   )
 }

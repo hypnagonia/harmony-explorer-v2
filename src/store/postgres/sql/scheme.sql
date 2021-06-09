@@ -71,8 +71,8 @@ create table if not exists transactions
     to_shard_id       smallint,
     transaction_index smallint,
     v                 text,
-    success            boolean,
-    error              text
+    success           boolean,
+    error             text
 );
 create index if not exists idx_transactions_hash on transactions using hash (hash);
 create index if not exists idx_transactions_hash_harmony on transactions using hash (hash_harmony);
@@ -147,32 +147,41 @@ create table if not exists address2transaction
 );
 
 create index if not exists idx_address2transaction_address_btree on address2transaction using btree (address);
-create index if not exists idx_address2transaction_block_number on address2transaction using btree (block_number  desc, address);
+create index if not exists idx_address2transaction_block_number on address2transaction using btree (block_number desc, address);
 
 create index if not exists idx_address2transaction_address_transaction_btree on address2transaction using btree (address)
-    where transaction_type='transaction';
-create index if not exists idx_address2transaction_block_number_transaction on address2transaction using btree (block_number  desc, address)
-    where transaction_type='transaction';
+    where transaction_type = 'transaction';
+create index if not exists idx_address2transaction_block_number_transaction on address2transaction using btree (block_number desc, address)
+    where transaction_type = 'transaction';
 
 create index if not exists idx_address2transaction_address_staking_transaction_btree on address2transaction using btree (address)
-    where transaction_type='staking_transaction';
-create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction using btree (block_number  desc, address)
-    where transaction_type='staking_transaction';
+    where transaction_type = 'staking_transaction';
+create index if not exists idx_address2transaction_block_number_staking_transaction on address2transaction using btree (block_number desc, address)
+    where transaction_type = 'staking_transaction';
 
 create index if not exists idx_address2transaction_address_internal_transaction_btree on address2transaction using btree (address)
-    where transaction_type='internal_transaction';
-create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction using btree (block_number  desc, address)
-    where transaction_type='internal_transaction';
+    where transaction_type = 'internal_transaction';
+create index if not exists idx_address2transaction_block_number_internal_transaction on address2transaction using btree (block_number desc, address)
+    where transaction_type = 'internal_transaction';
 
 create index if not exists idx_address2transaction_address_erc20_btree on address2transaction using btree (address)
-    where transaction_type='erc20';
-create index if not exists idx_address2transaction_block_number_erc20 on address2transaction using btree (block_number  desc, address)
-    where transaction_type='erc20';
+    where transaction_type = 'erc20';
+create index if not exists idx_address2transaction_block_number_erc20 on address2transaction using btree (block_number desc, address)
+    where transaction_type = 'erc20';
 
 create index if not exists idx_address2transaction_address_erc721_btree on address2transaction using btree (address)
-    where transaction_type='erc721';
-create index if not exists idx_address2transaction_block_number_erc721 on address2transaction using btree (block_number  desc, address)
-    where transaction_type='erc721';
+    where transaction_type = 'erc721';
+create index if not exists idx_address2transaction_block_number_erc721 on address2transaction using btree (block_number desc, address)
+    where transaction_type = 'erc721';
+
+create table if not exists address2transaction_fifo
+(
+    address            char(42)         not null,
+    transaction_hashes char(66)[]       not null,
+    transaction_type   transaction_type not null,
+    unique (address, transaction_type)
+);
+create index if not exists idx_address2transaction_fifo_address_btree on address2transaction using btree (address, transaction_type);
 
 /*
 types call staticcall create delegatecall

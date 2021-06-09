@@ -1,5 +1,5 @@
 import {IStorageAddress} from 'src/store/interface'
-import {Address2Transaction, Block, Filter, AddressTransactionType} from 'src/types'
+import {Address2Transaction, Block, Filter, AddressTransactionType, Address} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -12,102 +12,56 @@ export class PostgresStorageAddress implements IStorageAddress {
   }
 
   addAddress2Transaction = async (entry: Address2Transaction) => {
-    const {query, params} = generateQuery(entry)
+    // const {query, params} = generateQuery(newEntry)
+    // store latest 100 relations
     return await this.query(
-      `insert into address2transaction ${query} on conflict (address, transaction_hash, transaction_type) do nothing;`,
-      params
+      `insert into address2transaction_fifo (transaction_hashes,address,transaction_type) values(array[$1],$2,$3)
+      on conflict (address, transaction_type) do update
+      set transaction_hashes = (array_cat(EXCLUDED.transaction_hashes, address2transaction_fifo.transaction_hashes))[:100];`,
+      [entry.transactionHash, entry.address, entry.transactionType]
     )
-  }
-
-  // todo warning depricated
-  getRelatedTransactions = async (filter: Filter): Promise<Address2Transaction[]> => {
-    // todo hack
-    const q = buildSQLQuery(filter)
-      .replace('address', 'address2transaction.address')
-      .split('block_number')
-      .join(' address2transaction.block_number')
-
-    const res = await this.query(
-      `
-    select * from (select * from address2transaction ${q}) as a
-    left join staking_transactions on
-    (a.transaction_hash = staking_transactions.hash and a.transaction_type='staking_transaction')
-    left join transactions on (a.transaction_hash = transactions.hash and a.transaction_type<>'staking_transaction')
-        `,
-      []
-    )
-
-    return res.map(fromSnakeToCamelResponse)
   }
 
   getRelatedTransactionsByType = async (
-    filter: Filter,
-    type: AddressTransactionType
+    address: Address,
+    type: AddressTransactionType,
+    filter: Filter
   ): Promise<Address2Transaction[]> => {
-    filter.filters.push({
-      value: `'${type}'`,
-      type: 'eq',
-      property: 'transaction_type',
-    })
+    const {offset = 0, limit = 10} = filter
+    if (offset + limit > 1000) {
+      throw new Error('Only latest 1000 entries currently supported')
+    }
 
-    const q = buildSQLQuery(filter)
+    const res = await this.query(
+      `select transaction_hashes from address2transaction_fifo where address=$1 and transaction_type=$2`,
+      [address, type]
+    )
 
-    // todo order broken
-    // todo remove offset
-    // hack fresh transactions recorded last, not need sort
-    const q2 = q.replace('order by block_number desc', '').replace(`offset ${filter.offset}`, '')
+    const allHashes = res[0].transaction_hashes
+
+    if (!allHashes || !allHashes.length) {
+      return []
+    }
+
+    const hashes = allHashes.slice(offset, limit)
 
     if (type === 'staking_transaction') {
-      const isRes = await this.query(
-        `
-    select * from (select * from address2transaction ${q2}) as a
-    left join staking_transactions on a.transaction_hash = staking_transactions.hash
-        `,
-        []
-      )
-      if (isRes.length < (filter.limit ? filter.limit : 10)) {
-        return isRes.map(fromSnakeToCamelResponse)
-      }
+      const txs = await this.query(`select * from staking_transactions where hash in ($1)`, [
+        hashes,
+      ])
 
-      const res = await this.query(
-        `
-    select * from (select * from address2transaction ${q}) as a
-    left join staking_transactions on a.transaction_hash = staking_transactions.hash
-        `,
-        []
-      )
-
-      return res.map(fromSnakeToCamelResponse)
+      return txs.map(fromSnakeToCamelResponse)
     }
 
-    let response
-
-    const fastRes = await this.query(
-      `
-    select * from (select * from address2transaction ${q2}) as a
-    left join transactions on a.transaction_hash = transactions.hash
-        `,
-      []
-    )
-    if (fastRes.length < (filter.limit ? filter.limit : 10)) {
-      response = fastRes
-    } else {
-      response = await this.query(
-        `
-    select * from (select * from address2transaction ${q}) as a
-    left join transactions on a.transaction_hash = transactions.hash
-        `,
-        []
-      )
-    }
+    const txs = await this.query(`select * from transactions where hash = any ($1)`, [hashes])
 
     if (type === 'transaction' || type === 'internal_transaction') {
-      return response.map(fromSnakeToCamelResponse)
+      return txs.map(fromSnakeToCamelResponse)
     }
 
     // for erc20 and erc721 we add logs to payload
     return await Promise.all(
-      response.map(fromSnakeToCamelResponse).map(async (tx: any) => {
+      txs.map(fromSnakeToCamelResponse).map(async (tx: any) => {
         tx.logs = await this.query('select * from logs where transaction_hash=$1', [tx.hash])
         return tx
       })
