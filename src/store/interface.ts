@@ -14,6 +14,7 @@ import {
   Contract,
   IERC20,
   IERC721,
+  IERC1155,
 } from 'src/types/blockchain'
 import {
   Filter,
@@ -96,6 +97,8 @@ export interface IStorageERC721 {
   updateERC721: (erc721: IERC721) => Promise<any>
   addERC721: (erc721: IERC721) => Promise<any>
 }
+
+export interface IStorageERC1155 {}
 
 export interface IStorageSignature {
   // todo

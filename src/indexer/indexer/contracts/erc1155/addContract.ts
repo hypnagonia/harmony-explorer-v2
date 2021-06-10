@@ -1,8 +1,9 @@
-import {Contract, IERC721} from 'src/types'
+import {Contract, IERC1155} from 'src/types'
 import {validator, isUint, isLength} from 'src/utils/validators/validators'
 import {logger} from 'src/logger'
 import {PostgresStorage} from 'src/store/postgres'
 import {ABI} from './ABI'
+import {getByIPFSHash} from 'src/indexer/utils/ipfs/index'
 
 const {hasAllSignatures, callAll} = ABI
 const l = logger(module, 'erc1155')
@@ -18,36 +19,54 @@ const expectedMethodsAndEvents = [
   'contractURI',
 ]
 
-const callableMethods = [] // ['symbol', 'name']
+const callableMethods = ['contractURI'] // ['symbol', 'name']
+const maxMetaLength = 20000
 
 export const addContract = async (store: PostgresStorage, contract: Contract) => {
   if (!hasAllSignatures(expectedMethodsAndEvents, contract.bytecode)) {
     return
   }
 
-  /*
-  let params: any // Record<typeof callableMethods[number], string>
+  let params: Record<typeof callableMethods[number], string>
+  let meta = {
+    name: '',
+    symbol: '',
+  }
+  let metaJSON = ''
 
   try {
-    params = {} // await callAll(contract.address, callableMethods)
+    params = await callAll(contract.address, callableMethods)
 
     validator({
-      name: () => isLength(params.name, {min: 3, max: 64}),
-      symbol: () => isLength(params.symbol, {min: 3, max: 10}),
+      contractURI: () => isLength(params.contractURI, {min: 46, max: 46}),
+    })
+
+    meta = await getByIPFSHash(params.contractURI)
+    metaJSON = JSON.stringify(meta)
+
+    if (metaJSON.length > maxMetaLength) {
+      throw new Error('Meta is too big')
+    }
+
+    validator({
+      name: () => isLength(meta.name, {min: 3, max: 64}),
+      symbol: () => isLength(meta.symbol, {min: 3, max: 10}),
     })
   } catch (err) {
     l.debug(`Failed to get contract ${contract.address} info`, err.message || err)
     return
   }
-  */
 
-  const erc721: IERC721 = {
+  const erc1155: IERC1155 = {
     address: contract.address,
-    name: 'name',
-    symbol: 'symbol',
+    name: meta.name,
+    symbol: meta.symbol,
     lastUpdateBlockNumber: contract.blockNumber,
+    meta: metaJSON,
+    contractURI: params.contractURI,
   }
-  l.info(`Found new contract "${erc721.name}" ${contract.blockNumber}`)
 
-  // await store.erc721.addERC721(erc721)
+  l.info(`Found new contract "${erc1155.name}" ${contract.blockNumber}`)
+
+  await store.erc1155.addERC1155(erc1155)
 }

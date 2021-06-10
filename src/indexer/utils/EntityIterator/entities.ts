@@ -4,13 +4,14 @@ import {
   IERC20,
   IERC20Balance,
   IERC721,
+  IERC1155,
   InternalTransaction,
   Log,
 } from 'src/types'
 import {listByBlockNumber, EntityQueryCallback, listByOffset, withEqual} from './executors'
 import {stores} from 'src/store'
 
-export type ContractIndexerTaskEntities = 'erc20' | 'erc721'
+export type ContractIndexerTaskEntities = 'erc20' | 'erc721' | 'erc1155'
 export type EntityIteratorEntities =
   | 'contracts'
   | 'internalTransactions'
@@ -31,6 +32,7 @@ export const entityQueries: Record<EntityIteratorEntities, EntityQueryCallback> 
   contracts: listByBlockNumber<Contract>(store.contract.getContracts),
   erc20: listByOffset<IERC20>(store.erc20.getERC20),
   erc721: listByOffset<IERC721>(store.erc721.getERC721),
+  erc1155: listByOffset<IERC1155>(store.erc1155.getERC1155),
   erc20BalancesNeedUpdate: listByOffset<IERC20Balance>(store.erc20.getBalances, [
     withEqual('needUpdate'),
   ]),

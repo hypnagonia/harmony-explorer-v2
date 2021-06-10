@@ -280,6 +280,21 @@ create table if not exists erc721_asset
 create index if not exists idx_erc721_asset_owner_address on erc721_asset using hash (owner_address);
 create index if not exists idx_erc721_asset_token_address on erc721_asset using hash (token_address);
 
+create table if not exists erc1155
+(
+    address                  char(42) unique references contracts (address) not null,
+    symbol                   text                                           not null,
+    name                     text                                           not null,
+    total_supply             numeric default (0),
+    holders                  numeric default (0),
+    transaction_count        bigint  default (0),
+    last_update_block_number bigint  default (0),
+    meta                     jsonb,
+    contractURI              text
+);
+
+create index if not exists idx_erc1155_address on erc1155 using hash (address);
+
 create table if not exists signatures
 (
     hash      varchar not null,

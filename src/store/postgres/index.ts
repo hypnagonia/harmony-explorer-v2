@@ -19,6 +19,7 @@ import {PostgresStorageERC20} from 'src/store/postgres/ERC20'
 import {PostgresStorageSignature} from 'src/store/postgres/Signatures'
 import {PostgresStorageMetrics} from 'src/store/postgres/Metrics'
 import {PostgresStorageERC721} from 'src/store/postgres/ERC721'
+import {PostgresStorageERC1155} from 'src/store/postgres/ERC1155'
 
 const defaultRetries = 5
 
@@ -36,6 +37,7 @@ export class PostgresStorage implements IStorage {
   contract: PostgresStorageContract
   erc20: PostgresStorageERC20
   erc721: PostgresStorageERC721
+  erc1155: PostgresStorageERC1155
   signature: PostgresStorageSignature
   metrics: PostgresStorageMetrics
 
@@ -57,6 +59,7 @@ export class PostgresStorage implements IStorage {
     this.contract = new PostgresStorageContract(this.query)
     this.erc20 = new PostgresStorageERC20(this.query)
     this.erc721 = new PostgresStorageERC721(this.query)
+    this.erc1155 = new PostgresStorageERC1155(this.query)
     this.signature = new PostgresStorageSignature(this.query)
     this.metrics = new PostgresStorageMetrics(this.query)
 

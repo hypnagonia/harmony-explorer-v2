@@ -29,6 +29,7 @@
     "express": "^4.17.1",
     "grpc": "^1.24.6",
     "grpc-reflection-js": "^0.1.1",
+    "ipfs-http-client": "^50.1.1",
     "lru-cache": "^6.0.0",
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.6.0",

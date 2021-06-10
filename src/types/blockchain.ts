@@ -312,3 +312,25 @@ export type BytecodeSignature = {
   hash: BytecodeSignatureHash
   signatures: string
 }
+
+export type IERC1155 = {
+  address: Address
+  symbol: string
+  name: string
+  totalSupply?: string
+  holders?: number
+  transactionCount?: number
+  lastUpdateBlockNumber?: number
+  contractURI?: string
+  meta?: any
+  /*
+   meta: {
+    name: 'ROTTENSWAP ONE DROP',
+    type: '1155',
+    symbol: 'VINCI',
+    description: 'The most based drop to ever exist on Harmony.',
+    image: 'QmWSqePh8XnUM3xcrvTg4dYvcuCXHwNuvWFnsSVGHXZQgc',
+    external_link: ''
+  }
+  */
+}

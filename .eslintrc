@@ -40,6 +40,7 @@
     "quote-props": "off",
     "no-constant-condition": "off",
     "prefer-rest-params": "off",
-    "no-unreachable": "off"
+    "no-unreachable": "off",
+    "no-trailing-spaces": "off"
   }
 }

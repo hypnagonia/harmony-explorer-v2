@@ -85,6 +85,8 @@ export const config = {
       isEnabled: true,
       port: 3002,
     },
+    // with trailing slash
+    IPFSGateway: process.env.INDEXER_IPFS_GATEWAY || 'https://ipfs.io/ipfs/',
   },
   store: {
     postgres: [
