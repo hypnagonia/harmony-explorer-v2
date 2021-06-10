@@ -1,5 +1,12 @@
 import {IStorageAddress} from 'src/store/interface'
-import {Address2Transaction, Block, Filter, AddressTransactionType, Address} from 'src/types'
+import {
+  Address2Transaction,
+  Block,
+  Filter,
+  AddressTransactionType,
+  Address,
+  InternalTransaction,
+} from 'src/types'
 import {Query} from 'src/store/postgres/types'
 import {fromSnakeToCamelResponse, generateQuery} from 'src/store/postgres/queryMapper'
 import {buildSQLQuery} from 'src/store/postgres/filters'
@@ -55,21 +62,27 @@ export class PostgresStorageAddress implements IStorageAddress {
         hashes,
       ])
 
-      return txs.map(fromSnakeToCamelResponse)
+      return txs
+        .map(fromSnakeToCamelResponse)
+        .sort((a: InternalTransaction, b: InternalTransaction) => b.blockNumber - a.blockNumber)
     }
 
     const txs = await this.query(`select * from transactions where hash = any ($1)`, [hashes])
 
     if (type === 'transaction' || type === 'internal_transaction') {
-      return txs.map(fromSnakeToCamelResponse)
+      return txs
+        .map(fromSnakeToCamelResponse)
+        .sort((a: InternalTransaction, b: InternalTransaction) => b.blockNumber - a.blockNumber)
     }
 
     // for erc20 and erc721 we add logs to payload
-    return await Promise.all(
+    const txsWithLogs = (await Promise.all(
       txs.map(fromSnakeToCamelResponse).map(async (tx: any) => {
         tx.logs = await this.query('select * from logs where transaction_hash=$1', [tx.hash])
         return tx
       })
-    )
+    )) as Address2Transaction[]
+
+    return txsWithLogs.sort((a, b) => b.blockNumber - a.blockNumber)
   }
 }
