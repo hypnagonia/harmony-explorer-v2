@@ -160,10 +160,10 @@ export class BlockIndexer {
           }
 
           return await getBlocks(from, to)
-            .then(filterBlocks)
             .then(addBlocks)
             .then(addTransactions)
             .then(addStakingTransactions)
+            .then(filterBlocks)
             .then(addTraceBlocks)
         })
       ).then((res) => res.flatMap((b) => b).filter((b) => b))
