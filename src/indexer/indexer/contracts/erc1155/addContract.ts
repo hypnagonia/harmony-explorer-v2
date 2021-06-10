@@ -22,36 +22,43 @@ const expectedMethodsAndEvents = [
 const callableMethods = ['contractURI'] // ['symbol', 'name']
 const maxMetaLength = 20000
 
+const initialMeta = {
+  name: 'HRC1155',
+  symbol: 'HRC1155',
+}
+
+const initialEmptyMeta = JSON.stringify({})
+
 export const addContract = async (store: PostgresStorage, contract: Contract) => {
   if (!hasAllSignatures(expectedMethodsAndEvents, contract.bytecode)) {
     return
   }
 
   let params: Record<typeof callableMethods[number], string>
-  let meta = {
-    name: '',
-    symbol: '',
-  }
-  let metaJSON = ''
+  let meta = initialMeta
+  let metaJSON = initialEmptyMeta
 
   try {
     params = await callAll(contract.address, callableMethods)
 
-    validator({
-      contractURI: () => isLength(params.contractURI, {min: 46, max: 46}),
-    })
+    const prepareMeta = async () => {
+      meta = (await getByIPFSHash(params.contractURI)) || initialMeta
+      metaJSON = meta ? JSON.stringify(meta) : initialEmptyMeta
 
-    meta = await getByIPFSHash(params.contractURI)
-    metaJSON = JSON.stringify(meta)
+      if (metaJSON && metaJSON.length > maxMetaLength) {
+        // don't store big meta
+        metaJSON = initialEmptyMeta
+      }
 
-    if (metaJSON.length > maxMetaLength) {
-      throw new Error('Meta is too big')
+      validator({
+        name: () => isLength(meta.name, {min: 3, max: 64}),
+        symbol: () => isLength(meta.symbol, {min: 3, max: 10}),
+      })
     }
 
-    validator({
-      name: () => isLength(meta.name, {min: 3, max: 64}),
-      symbol: () => isLength(meta.symbol, {min: 3, max: 10}),
-    })
+    if (params.contractURI && params.contractURI.length === 46) {
+      await prepareMeta()
+    }
   } catch (err) {
     l.debug(`Failed to get contract ${contract.address} info`, err.message || err)
     return
@@ -66,7 +73,7 @@ export const addContract = async (store: PostgresStorage, contract: Contract) =>
     contractURI: params.contractURI,
   }
 
-  l.info(`Found new contract "${erc1155.name}" ${contract.blockNumber}`)
+  l.info(`Found new contract "${erc1155.name}" at ${contract.blockNumber}`)
 
   await store.erc1155.addERC1155(erc1155)
 }

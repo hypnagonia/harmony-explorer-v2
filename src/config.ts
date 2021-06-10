@@ -126,7 +126,9 @@ export const config = {
   },
   logger: {
     levels: {
-      console: ['error', 'info', 'warn', 'debug'] as TLogLevel[],
+      console: process.env.STDOUT_LOG_LEVELS
+        ? (getCommaSeparatedList(process.env.STDOUT_LOG_LEVELS) as TLogLevel[])
+        : (['error', 'info', 'warn', 'debug'] as TLogLevel[]),
       sentry: ['error', 'warn'] as TLogLevel[],
     },
   },

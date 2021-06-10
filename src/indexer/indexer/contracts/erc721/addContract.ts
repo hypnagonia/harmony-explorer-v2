@@ -49,7 +49,7 @@ export const addContract = async (store: PostgresStorage, contract: Contract) =>
     symbol: params.symbol,
     lastUpdateBlockNumber: contract.blockNumber,
   }
-  l.info(`Found new contract "${erc721.name}"`)
+  l.info(`Found new contract "${erc721.name}" at ${contract.blockNumber}`)
 
   await store.erc721.addERC721(erc721)
 }
