@@ -39,6 +39,12 @@ type setEntry = {
   tokenId: IERC721TokenID
 }
 
+// 1155
+/*
+create token
+mark ownership
+*/
+
 export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: IParams) => {
   const filteredLogs = logs.filter(({topics}) => topics.includes(transferEvent))
   if (!filteredLogs.length) {

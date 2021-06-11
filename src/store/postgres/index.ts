@@ -108,7 +108,6 @@ export class PostgresStorage implements IStorage {
     } catch (e) {
       const retriesLeft = retries - 1
       if (retriesLeft > 0) {
-        console.log('timeout')
         await sleep(200)
         return this.query(sql, params, retriesLeft)
       }
@@ -137,7 +136,6 @@ export class PostgresStorage implements IStorage {
 
       return rows
     } catch (e) {
-      console.log('timeout')
       this.l.debug(e.message || e, {sql, params})
       throw new Error(e)
     }

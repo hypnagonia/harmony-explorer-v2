@@ -82,16 +82,13 @@ export const getTransactionTrace = (
   return transport(shardID, 'debug_traceTransaction', [hash, {tracer}])
 }
 
+// these blocks always fails
+const corruptedTraceBlocks = [4864036, 8027779, 14054302]
 export const traceBlock = (
   shardID: ShardID,
   blockNumber: BlockNumber
 ): Promise<InternalTransaction[]> => {
-  // this block always fails
-  if (config.indexer.chainID === mainnetChainID && blockNumber === 4864036) {
-    return Promise.resolve([])
-  }
-  // this block always fails
-  if (config.indexer.chainID === mainnetChainID && blockNumber === 8027779) {
+  if (config.indexer.chainID === mainnetChainID && corruptedTraceBlocks.includes(blockNumber)) {
     return Promise.resolve([])
   }
 

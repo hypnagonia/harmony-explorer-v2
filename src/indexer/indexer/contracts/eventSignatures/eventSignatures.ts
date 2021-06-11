@@ -6,11 +6,14 @@ download method and events signatures rainbow table
 import nodeFetch from 'node-fetch'
 import {stores} from 'src/store'
 import {BytecodeSignature} from 'src/types'
+import {logger} from 'src/logger'
 
+const l = logger(module)
 // store ad shard 0
 const store = stores[0]
 
 export const run = async () => {
+  l.info('fetching 4byte signatures...')
   // events
   await getSignatures('https://www.4byte.directory/api/v1/event-signatures')
   // methods
@@ -20,6 +23,7 @@ export const run = async () => {
 const getSignatures = async (url: string) => {
   const exec = async (url: string): Promise<any> => {
     const res = await nodeFetch(url).then((r) => r.json())
+    l.info(`Fetched ${res.results.length} records from ${url}`)
 
     const promises = res.results
       .map((e: any) => {
@@ -33,6 +37,7 @@ const getSignatures = async (url: string) => {
     await Promise.all(promises)
 
     if (!res.next) {
+      l.info(`Done`)
       return
     }
 

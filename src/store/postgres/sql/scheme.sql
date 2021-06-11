@@ -282,6 +282,7 @@ create index if not exists idx_erc721_asset_token_address on erc721_asset using 
 
 create table if not exists erc1155
 (
+    id                       bigserial primary key,
     address                  char(42) unique references contracts (address) not null,
     symbol                   text                                           not null,
     name                     text                                           not null,
@@ -294,6 +295,32 @@ create table if not exists erc1155
 );
 
 create index if not exists idx_erc1155_address on erc1155 using hash (address);
+
+
+create table if not exists erc1155_asset
+(
+    id                       bigserial primary key,
+    token_address            char(42) references erc721 (address) not null,
+    token_id                 text,
+    token_uri                text,
+    meta                     jsonb,
+    need_update              boolean,
+    last_update_block_number bigint,
+    unique (token_address, token_id)
+);
+/*todo index
+  address hash
+  */
+
+create table if not exists erc1155_owners
+(
+    id       bigserial primary key,
+    owner_id bigint,
+    token_id bigint,
+    amount   bigint,
+    unique (owner_id, token_id)
+);
+/*todo index*/
 
 create table if not exists signatures
 (

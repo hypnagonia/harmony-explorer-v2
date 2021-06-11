@@ -21,7 +21,6 @@ const filter: Filter = {
 }
 // update balances
 export const onFinish = async (store: PostgresStorage) => {
-  console.log('erc721 onFinish')
   // todo
 
   l.info(`Updating assets`)
@@ -34,7 +33,6 @@ export const onFinish = async (store: PostgresStorage) => {
     if (!assetsNeedUpdate.length) {
       break
     }
-    console.log('assetsNeedUpdate', assetsNeedUpdate.length)
 
     const promises = assetsNeedUpdate.map(async ({tokenAddress, tokenID}) => {
       tokensForUpdate.add(tokenAddress)
@@ -52,7 +50,6 @@ export const onFinish = async (store: PostgresStorage) => {
         // l.warn(`Failed to fetch meta from ${uri} for token ${tokenAddress} ${tokenID}`)
       }
 
-      console.log('saving')
       return store.erc721.updateAsset(owner!, tokenAddress, uri, meta, tokenID as IERC721TokenID)
     })
     await Promise.all(promises)
