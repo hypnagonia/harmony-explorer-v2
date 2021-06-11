@@ -11,8 +11,6 @@ export class PostgresStorageMetrics implements IStorageMetrics {
 
   // last 14 days txs count
   getTransactionCountLast14Days = async (): Promise<any[]> => {
-    return []
-
     const res = await this.query(
       `select date_trunc('day', "timestamp") as timestamp, count(1) from "transactions"
             where "transactions"."timestamp" >= date_trunc('day', now() - interval '14 day') group by 1 order by 1 limit 1000;`,
