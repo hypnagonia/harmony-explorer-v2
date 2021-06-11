@@ -19,6 +19,10 @@ export class PostgresStorageAddress implements IStorageAddress {
   }
 
   addAddress2Transaction = async (entry: Address2Transaction) => {
+    if (!entry.transactionHash) {
+      return
+    }
+
     // const {query, params} = generateQuery(newEntry)
     // store latest 100 relations
     return await this.query(

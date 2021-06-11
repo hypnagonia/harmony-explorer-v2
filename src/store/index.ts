@@ -3,7 +3,7 @@ import {config} from 'src/config'
 import {ShardID} from 'src/types/blockchain'
 import {PostgresStorageOptions} from './postgres/types'
 
-const shards: ShardID[] = [0, 1]
+const shards: ShardID[] = [0, 1, 2, 3]
 
 // todo point API to readonly replica
 

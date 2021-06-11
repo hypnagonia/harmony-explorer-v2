@@ -25,6 +25,7 @@ const run = async () => {
     }
   } catch (err) {
     l.error(err)
+    l.error(err.stack)
     process.exit(1)
   }
 }

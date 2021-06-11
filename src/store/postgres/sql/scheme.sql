@@ -183,7 +183,19 @@ create table if not exists address2transaction_fifo
     transaction_type   transaction_type not null,
     unique (address, transaction_type)
 );
-create index if not exists idx_address2transaction_fifo_address_btree on address2transaction using btree (address, transaction_type);
+create index if not exists idx_address2transaction_fifo_address_btree on address2transaction_fifo using btree (address, transaction_type);
+
+create index if not exists idx_address2transaction_address_transaction_hash_fifo on address2transaction_fifo using hash (address)
+    where transaction_type = 'transaction';
+create index if not exists idx_address2transaction_address_staking_transaction_hash_fifo on address2transaction_fifo using hash (address)
+    where transaction_type = 'staking_transaction';
+create index if not exists idx_address2transaction_address_internal_transaction_hash_fifo on address2transaction_fifo using hash (address)
+    where transaction_type = 'internal_transaction';
+create index if not exists idx_address2transaction_address_erc20_hash_fifo on address2transaction_fifo using hash (address)
+    where transaction_type = 'erc20';
+create index if not exists idx_address2transaction_address_erc721_hash_fifo on address2transaction_fifo using hash (address)
+    where transaction_type = 'erc721';
+
 
 /*
 types call staticcall create delegatecall

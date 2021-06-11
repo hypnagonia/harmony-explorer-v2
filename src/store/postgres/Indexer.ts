@@ -14,8 +14,20 @@ export class PostgresStorageIndexer implements IStorageIndexer {
       `select chain_id from indexer_state where indexer_name='blocks';`,
       []
     )
+
     const lastIndexedBlock = res && res[0] && +res[0][`chain_id`]
     return lastIndexedBlock || 0
+  }
+
+  updateChainID = async (chainID: number | string): Promise<any> => {
+    if (!+chainID) {
+      return
+    }
+
+    const res = await this.query(
+      `update indexer_state set chain_id=$1 where indexer_name='blocks';`,
+      [chainID]
+    )
   }
 
   getLastIndexedBlockNumber = async (): Promise<number | null> => {
