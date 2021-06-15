@@ -94,7 +94,12 @@ export const traceBlock = (
 
   const hex = '0x' + blockNumber.toString(16)
   return transport(shardID, 'trace_block', [hex]).then((txs) =>
-    txs ? txs.map(mapInternalTransactionFromBlockTrace(blockNumber)) : []
+    txs
+      ? txs
+          .map(mapInternalTransactionFromBlockTrace(blockNumber))
+          // filter suicide type as we don't need it
+          .filter((t: InternalTransaction) => t.type === 'suicide')
+      : []
   )
 }
 

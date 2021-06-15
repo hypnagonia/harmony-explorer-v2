@@ -55,7 +55,6 @@ const checkChainID = async (shardID: ShardID) => {
       }
       // todo fix condition
       if (nodeChainID !== chainID && nodeChainID !== chainID + shardID) {
-        console.log({nodeChainID, chainID, shardID})
         throw new Error(
           `Wrong chain. ${o.url} returned chain ID ${nodeChainID}. Expected: ${chainID}.`
         )
