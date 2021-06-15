@@ -98,7 +98,7 @@ export const traceBlock = (
       ? txs
           .map(mapInternalTransactionFromBlockTrace(blockNumber))
           // filter suicide type as we don't need it
-          .filter((t: InternalTransaction) => t.type === 'suicide')
+          .filter((t: InternalTransaction) => t.type !== 'suicide')
       : []
   )
 }
