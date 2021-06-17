@@ -83,7 +83,7 @@ export const getTransactionTrace = (
 }
 
 // these blocks always fails
-const corruptedTraceBlocks = [4864036, 8027779, 14054302]
+const corruptedTraceBlocks = [4864036, 8027779]
 export const traceBlock = (
   shardID: ShardID,
   blockNumber: BlockNumber
