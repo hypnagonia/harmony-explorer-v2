@@ -20,7 +20,11 @@ import {logTime} from 'src/utils/logTime'
 
 const l = logger(module, 'erc1155')
 
-const transferEvent = getEntryByName('TransferSingle')!.signature
+const transferEventName = 'TransferSingle'
+const transferEvent = getEntryByName(transferEventName)!.signature
+
+// todo track transfer batch
+const transferBatchEvent = getEntryByName('TransferBatch')!.signature
 
 type IParams = {
   token: IERC721
@@ -37,6 +41,7 @@ type setEntry = {
   blockNumber: BlockNumber
   transactionHash: TransactionHash
   tokenId: IERC721TokenID
+  value: string | number
 }
 
 // 1155
@@ -50,29 +55,31 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
   if (!filteredLogs.length) {
     return
   }
+
   const tokenAddress = filteredLogs[0].address
 
   const addressesForUpdate = new Map<Address, setEntry>()
 
   for (const log of filteredLogs) {
     const [topic0, ...topics] = log.topics
-    const {from, to, tokenId} = decodeLog('Transfer', log.data, topics)
+    const {operator, from, to, id: tokenId, value} = decodeLog(transferEventName, log.data, topics)
 
     addressesForUpdate.set(from, {
       address: from,
       blockNumber: +log.blockNumber,
       transactionHash: log.transactionHash,
       tokenId,
+      value,
     })
     addressesForUpdate.set(to, {
       address: to,
       blockNumber: +log.blockNumber,
       transactionHash: log.transactionHash,
       tokenId,
+      value,
     })
   }
 
-  // todo burn token?
   const arrFromSet = [...addressesForUpdate.values()].filter(
     (o) => ![zeroAddress].includes(o.address)
   )
@@ -80,7 +87,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
     o.address = normalizeAddress(o.address)!
   })
 
-  // add related txs
+  // add related txs we mark them 721 table as all nft
   const setAddress2Transactions = arrFromSet
     .map(
       (o) =>
@@ -94,10 +101,14 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
     .map((o) => store.address.addAddress2Transaction(o))
 
   const setUpdateNeeded = arrFromSet.map((a) =>
-    store.erc721.setNeedUpdateAsset(a.address!, tokenAddress, a.tokenId!)
+    store.erc1155.setNeedUpdateAsset(tokenAddress, a.tokenId!)
   )
 
-  await Promise.all(setUpdateNeeded.concat(setAddress2Transactions))
+  const setUpdateBalanceNeeded = arrFromSet.map((a) =>
+    store.erc1155.setNeedUpdateBalance(a.address!, tokenAddress, a.tokenId!)
+  )
+
+  await Promise.all([...setUpdateNeeded, ...setAddress2Transactions, ...setUpdateBalanceNeeded])
 
   l.info(
     `${setUpdateNeeded.length} tokens marked need update balances for "${token.name}" ${token.address}`

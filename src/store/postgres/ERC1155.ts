@@ -3,6 +3,7 @@ import {
   Address,
   BlockNumber,
   IERC721Asset,
+  IERC1155Asset,
   Filter,
   IERC721,
   IERC1155,
@@ -42,12 +43,10 @@ export class PostgresStorageERC1155 implements IStorageERC1155 {
   }
 
   updateERC1155 = async (erc1155: IERC1155) => {
-    /*
     return this.query(
-      `update erc set total_supply=$1, holders=$2, transaction_count=$3 where address=$4;`,
-      [erc721.totalSupply, erc721.holders, erc721.transactionCount, erc721.address]
+      `update erc1155 set total_supply=$1, holders=$2, transaction_count=$3 where address=$4;`,
+      [erc1155.totalSupply, erc1155.holders, erc1155.transactionCount, erc1155.address]
     )
-    */
   }
 
   getERC1155LastSyncedBlock = async (address: Address): Promise<number> => {
@@ -66,7 +65,6 @@ export class PostgresStorageERC1155 implements IStorageERC1155 {
     ])
   }
 
-  /*
   getERC721Assets = async (owner: Address, token: Address): Promise<IERC721Asset[]> => {
     const res = await this.query(
       `select * from erc721_asset where owner_address=$1 and token_address=$2`,
@@ -76,20 +74,56 @@ export class PostgresStorageERC1155 implements IStorageERC1155 {
     return res.map(fromSnakeToCamelResponse)
   }
 
-  setNeedUpdateAsset = async (owner: Address, token: Address, tokenID: IERC721TokenID) => {
+  setNeedUpdateAsset = async (token: Address, tokenID: IERC721TokenID) => {
     return this.query(
       `
-            insert into erc721_asset(owner_address, token_address, token_id, need_update) 
-                values($1, $2, $3, true)
+            insert into erc1155_asset(token_address, token_id, need_update) 
+                values($1, $2, true)
                 on conflict(token_address, token_id)
+                do update set need_update = true;
+          `,
+      [token, tokenID]
+    )
+  }
+
+  setNeedUpdateBalance = async (owner: Address, token: Address, tokenID: IERC721TokenID) => {
+    return this.query(
+      `
+            insert into erc1155_balance(owner_address, token_address, token_id, need_update) 
+                values($1, $2, $3, true)
+                on conflict(owner_address, token_id, token_address)
                 do update set need_update = true;
           `,
       [owner, token, tokenID]
     )
   }
 
+  getAssets = async (filter: Filter): Promise<IERC1155Asset[]> => {
+    const q = buildSQLQuery(filter)
+
+    const res = await this.query(`select * from erc1155_asset ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
+  }
+
+  getBalances = async (filter: Filter): Promise<IERC721Asset[]> => {
+    const q = buildSQLQuery(filter)
+
+    const res = await this.query(`select * from erc1155_balance ${q}`, [])
+
+    return res.map(fromSnakeToCamelResponse)
+  }
+
+  getHoldersCount = async (token: Address): Promise<string> => {
+    const res = await this.query(
+      `select count(distinct(owner_address)) from erc1155_balance where token_address=$1`,
+      [token]
+    )
+
+    return res[0].count
+  }
+
   updateAsset = async (
-    owner: Address,
     tokenAddress: Address,
     tokenURI: string,
     meta: string,
@@ -97,40 +131,23 @@ export class PostgresStorageERC1155 implements IStorageERC1155 {
   ) => {
     return this.query(
       `
-          update erc721_asset set token_uri=$1, meta=$2, owner_address=$3, need_update=false 
-          where token_address=$4 and token_id=$5;
-          `,
-      [tokenURI, meta, owner, tokenAddress, tokenID]
+        update erc1155_asset set token_uri=$1, meta=$2, need_update=false
+        where token_address=$3 and token_id=$4;
+        `,
+      [tokenURI, meta, tokenAddress, tokenID]
     )
   }
 
-  getAssets = async (filter: Filter): Promise<IERC721Asset[]> => {
-    const q = buildSQLQuery(filter)
-
-    const res = await this.query(`select * from erc721_asset ${q}`, [])
-
-    return res.map(fromSnakeToCamelResponse)
-  }
-
   getUserAssets = async (address: Address): Promise<IERC721Asset[]> => {
-    const res = await this.query(`select * from erc721_asset where owner_address=$1`, [address])
+    // todo join with data
+    const res = await this.query(`select * from erc1155_balances where owner_address=$1`, [address])
 
     return res.map(fromSnakeToCamelResponse)
   }
 
   getTokenAssets = async (address: Address): Promise<IERC721Asset[]> => {
-    const res = await this.query(`select * from erc721_asset where token_address=$1`, [address])
+    const res = await this.query(`select * from erc1155_asset where token_address=$1`, [address])
 
     return res.map(fromSnakeToCamelResponse)
   }
-
-  getHoldersCount = async (token: Address): Promise<string> => {
-    const res = await this.query(
-      `select count(distinct(owner_address)) from erc721_asset where token_address=$1`,
-      [token]
-    )
-
-    return res[0].count
-  }
-  */
 }

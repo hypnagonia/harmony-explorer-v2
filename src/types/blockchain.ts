@@ -340,3 +340,13 @@ export type IERC1155 = {
   }
   */
 }
+
+export type IERC1155Asset = {
+  ownerAddress: Address
+  tokenAddress: Address
+  tokenID?: string
+  tokenURI?: string
+  meta?: string
+  needUpdate?: boolean
+  lastUpdateBlockNumber?: number
+}

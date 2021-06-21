@@ -15,8 +15,8 @@ export const ERC1155Indexer: ContractTracker<IERC721> = {
     process: trackEvents,
     getLastSyncedBlock: (store: PostgresStorage, token) =>
       store.erc1155.getERC1155LastSyncedBlock(token.address),
-    setLastSyncedBlock: async (store: PostgresStorage, token, blockNumber: BlockNumber) => {},
-    // todo tmp store.erc1155.setERC1155LastSyncedBlock(token.address, blockNumber),
+    setLastSyncedBlock: async (store: PostgresStorage, token, blockNumber: BlockNumber) =>
+      store.erc1155.setERC1155LastSyncedBlock(token.address, blockNumber),
     batchSize: 10000,
   },
   onFinish,

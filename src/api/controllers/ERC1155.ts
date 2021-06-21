@@ -24,15 +24,16 @@ export async function getUserERC721Assets(address: Address): Promise<IERC20Balan
     1000 * 60 * 5
   )
 }
+*/
 
-export async function getTokenERC721Assets(address: Address): Promise<IERC20Balance[] | null> {
+export async function getTokenERC1155Assets(address: Address): Promise<IERC20Balance[] | null> {
   validator({
     address: isAddress(address),
   })
 
   return await withCache(
-    ['getTokenERC721Assets', arguments],
-    () => stores[0].erc721.getTokenAssets(address),
+    ['getTokenERC1155Assets', arguments],
+    () => stores[0].erc1155.getTokenAssets(address),
     1000 * 60 * 5
   )
-}*/
+}
