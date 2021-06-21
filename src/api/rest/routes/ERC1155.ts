@@ -11,15 +11,13 @@ export async function getAllERC1155(req: Request, res: Response, next: NextFunct
   next(data)
 }
 
-/*
-erc721Router.get('/address/:address/balances', catchAsync(getUserERC721Assets))
+erc1155Router.get('/address/:address/balances', catchAsync(getUserERC1155Balances))
 
-export async function getUserERC721Assets(req: Request, res: Response, next: NextFunction) {
+export async function getUserERC1155Balances(req: Request, res: Response, next: NextFunction) {
   const {address} = req.params
-  const data = await controllers.getUserERC721Assets(address)
+  const data = await controllers.getUserERC1155Balances(address)
   next(data)
 }
-*/
 
 erc1155Router.get('/token/:address/balances', catchAsync(getTokenERC1155Assets))
 

@@ -11,7 +11,7 @@ export const getByIPFSHash = async (hash: string, retries = 3) => {
   const controller = new AbortController()
   const timeout = setTimeout(() => {
     controller.abort()
-  }, 5000)
+  }, 20000)
 
   try {
     return await nodeFetch(url, {signal: controller.signal})

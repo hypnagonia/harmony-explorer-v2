@@ -12,19 +12,17 @@ export async function getAllERC1155(): Promise<IERC1155[] | null> {
   )
 }
 
-/*
-export async function getUserERC721Assets(address: Address): Promise<IERC20Balance[] | null> {
+export async function getUserERC1155Balances(address: Address): Promise<IERC20Balance[] | null> {
   validator({
     address: isAddress(address),
   })
 
   return await withCache(
-    ['getUserERC721Assets', arguments],
-    () => stores[0].erc721.getUserAssets(address),
+    ['getUserERC1155Balances', arguments],
+    () => stores[0].erc1155.getUserBalances(address),
     1000 * 60 * 5
   )
 }
-*/
 
 export async function getTokenERC1155Assets(address: Address): Promise<IERC20Balance[] | null> {
   validator({
