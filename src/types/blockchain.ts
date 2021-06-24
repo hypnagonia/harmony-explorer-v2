@@ -280,6 +280,7 @@ export type IERC20 = {
   symbol: string
   name: string
   totalSupply?: string
+  circulatingSupply?: string
   holders?: number
   transactionCount?: number
   lastUpdateBlockNumber?: number

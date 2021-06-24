@@ -46,9 +46,12 @@ export const onFinish = async (store: PostgresStorage) => {
     const totalSupply = await call('totalSupply', [], token)
     // todo tx count ?
 
+    const circulatingSupply = await store.erc20.getERC20CirculatingSupply(token)
+
     const erc20 = {
       holders: +holders || 0,
       totalSupply: totalSupply,
+      circulatingSupply,
       transactionCount: 0,
       address: token,
     }

@@ -20,7 +20,6 @@ export const getByIPFSHash = async (hash: string, retries = 3) => {
         clearTimeout(timeout)
       })
   } catch (e) {
-    console.log('ipfs retry')
     if (retries <= 0) {
       throw new Error(e)
     }

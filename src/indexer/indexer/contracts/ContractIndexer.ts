@@ -130,6 +130,7 @@ export class ContractIndexer {
   loop = async () => {
     // todo only when blocks synced
 
+    // todo in same time
     for (const task of tasks) {
       const l = this.ls[task.name]
       try {
@@ -140,7 +141,7 @@ export class ContractIndexer {
         }
 
         if (typeof task.trackEvents.process === 'function') {
-          // await this.trackEvents(task)
+          await this.trackEvents(task)
         }
 
         if (typeof task.onFinish === 'function') {

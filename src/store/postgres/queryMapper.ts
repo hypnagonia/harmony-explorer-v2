@@ -24,6 +24,7 @@ export const mapNaming: Record<string, string> = {
   creator_address: 'creatorAddress',
   solidity_version: 'solidityVersion',
   total_supply: 'totalSupply',
+  circulating_supply: 'circulatingSupply',
   owner_address: 'ownerAddress',
   token_address: 'tokenAddress',
   need_update: 'needUpdate',

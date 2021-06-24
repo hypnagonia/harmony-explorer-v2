@@ -245,6 +245,7 @@ create table if not exists erc20
     symbol                   text                                           not null,
     name                     text                                           not null,
     total_supply             numeric default (0),
+    circulating_supply       numeric default (0),
     holders                  numeric default (0),
     transaction_count        bigint  default (0),
     last_update_block_number bigint  default (0)

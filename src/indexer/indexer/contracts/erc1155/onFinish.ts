@@ -22,8 +22,6 @@ const filter: Filter = {
 }
 // update balances
 export const updateAssets = async (store: PostgresStorage) => {
-  console.log('erc1155 onFinish')
-
   l.info(`Updating assets`)
   let count = 0
   const tokensForUpdate = new Set<Address>()
@@ -60,12 +58,10 @@ export const updateAssets = async (store: PostgresStorage) => {
           // todo validate size
           meta = await getByIPFSHash(uri)
         } catch (e) {
-          console.log(e)
-          // l.warn(`Failed to fetch meta from ${uri} for token ${tokenAddress} ${tokenID}`)
+          l.debug(`Failed to fetch meta from ${uri} for token ${tokenAddress} ${tokenID}`)
         }
 
         await store.erc1155.updateAsset(tokenAddress, uri, meta, tokenID as IERC721TokenID)
-        console.log('done')
       }
     )
     await Promise.all(promises)
@@ -111,7 +107,6 @@ export const updateBalances = async (store: PostgresStorage) => {
       tokensForUpdate.add(tokenAddress)
 
       const [balance] = await call('balanceOfBatch', [[ownerAddress], [tokenID]], tokenAddress)
-      console.log({balance})
       count++
       return store.erc1155.updateBalance(
         tokenAddress,
@@ -127,6 +122,6 @@ export const updateBalances = async (store: PostgresStorage) => {
 }
 
 export const onFinish = async (store: PostgresStorage) => {
-  // await updateAssets(store)
+  await updateAssets(store)
   await updateBalances(store)
 }

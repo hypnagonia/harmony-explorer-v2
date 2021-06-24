@@ -32,8 +32,14 @@ export class PostgresStorageERC20 implements IStorageERC20 {
 
   updateERC20 = async (erc20: IERC20) => {
     return this.query(
-      `update erc20 set total_supply=$1, holders=$2, transaction_count=$3 where address=$4;`,
-      [erc20.totalSupply, erc20.holders, erc20.transactionCount, erc20.address]
+      `update erc20 set total_supply=$1, circulating_supply=$5, holders=$2, transaction_count=$3 where address=$4;`,
+      [
+        erc20.totalSupply,
+        erc20.holders,
+        erc20.transactionCount,
+        erc20.address,
+        erc20.circulatingSupply,
+      ]
     )
   }
 
@@ -60,6 +66,14 @@ export class PostgresStorageERC20 implements IStorageERC20 {
     )
 
     return res[0] || null
+  }
+
+  getERC20CirculatingSupply = async (token: Address): Promise<string | null> => {
+    const res = await this.query(`select sum(balance) from erc20_balance where token_address=$1`, [
+      token,
+    ])
+
+    return res[0] || '0'
   }
 
   setNeedUpdateBalance = async (owner: Address, token: Address) => {
