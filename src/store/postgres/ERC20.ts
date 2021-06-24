@@ -73,7 +73,7 @@ export class PostgresStorageERC20 implements IStorageERC20 {
       token,
     ])
 
-    return res[0] || '0'
+    return res.sum || '0'
   }
 
   setNeedUpdateBalance = async (owner: Address, token: Address) => {

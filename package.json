@@ -1,6 +1,6 @@
 {
   "name": "harmony-explorer-2021",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "src/index.ts",
   "license": "ISC",
   "author": "hypnagonia@gmail.com",
