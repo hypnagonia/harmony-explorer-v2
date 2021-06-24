@@ -3,6 +3,7 @@ import {TLogMessage} from 'zerg/dist/types'
 import {getExtendedData} from './utils'
 import {consoleNodeColorful} from 'zerg/dist/transports'
 import {config} from 'src/config'
+import {addLastLog} from './lastLogs'
 
 function handler(logMessage: TLogMessage) {
   const date = new Date().toISOString()
@@ -15,6 +16,7 @@ function handler(logMessage: TLogMessage) {
   //  args.push(extendedData)
   // }
 
+  addLastLog(`${logMessage.moduleName} ${logMessage.message}`)
   return logMessage
 }
 

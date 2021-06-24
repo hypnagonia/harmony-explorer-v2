@@ -5,6 +5,7 @@ import {logger} from 'src/logger'
 import {stores} from 'src/store'
 import * as RPCClient from 'src/indexer/rpc/client'
 import {cache as LRUCache} from 'src/api/controllers/cache'
+import {getLastLogs} from 'src/logger/lastLogs'
 
 const l = logger(module)
 
@@ -32,9 +33,11 @@ export const indexerServer = async () => {
     )
     const state = {lastSyncedBlocks}
 
+    const lastLogs = getLastLogs()
+
     const cache = {entries: LRUCache.itemCount}
     // be sure to remove passwords etc
-    const json = {config: {...config, store: {}}, state, cache}
+    const json = {config: {...config, store: {}}, state, cache, lastLogs}
     res.json(json)
   })
 
