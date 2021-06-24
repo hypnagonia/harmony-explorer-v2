@@ -5,14 +5,15 @@ import {consoleNodeColorful} from 'zerg/dist/transports'
 import {config} from 'src/config'
 
 function handler(logMessage: TLogMessage) {
-  const message = logMessage.message
+  const date = new Date().toISOString()
+  logMessage.message = `[${date}] ${logMessage.message}`
 
-  const args: any[] = [message]
-  const extendedData = getExtendedData(logMessage)
+  // const args: any[] = [args, logMessage.message]
+  // const extendedData = getExtendedData(logMessage)
 
-  if (extendedData) {
-    args.push(extendedData)
-  }
+  // if (extendedData) {
+  //  args.push(extendedData)
+  // }
 
   return logMessage
 }
