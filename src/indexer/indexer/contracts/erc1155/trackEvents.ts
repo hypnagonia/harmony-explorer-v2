@@ -88,6 +88,7 @@ export const trackEvents = async (store: PostgresStorage, logs: Log[], {token}: 
   })
 
   // add related txs we mark them 721 table as all nft
+  // todo add to token address
   const setAddress2Transactions = arrFromSet
     .map(
       (o) =>

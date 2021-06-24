@@ -3,7 +3,18 @@ import assert from 'assert'
 import {TLogLevel} from 'zerg/dist/types'
 import {ShardID} from 'src/types'
 import {getGitCommitHash} from 'src/utils/getGitCommitHash'
+import fs from 'fs'
+import path from 'path'
+
 const packageJSON = require('../package.json')
+
+let buildData: String
+
+try {
+  buildData = `${fs.readFileSync(path.join(__dirname, '../', './VERSION'))}`
+} catch (e) {
+  buildData = 'Unset'
+}
 
 dotenv.config()
 
@@ -41,7 +52,7 @@ export const config = {
   info: {
     gitCommitHash: getGitCommitHash(),
     version: packageJSON.version,
-    buildNumber: process.env.BUILD_NUMBER || 'Unset',
+    buildData,
   },
   api: {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s) as ShardID[],
