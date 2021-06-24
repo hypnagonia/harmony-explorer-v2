@@ -41,6 +41,7 @@ export const config = {
   info: {
     gitCommitHash: getGitCommitHash(),
     version: packageJSON.version,
+    buildNumber: process.env.BUILD_NUMBER || 'Unset',
   },
   api: {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s) as ShardID[],

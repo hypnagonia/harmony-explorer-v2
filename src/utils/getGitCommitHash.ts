@@ -8,6 +8,6 @@ export const getGitCommitHash = () => {
     hash = output.toString().split('\n')[0]
     return hash
   } catch (err) {
-    return 'Unknown'
+    return 'Unset'
   }
 }

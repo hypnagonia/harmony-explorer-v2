@@ -1,18 +1,16 @@
-import LRU from 'lru-cache'
 import {TLogMessage} from 'zerg/dist/types'
 
-const options = {
-  max: 20,
-  maxAge: 1000 * 60 * 60 * 24 * 7,
-}
-
-export const cache = new LRU(options)
+const maxLength = 20
+export const cache: String[] = []
 
 export const addLastLog = (logMessage: TLogMessage) => {
   const m = `${logMessage.moduleName} ${logMessage.message}`
-  cache.set(m, m)
+  cache.unshift(m)
+  if (cache.length > maxLength) {
+    cache.length = maxLength
+  }
 }
 
 export const getLastLogs = () => {
-  return cache.values()
+  return cache.reverse()
 }
