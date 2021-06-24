@@ -16,7 +16,7 @@ function handler(logMessage: TLogMessage) {
   //  args.push(extendedData)
   // }
 
-  addLastLog(`${logMessage.moduleName} ${logMessage.message}`)
+  addLastLog(logMessage)
   return logMessage
 }
 

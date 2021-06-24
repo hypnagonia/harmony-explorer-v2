@@ -1,4 +1,5 @@
 import LRU from 'lru-cache'
+import {TLogMessage} from 'zerg/dist/types'
 
 const options = {
   max: 20,
@@ -7,8 +8,9 @@ const options = {
 
 export const cache = new LRU(options)
 
-export const addLastLog = (message: any) => {
-  cache.set(message, message)
+export const addLastLog = (logMessage: TLogMessage) => {
+  const m = `${logMessage.moduleName} ${logMessage.message}`
+  cache.set(m, m)
 }
 
 export const getLastLogs = () => {
