@@ -150,7 +150,28 @@ export const config = {
 }
 
 export const init = async () => {
+  const filteredSymbols = ['=', ' ']
+  const trimSpaces = (s: string) => {
+    return s
+      .split('')
+      .filter((l) => !filteredSymbols.includes(l))
+      .join('')
+  }
+
+  const parseValue = (s: string, v: string) => {
+    return trimSpaces(s.split(v)[1].split('\n')[0])
+  }
+
   if (toBool(process.env.AWS_CONFIG_IS_ENABLE)) {
-    config.info.AWSKMSData = (await initAWSKMS()) as any
+    const decrypted = (await initAWSKMS()) as string
+
+    config.store.postgres[0].user = parseValue(decrypted, 'SHARD0_POSTGRES_USER')
+    config.store.postgres[0].password = parseValue(decrypted, 'SHARD0_POSTGRES_PASSWORD')
+    config.store.postgres[1].user = parseValue(decrypted, 'SHARD1_POSTGRES_USER')
+    config.store.postgres[1].password = parseValue(decrypted, 'SHARD1_POSTGRES_PASSWORD')
+    config.store.postgres[2].user = parseValue(decrypted, 'SHARD2_POSTGRES_USER')
+    config.store.postgres[2].password = parseValue(decrypted, 'SHARD2_POSTGRES_PASSWORD')
+    config.store.postgres[3].user = parseValue(decrypted, 'SHARD3_POSTGRES_USER')
+    config.store.postgres[3].password = parseValue(decrypted, 'SHARD3_POSTGRES_PASSWORD')
   }
 }

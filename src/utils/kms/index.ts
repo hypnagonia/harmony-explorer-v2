@@ -37,14 +37,15 @@ export const run = async () => {
       CiphertextBlob: encryptedSecret,
     }
 
-    return await new Promise((resolve) => {
+    return await new Promise((resolve, reject) => {
       kms.decrypt(params, (err: AWSError, data: DecryptResponse) => {
         if (err) {
-          console.log(err, err.stack)
-        } else {
-          const decrypted = (data['Plaintext'] || '').toString()
-          resolve({decrypted, data, region, accessKeyId, secretAccessKey})
+          reject(err)
+          return
         }
+
+        const decrypted = (data['Plaintext'] || '').toString()
+        resolve(decrypted)
       })
     })
   } catch (err) {
