@@ -69,8 +69,8 @@ export class PostgresStorage implements IStorage {
 
     this.db = new Pool({
       // todo a hack for kms support
-      user: options.user || config.store.postgres[this.shardID].user,
-      password: options.password || config.store.postgres[this.shardID].password,
+      user: config.store.postgres[this.shardID].user,
+      password: config.store.postgres[this.shardID].password,
       host: options.host,
       database: options.database,
       port: options.port,
