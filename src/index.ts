@@ -1,6 +1,4 @@
 import {logger} from './logger'
-import {api} from 'src/api'
-import {indexer} from 'src/indexer'
 import {config, init as configInit} from 'src/config'
 
 // import {run as eventSignaturesRun} from 'src/indexer/indexer/contracts/eventSignatures/eventSignatures'
@@ -15,12 +13,14 @@ const run = async () => {
 
   try {
     if (config.api.isEnabled) {
+      const {api} = require('src/api')
       await api()
     } else {
       l.debug('API is disabled')
     }
 
     if (config.indexer.isEnabled) {
+      const {indexer} = require('src/indexer')
       await indexer()
     } else {
       l.debug('Indexer is disabled')
