@@ -148,7 +148,6 @@ export class ContractIndexer {
           await task.onFinish(this.store)
         }
       } catch (err) {
-        console.log(err)
         l.warn('Batch failed', err.message || err)
       }
     }

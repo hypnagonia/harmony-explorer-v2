@@ -5,7 +5,6 @@ import {config, init as configInit} from 'src/config'
 
 const l = logger(module)
 
-// todo checks on start. shard chainId
 const run = async () => {
   l.info(`Harmony Explorer v${config.info.version}. Git commit hash: ${config.info.gitCommitHash}`)
   // eventSignaturesRun()

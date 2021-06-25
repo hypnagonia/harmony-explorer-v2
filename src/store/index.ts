@@ -5,8 +5,6 @@ import {PostgresStorageOptions} from './postgres/types'
 
 const shards: ShardID[] = [0, 1, 2, 3]
 
-// todo point API to readonly replica
-
 const indexerPools = config.indexer.isEnabled
   ? shards.map((shardID) => {
       const p = config.store.postgres[shardID]
