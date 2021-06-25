@@ -1,7 +1,7 @@
 import {logger} from './logger'
 import {api} from 'src/api'
 import {indexer} from 'src/indexer'
-import {config} from 'src/config'
+import {config, init as configInit} from 'src/config'
 // import {run as eventSignaturesRun} from 'src/indexer/indexer/contracts/eventSignatures/eventSignatures'
 
 const l = logger(module)
@@ -10,6 +10,7 @@ const l = logger(module)
 const run = async () => {
   l.info(`Harmony Explorer v${config.info.version}. Git commit hash: ${config.info.gitCommitHash}`)
   // eventSignaturesRun()
+  await configInit()
 
   try {
     if (config.api.isEnabled) {

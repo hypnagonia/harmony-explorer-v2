@@ -5,26 +5,27 @@ import {ShardID} from 'src/types'
 import {getGitCommitHash} from 'src/utils/getGitCommitHash'
 import fs from 'fs'
 import path from 'path'
+import {run as initAWSKMS} from './utils/kms/index'
 
 const packageJSON = require('../package.json')
 
-let buildData: String
+let VERSIONFileData: String
 
 try {
-  buildData = `${fs.readFileSync(path.join(__dirname, '../', './VERSION'))}`
+  VERSIONFileData = `${fs.readFileSync(path.join(__dirname, '../', './VERSION'))}`
 } catch (e) {
-  buildData = 'Unset'
+  VERSIONFileData = 'Unset'
 }
 
 dotenv.config()
 
-const toBool = (value: string) => !!+value
+const toBool = (value: string = '0') => !!+value
 
 const required: Record<string, string> = {
   INDEXER_BATCH_COUNT: 'number',
 }
 
-if (toBool(process.env.INDEXER_IS_ENABLED || '0')) {
+if (toBool(process.env.INDEXER_IS_ENABLED)) {
   Object.keys(required).map((k) => {
     assert(process.env[k], `Env variable "${k}" must be defined`)
     assert(
@@ -52,7 +53,9 @@ export const config = {
   info: {
     gitCommitHash: getGitCommitHash(),
     version: packageJSON.version,
-    buildData,
+    VERSIONFileData,
+    isAWSKMSEnabled: process.env.AWS_CONFIG_IS_ENABLE,
+    AWSKMSData: 'Unset',
   },
   api: {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s) as ShardID[],
@@ -144,4 +147,10 @@ export const config = {
       sentry: ['error', 'warn'] as TLogLevel[],
     },
   },
+}
+
+export const init = async () => {
+  if (toBool(process.env.AWS_CONFIG_IS_ENABLE)) {
+    config.info.AWSKMSData = (await initAWSKMS()) as any
+  }
 }
