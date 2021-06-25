@@ -55,7 +55,6 @@ export const config = {
     version: packageJSON.version,
     VERSIONFileData,
     isAWSKMSEnabled: process.env.AWS_CONFIG_IS_ENABLE,
-    AWSKMSData: 'Unset',
   },
   api: {
     shards: getCommaSeparatedList(process.env.API_SHARDS).map((s) => +s) as ShardID[],

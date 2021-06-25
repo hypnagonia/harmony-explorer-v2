@@ -20,6 +20,7 @@ import {PostgresStorageSignature} from 'src/store/postgres/Signatures'
 import {PostgresStorageMetrics} from 'src/store/postgres/Metrics'
 import {PostgresStorageERC721} from 'src/store/postgres/ERC721'
 import {PostgresStorageERC1155} from 'src/store/postgres/ERC1155'
+import {config} from 'src/config'
 
 const defaultRetries = 5
 
@@ -67,10 +68,11 @@ export class PostgresStorage implements IStorage {
     this.options = options
 
     this.db = new Pool({
-      user: options.user,
+      // todo a hack for kms support
+      user: options.user || config.store.postgres[this.shardID].user,
+      password: options.password || config.store.postgres[this.shardID].password,
       host: options.host,
       database: options.database,
-      password: options.password,
       port: options.port,
       max: options.poolSize,
       // https://node-postgres.com/api/pool
