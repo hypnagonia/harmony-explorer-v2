@@ -67,7 +67,7 @@ export async function getRelatedTransactionsByType(
     offset: filter ? filter.offset : 0,
     limit: filter ? filter.limit : 10,
     orderBy: 'block_number',
-    orderDirection: 'desc',
+    orderDirection: filter.orderDirection,
     filters: [],
   }
 
